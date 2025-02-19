@@ -135,7 +135,9 @@ export default function RegistroForm() {
     password?: string;
     name?: string;
     password_confirmation?: string;
+    phone_number?: string;
   }>({});
+
   const [registerData, setRegisterData] = React.useState({
     name: "",
     email: "",
@@ -144,7 +146,7 @@ export default function RegistroForm() {
     password_confirmation: "",
     gender: "male",
     age: 21,
-    phone_number: "573169393922",
+    phone_number: "",
     phone_indicator: "+57",
   });
   const [loginData, setLoginData] = React.useState({
@@ -161,20 +163,18 @@ export default function RegistroForm() {
 
     if (name === "email" && !value.trim()) {
       error = "El correo es requerido.";
-    }
-
-    if (name === "password" && !value.trim()) {
+    } else if (name === "password" && !value.trim()) {
       error = "La contraseña es requerida.";
-    }
-
-    if (!isLogin) {
-      if (name === "name" && !value.trim()) {
-        error = "El nombre es requerido.";
-      }
-
-      if (name === "password_confirmation" && value !== registerData.password) {
-        error = "Las contraseñas no coinciden.";
-      }
+    } else if (name === "name" && !value.trim() && !isLogin) {
+      error = "El nombre es requerido.";
+    } else if (
+      name === "password_confirmation" &&
+      value !== registerData.password &&
+      !isLogin
+    ) {
+      error = "Las contraseñas no coinciden.";
+    } else if (name === "phone_number" && !value.trim() && !isLogin) {
+      error = "El número de teléfono es requerido.";
     }
 
     setErrors((prev) => ({ ...prev, [name]: error }));
@@ -224,6 +224,12 @@ export default function RegistroForm() {
 
     setIsLoading(true);
     try {
+
+      const modifiedRegisterData = {
+        ...registerData,
+        phone_number: `57${registerData.phone_number}`
+      };
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/auth/register`,
         {
@@ -231,7 +237,7 @@ export default function RegistroForm() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(registerData),
+          body: JSON.stringify(modifiedRegisterData),
         }
       ).finally(() => {
         setIsLoading(false);
@@ -310,7 +316,6 @@ export default function RegistroForm() {
           <form className="space-y-4">
             <div className="space-y-2">
               <p className="text-sm font-medium text-primary">Tus datos</p>
-
               <Input
                 className="rounded-full border-primary px-4 py-2"
                 placeholder="Nombre"
@@ -337,7 +342,21 @@ export default function RegistroForm() {
               {errors.email && (
                 <p className="text-sm text-red-500">{errors.email}</p>
               )}
-
+              <div className="relative">
+                <Input
+                  className="rounded-full border-primary px-4 py-2"
+                  placeholder="Número de teléfono"
+                  type="tel"
+                  name="phone_number"
+                  value={registerData.phone_number}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  onFocus={handleInputFocus}
+                />
+                {errors.phone_number && (
+                  <p className="text-sm text-red-500">{errors.phone_number}</p>
+                )}
+              </div>
               <div className="relative">
                 <Input
                   className="rounded-full border-primary px-4 py-2 pr-10"
@@ -364,7 +383,6 @@ export default function RegistroForm() {
                   )}
                 </button>
               </div>
-
               <div className="relative">
                 <Input
                   className="rounded-full border-primary px-4 py-2 pr-10"
