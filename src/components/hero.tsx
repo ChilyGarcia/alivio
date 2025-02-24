@@ -72,6 +72,8 @@ export default function Hero() {
   };
 
   const handleNextStep = async () => {
+    if (!isStepValid()) return;
+
     const isPresencial = responses.formato === "Presencial";
 
     if (isPresencial && currentStep < 6) {
@@ -103,6 +105,27 @@ export default function Hero() {
     setResponses((prev) => ({ ...prev, [stepKey]: value }));
   };
 
+  const isStepValid = () => {
+    switch (currentStep) {
+      case 1:
+        return responses.motivo !== null;
+      case 2:
+        return responses.servicio !== null;
+      case 3:
+        return responses.formato !== null;
+      case 4:
+        return responses.sexo !== null;
+      case 5:
+        // Aquí deberás validar que la búsqueda de ciudad tenga un valor.
+        // Por ejemplo, si CitySearchComponent actualiza responses.city:
+        return true;
+      case 6:
+        return responses.type !== null;
+      default:
+        return false;
+    }
+  };
+
   useEffect(() => {
     fetchGroup();
   }, []);
@@ -110,17 +133,12 @@ export default function Hero() {
   const steps = {
     1: (
       <div>
-        <h2 className="text-[14px] text-primary font-bold text-center">
-          Citas con especialistas
-        </h2>
-        <br />
-        <h3 className="text-2xl font-bold text-center text-primary">
+        <h3 className="text-2xl font-extrabold text-center text-primary mb-6">
           ¿Motivo de su cita?
         </h3>
         <p className="text-center text-sm text-gray-600 mb-6">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac urna
-          felis. Sed vehicula, nisi et lacinia venenatis, ex felis pulvinar
-          ipsum.
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+          eiusmod.
         </p>
         <div className="flex justify-between space-x-4">
           <button
@@ -140,7 +158,7 @@ export default function Hero() {
     ),
     2: (
       <div>
-        <h3 className="text-2xl font-bold text-center text-primary">
+        <h3 className="text-2xl font-extrabold text-center text-primary mb-6">
           ¿Motivo de la cita? Servicio requerido
         </h3>
         <p className="text-center text-sm text-gray-600 mb-6">
@@ -162,8 +180,8 @@ export default function Hero() {
 
     3: (
       <div>
-        <h3 className="text-2xl font-bold text-center text-primary">
-          ¿Qué formato prefieres o requieres?
+        <h3 className="text-2xl font-extrabold text-center text-primary mb-6">
+          ¿Qué formato prefieres?
         </h3>
         <p className="text-center text-sm text-gray-600 mb-6">
           Lorem ipsum dolor sit amet, consectetur adipiscing elit.
@@ -198,7 +216,7 @@ export default function Hero() {
     ),
     4: (
       <div>
-        <h3 className="text-2xl font-bold text-center text-primary">
+        <h3 className="text-2xl font-extrabold text-center text-primary mb-6">
           ¿Cuál es tu sexo?
         </h3>
         <p className="text-center text-sm text-gray-600 mb-6">
@@ -228,7 +246,7 @@ export default function Hero() {
     ),
     5: (
       <div>
-        <h3 className="text-2xl font-bold text-center text-primary">
+        <h3 className="text-2xl font-extrabold text-center text-primary mb-6">
           ¿Cuál es tu ubicación actual?
         </h3>
         <p className="text-center text-sm text-gray-600 mb-6">
@@ -240,7 +258,7 @@ export default function Hero() {
 
     6: (
       <div>
-        <h3 className="text-2xl font-bold text-center text-primary">
+        <h3 className="text-2xl font-extrabold text-center text-primary mb-6">
           ¿Que tipo de cita necesitas?
         </h3>
         <p className="text-center text-sm text-gray-600 mb-6">
@@ -306,25 +324,39 @@ export default function Hero() {
       </div>
 
       <section className="h-[60vh] w-full relative bg-white flex justify-center">
-        <div className="bg-white w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl mx-auto rounded-2xl border-primary border-4 absolute top-[-55px] left-1/2 transform -translate-x-1/2 p-6 z-10 shadow-lg">
+        <div className="bg-white border-2 border-primary rounded-2xl shadow-lg absolute top-[-55px] left-1/2 transform -translate-x-1/2 w-[calc(100%-2rem)] max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl p-6 z-10">
+          <div className="flex items-center justify-center ">
+            <label className="text-sm font-bold text-primary">
+              {currentStep > 1 ? <>Formulario</> : <>Citas con Especialistas</>}
+            </label>
+          </div>
+
+          <div className="-mx-6 mb-6 mt-4">
+            <hr className="border-primary" />
+          </div>
+
           {currentStep > 1 && (
-            <div className="absolute top-4 left-4">
+            <div className="absolute top-5 left-4">
               <button
                 onClick={handlePrevStep}
                 className="flex items-center space-x-2 text-primary font-bold hover:text-blue-700 transition-colors"
               >
-                <span className="text-xl">←</span>
-                <span className="text-sm">Volver</span>
+                <img src="/icons/arrow-left-icon.png"></img>
+                {/* <span className="text-xl">←</span> */}
+                {/* <span className="text-sm">Volver</span> */}
               </button>
             </div>
           )}
-          {/* Contenido del paso */}
+
+          {/* Contenido dinámico del paso actual */}
           <div className="mt-10">{steps[currentStep]}</div>
+
           {/* Botón siguiente */}
           <div className="flex justify-between mt-6">
             <button
               onClick={handleNextStep}
-              className="px-4 py-2 bg-primary w-full text-white font-medium text-sm rounded-2xl hover:bg-blue-700 transition-colors"
+              disabled={!isStepValid()}
+              className="px-4 py-2 bg-primary w-full text-white font-medium text-sm rounded-2xl transition-colors hover:bg-blue-700 disabled:bg-gray-300 disabled:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <span className="loading loading-spinner loading-md"></span>

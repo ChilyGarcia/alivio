@@ -42,7 +42,16 @@ export default function AppointmentsPage() {
       );
 
       console.log("📌 Respuesta de agendamiento:", response.data);
-      setAppointments(response.data.data);
+
+      const appointmentsAsDates = response.data.map((item: any) => {
+        const [year, month, day] = item.date.split("-");
+        return {
+          ...item,
+          date: new Date(Number(year), Number(month) - 1, Number(day)),
+        };
+      });
+
+      setAppointments(appointmentsAsDates);
       setTotalPages(response.data.last_page);
     };
     fetchAppointments();
@@ -71,26 +80,27 @@ export default function AppointmentsPage() {
           </h1>
         </div>
 
-        {/* Filtros de estado de cita */}
-        <div className="flex border-b pb-2 mb-4 space-x-6 text-primary">
+        <div className="flex w-full border-b pb-2 mb-4 text-primary">
           <button
-            className={`text-sm font-semibold ${
+            className={`flex-1 text-center text-sm font-semibold py-2 ${
               statusFilter === "scheduled" ? "border-b-2 border-primary" : ""
             }`}
             onClick={() => handleStatusFilter("scheduled")}
           >
             Pendientes
           </button>
+
           <button
-            className={`text-sm font-semibold ${
+            className={`flex-1 text-center text-sm font-semibold py-2 ${
               statusFilter === "canceled" ? "border-b-2 border-primary" : ""
             }`}
             onClick={() => handleStatusFilter("canceled")}
           >
             Canceladas
           </button>
+
           <button
-            className={`text-sm font-semibold ${
+            className={`flex-1 text-center text-sm font-semibold py-2 ${
               statusFilter === "completed" ? "border-b-2 border-primary" : ""
             }`}
             onClick={() => handleStatusFilter("completed")}
@@ -188,7 +198,13 @@ export default function AppointmentsPage() {
                   </div>
                   <div className="flex items-center gap-2">
                     <DollarSign className="w-4 h-4 text-gray-400" />
-                    <span className="text-sm">COP $35,000</span>
+                    <span className="text-sm">
+                      COP ${" "}
+                      {Number(appointment.total_cost).toLocaleString("en-US", {
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0,
+                      })}
+                    </span>
                   </div>
                 </div>
 
