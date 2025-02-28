@@ -45,7 +45,7 @@ export const authenticationService = {
     try {
       const token = Cookies.get("token");
 
-      const response = await fetchWithInterceptor(`${BACKEND_URL}/logout`, {
+      const response = await fetchWithInterceptor(`${BACKEND_URL}/auth/logout`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

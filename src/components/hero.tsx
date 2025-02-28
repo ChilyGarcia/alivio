@@ -1,13 +1,11 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import Cookies from "js-cookie";
 import CardHero from "./card";
 import Image from "next/image";
 import { Showgallery2 } from "../components/ImageGallery";
 import { useState, useEffect } from "react";
 import CitySearchComponent from "@/components/CitySearchComponent";
-import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -19,6 +17,7 @@ export default function Hero() {
     motivo: null,
     servicio: null,
     formato: null,
+    type: null,
     sexo: null,
   });
   const [groups, setGroups] = useState([]);
@@ -116,8 +115,6 @@ export default function Hero() {
       case 4:
         return responses.sexo !== null;
       case 5:
-        // Aquí deberás validar que la búsqueda de ciudad tenga un valor.
-        // Por ejemplo, si CitySearchComponent actualiza responses.city:
         return true;
       case 6:
         return responses.type !== null;
@@ -330,11 +327,9 @@ export default function Hero() {
               {currentStep > 1 ? <>Formulario</> : <>Citas con Especialistas</>}
             </label>
           </div>
-
           <div className="-mx-6 mb-6 mt-4">
             <hr className="border-primary" />
           </div>
-
           {currentStep > 1 && (
             <div className="absolute top-5 left-4">
               <button
@@ -347,11 +342,7 @@ export default function Hero() {
               </button>
             </div>
           )}
-
-          {/* Contenido dinámico del paso actual */}
           <div className="mt-10">{steps[currentStep]}</div>
-
-          {/* Botón siguiente */}
           <div className="flex justify-between mt-6">
             <button
               onClick={handleNextStep}

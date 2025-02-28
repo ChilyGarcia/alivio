@@ -21,9 +21,40 @@ interface ChatProps {
   messages: Message[];
 }
 
+interface Receiver {
+  id: number;
+  name: string;
+  email: string;
+  gender: string;
+  age: null;
+  phone_number: string;
+  phone_indicator: string;
+  email_verified_at: Date;
+  created_at: Date;
+  updated_at: Date;
+  role: string;
+  profile_image: null;
+  profile_image_url: null;
+}
+
 export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
   const [messagesSubscribe, setMessages] = useState<Message[]>(messages);
   const [messageInput, setMessageInput] = useState("");
+  const [receiver, setReceiver] = useState<Receiver>({
+    id: 0,
+    name: "",
+    email: "",
+    gender: "",
+    age: null,
+    phone_number: "",
+    phone_indicator: "",
+    email_verified_at: new Date(),
+    created_at: new Date(),
+    updated_at: new Date(),
+    role: "",
+    profile_image: null,
+    profile_image_url: null,
+  });
   const router = useRouter();
   const token = Cookies.get("token");
 
@@ -45,6 +76,35 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
     };
   }, [sender_id, receiver_id]);
 
+  useEffect(() => {
+    const fetchUserReceiver = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/get-user-details/${receiver_id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+
+        setReceiver(data);
+      } catch (error) {
+        console.error("Failed to fetch user receiver:", error);
+      }
+    };
+
+    fetchUserReceiver();
+  }, []);
+
+  useEffect(() => {
+    console.log("Este es el dato del receiver", receiver);
+  }, [receiver]);
+
   const handleSendMessage = () => {
     if (messageInput.trim() === "") return;
 
@@ -63,15 +123,17 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
   };
 
   const handleRouterMyAppointments = () => {
-    router.push("/my-appointments") 
-  }
+    router.push("/my-appointments");
+  };
 
   return (
     <div className="flex flex-col h-screen max-w-md mx-auto bg-gray-50">
-      {/* Header */}
       <header className="flex items-center gap-4 p-4 bg-blue-700 text-white">
         <button className="p-1" onClick={() => router.push("/my-appointments")}>
-          <ChevronLeft className="w-6 h-6" onClick={() => handleRouterMyAppointments() } />
+          <ChevronLeft
+            className="w-6 h-6"
+            onClick={() => handleRouterMyAppointments()}
+          />
         </button>
         <div className="flex items-center gap-3 flex-1">
           <div className="relative w-10 h-10 rounded-full overflow-hidden">
@@ -84,8 +146,8 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
             />
           </div>
           <div>
-            <h1 className="font-medium">Pepito Pérez</h1>
-            <p className="text-xs text-white/80">Especialista</p>
+            <h1 className="font-medium"> {receiver.name} </h1>
+            <p className="text-xs text-white/80">{receiver.role}</p>
           </div>
         </div>
         <button className="p-1">
@@ -93,7 +155,6 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
         </button>
       </header>
 
-      {/* Chat Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messagesSubscribe.map((msg, index) => (
           <div

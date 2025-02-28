@@ -11,10 +11,8 @@ import {
   Menu,
   X,
   Store,
+  LogOut,
   MessageCircle,
-  Bell,
-  Users,
-  Mail,
   Settings,
 } from "lucide-react";
 import Cookies from "js-cookie";
@@ -35,7 +33,7 @@ const TabBar = () => {
   };
 
   const [menuOpen, setMenuOpen] = useState(false);
-  const [showTabBar, setShowTabBar] = useState(true); // Controla la visibilidad del TabBar
+  const [showTabBar, setShowTabBar] = useState(true);
   const [token, setToken] = useState("");
   const [user, setUser] = useState<UserType>(initialUser);
   const router = useRouter();
@@ -44,6 +42,7 @@ const TabBar = () => {
     try {
       const response = await authenticationService.userDetails();
       setUser(response);
+
       return response;
     } catch (error) {
       console.error(error);
@@ -51,11 +50,16 @@ const TabBar = () => {
   };
 
   useEffect(() => {
-    const auth = Cookies.get("token");
-    if (auth) {
-      fetchUserDetails();
-      setToken(auth);
-    }
+    const fetchData = async () => {
+      const auth = Cookies.get("token");
+      if (auth) {
+        const response = await fetchUserDetails();
+
+        Cookies.set("user", JSON.stringify(response));
+        setToken(auth);
+      }
+    };
+    fetchData();
   }, []);
 
   const handleTabItemAuthentication = (ref: string) => {
@@ -67,14 +71,35 @@ const TabBar = () => {
     }
   };
 
+  const fetchLogOut = async () => {
+    try {
+      const response = authenticationService.logOut();
+
+      console.log(response);
+      if (response) {
+        Cookies.remove("token");
+        window.location.href = "/";
+      }
+      return response;
+    } catch (error) {
+      console.error("Error logging in:", (error as Error).message);
+      return;
+    }
+  };
+
+  const handleLogOut = (ref: string) => {
+    console.log("Este es el desencadenador del cerrar sesion");
+
+    fetchLogOut();
+  };
+
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
-    setShowTabBar(menuOpen); // Si el menú se abre, oculta la barra. Si se cierra, la muestra.
+    setShowTabBar(menuOpen);
   };
 
   return (
     <>
-      {/* TabBar solo se muestra si showTabBar es true */}
       {showTabBar && (
         <nav className="fixed bottom-0 left-0 w-full bg-white shadow-md p-2 flex justify-around items-center border-t border-gray-300 z-[9999]">
           <TabItem
@@ -85,12 +110,25 @@ const TabBar = () => {
           />
           {token && (
             <>
-              <TabItem
-                href="/my-appointments"
-                icon={<Calendar size={24} />}
-                label="Citas"
-                onClick={() => handleTabItemAuthentication("/my-appointments")}
-              />
+              {user.role == "patient" ? (
+                <TabItem
+                  href="/my-appointments"
+                  icon={<Calendar size={24} />}
+                  label="Citas"
+                  onClick={() =>
+                    handleTabItemAuthentication("/my-appointments")
+                  }
+                />
+              ) : (
+                <TabItem
+                  href="/professionals/my-patients"
+                  icon={<Calendar size={24} />}
+                  label="Mis pacientes"
+                  onClick={() =>
+                    handleTabItemAuthentication("/my-appointments")
+                  }
+                />
+              )}
             </>
           )}
           <TabItem
@@ -125,13 +163,11 @@ const TabBar = () => {
 
       {menuOpen && (
         <>
-          {/* Fondo desenfocado */}
           <div
             className="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-md z-40"
-            onClick={toggleMenu} // Cierra el menú y muestra el TabBar al hacer clic fuera
+            onClick={toggleMenu}
           ></div>
 
-          {/* Menú lateral */}
           <div className="fixed top-0 right-0 w-64 h-full bg-white shadow-lg p-6 flex flex-col z-50 border-l border-gray-200">
             <div className="flex justify-between items-center mb-6">
               <img src="/images/alivio-image.png" className="w-32" />
@@ -182,24 +218,6 @@ const TabBar = () => {
                 label="Chats disponibles"
                 active={false}
               />
-              <NavItem
-                href="/notificaciones"
-                icon={<Bell size={20} />}
-                label="Notificaciones"
-                active={false}
-              />
-              <NavItem
-                href="/nosotros"
-                icon={<Users size={20} />}
-                label="Nosotros"
-                active={false}
-              />
-              <NavItem
-                href="/contacto"
-                icon={<Mail size={20} />}
-                label="Contacto"
-                active={false}
-              />
             </nav>
             <div className="mt-auto border-t pt-4">
               <NavItem
@@ -209,12 +227,22 @@ const TabBar = () => {
                 active={false}
               />
               {token ? (
-                <NavItem
-                  href="/profile"
-                  icon={<User size={20} />}
-                  label={user.name}
-                  active={false}
-                />
+                <>
+                  <NavItem
+                    href="/profile"
+                    icon={<User size={20} />}
+                    label={user.name}
+                    active={false}
+                  />
+                  <Link
+                    href="/"
+                    className={`flex items-center p-3 rounded-lg  text-primary transition-all`}
+                    onClick={() => handleLogOut("/")}
+                  >
+                    <LogOut size={20}></LogOut>
+                    <span className="ml-3">Cerrar sesion</span>
+                  </Link>
+                </>
               ) : (
                 <>
                   <NavItem

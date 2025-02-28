@@ -182,7 +182,6 @@ export default function RegistroForm() {
 
   const validateForm = () => {
     if (isOpen) {
-      // Validar Login
       const isValid =
         loginData.email.trim() &&
         loginData.password.trim() &&
@@ -190,7 +189,6 @@ export default function RegistroForm() {
         !errors.password;
       setIsValidated(isValid);
     } else {
-      // Validar Registro
       const isValid =
         registerData.name.trim() &&
         registerData.email.trim() &&

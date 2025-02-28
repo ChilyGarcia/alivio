@@ -64,6 +64,12 @@ export const backendService = {
     );
   },
 
+  listMyPatients: async (currentPage: number, status: string) => {
+    return await fetchWithAuth(
+      `${BACKEND_URL}/professional/appointments/${status}?page=${currentPage}`
+    );
+  },
+
   getMessages: async (sender_id: number, receiver_id: number) => {
     return await fetchWithAuth(`${BACKEND_URL}/messages`, {
       method: "POST",
