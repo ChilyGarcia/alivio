@@ -32,6 +32,8 @@ const AppointmentModal = ({
   const [timeOptions, setTimeOptions] = useState([]);
   const [totalCost, setTotalCost] = useState("");
   const [totalCents, setTotalCents] = useState("");
+  const isAppointmentIncomplete = !selectedDate || !startTime || !endTime;
+  const [isLoading, setIsLoading] = useState(false);
 
   const subtotal = 26990;
   const iva = Math.round(subtotal * 0.19);
@@ -216,7 +218,7 @@ const AppointmentModal = ({
       const json = await response.json();
 
       setTotalCost(json.total_cost);
-      setTotalCents(json.total_cents)
+      setTotalCents(json.total_cents);
 
       console.log(json);
     } catch (error) {
@@ -232,6 +234,7 @@ const AppointmentModal = ({
   }, [startTime, endTime]);
 
   const handleRegisterPage = () => {
+    setIsLoading(true);
     console.log(
       `Fecha: ${selectedDate}, Inicio: ${startTime}, Fin: ${endTime}, Total: ${total}`
     );
@@ -263,30 +266,36 @@ const AppointmentModal = ({
       end_time: formatTimeTo24Hour(endTime),
     };
 
-    localStorage.setItem("payment_cents", totalCents)
+    localStorage.setItem("payment_cents", totalCents);
 
     localStorage.setItem(
       "appointmentDetails",
       JSON.stringify(appointmentDetails)
     );
 
+    setIsLoading(false);
     if (token) {
       router.push("/payments");
     } else {
       router.push("/authentication");
     }
   };
+
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] p-4">
-      <div className="bg-white rounded-3xl w-full max-w-md overflow-hidden shadow-lg">
-        {/* Header */}
+    <div
+      className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] p-4 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-3xl w-full max-w-md overflow-hidden shadow-lg"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="p-4 border-b">
           <h2 className="text-2xl font-bold text-primary text-center">
             Fecha de la Cita
           </h2>
         </div>
 
-        {/* Botón para abrir el calendario */}
         <div className="p-4 border-b">
           <button
             onClick={() => setIsCalendarOpen(!isCalendarOpen)}
@@ -322,7 +331,6 @@ const AppointmentModal = ({
               </button>
             </div>
 
-            {/* Days of the week */}
             <div className="grid grid-cols-7 gap-1 text-sm mb-2">
               {["Dom", "Lun", "Mar", "Mie", "Jue", "Vie", "Sab"].map((day) => (
                 <div key={day} className="text-center font-medium">
@@ -357,68 +365,83 @@ const AppointmentModal = ({
           </div>
         )}
 
-        {/* Botón para abrir selector de hora */}
         <div className="p-4 border-b">
-          <button
-            onClick={() => setIsTimePickerOpen(!isTimePickerOpen)}
-            className="flex items-center gap-2 w-full px-4 py-3 border rounded-lg text-left text-primary font-medium bg-white shadow-lg hover:bg-gray-100"
-          >
-            <Clock className="w-5 h-5" />
-            <span>{`Hora: ${startTime || "Seleccionar"} - ${
-              endTime || "Seleccionar"
-            }`}</span>
-            <ChevronRight className="w-5 h-5 ml-auto" />
-          </button>
+          {timeOptions.length > 0 ? (
+            <button
+              onClick={() => setIsTimePickerOpen(!isTimePickerOpen)}
+              className="flex items-center gap-2 w-full px-4 py-3 border rounded-lg text-left text-primary font-medium bg-white shadow-lg hover:bg-gray-100"
+            >
+              <Clock className="w-5 h-5" />
+              <span>{`Hora: ${startTime || "Seleccionar"} - ${
+                endTime || "Seleccionar"
+              }`}</span>
+              <ChevronRight className="w-5 h-5 ml-auto" />
+            </button>
+          ) : (
+            <label className="text-sm font-semibold text-gray-700">
+              No se encontraron disponibilidades para esta fecha
+            </label>
+          )}
         </div>
 
-        {isTimePickerOpen && timeOptions.length > 0 && (
-          <div className="p-4 space-y-4">
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">
-                Hora de inicio
-              </label>
-              <select
-                value={startTime}
-                onChange={handleStartTimeChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium bg-white focus:ring-primary focus:border-primary transition-all"
-              >
-                <option value="" disabled>
-                  Seleccionar hora de inicio
-                </option>
-                {timeOptions.flat().map((time) => (
-                  <option key={time} value={time}>
-                    {time}
+        {isTimePickerOpen &&
+          (timeOptions.length > 0 ? (
+            <div className="p-4 space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">
+                  Hora de inicio
+                </label>
+                <select
+                  value={startTime}
+                  onChange={handleStartTimeChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium bg-white focus:ring-primary focus:border-primary transition-all"
+                >
+                  <option value="" disabled>
+                    Seleccionar hora de inicio
                   </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">
-                Hora de fin
-              </label>
-              <select
-                value={endTime}
-                onChange={(e) => setEndTime(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium bg-white focus:ring-primary focus:border-primary transition-all"
-                disabled={!startTime}
-              >
-                <option value="" disabled>
-                  Seleccionar hora de fin
-                </option>
-                {timeOptions
-                  .find((block) => block.includes(startTime))
-                  ?.filter((time) => parseInt(time) > parseInt(startTime))
-                  .map((time) => (
+                  {timeOptions.flat().map((time) => (
                     <option key={time} value={time}>
                       {time}
                     </option>
                   ))}
-              </select>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">
+                  Hora de fin
+                </label>
+                <select
+                  value={endTime}
+                  onChange={(e) => setEndTime(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium bg-white focus:ring-primary focus:border-primary transition-all"
+                  disabled={!startTime}
+                >
+                  <option value="" disabled>
+                    Seleccionar hora de fin
+                  </option>
+                  {(
+                    timeOptions
+                      .find((block) => block.includes(startTime))
+                      ?.filter(
+                        (time: string) => parseInt(time) > parseInt(startTime)
+                      ) ?? []
+                  ).map((time: string) => (
+                    <option key={time} value={time}>
+                      {time}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
-          </div>
-        )}
-        {/* Resumen de precios */}
+          ) : (
+            <div className="p-4">
+              <label className="text-sm font-semibold text-gray-700">
+                No se encontraron disponibilidades para esta fecha
+              </label>
+            </div>
+          ))}
+
         {totalCost && (
           <>
             <div className="p-4 space-y-2 border-t">
@@ -438,7 +461,6 @@ const AppointmentModal = ({
           </>
         )}
 
-        {/* Action Buttons */}
         <div className="grid grid-cols-2 gap-4 p-4 border-t">
           <button
             onClick={onClose}
@@ -448,9 +470,22 @@ const AppointmentModal = ({
           </button>
           <button
             onClick={() => handleRegisterPage()}
-            className="py-1 px-2 rounded-full bg-primary text-white font-medium hover:bg-blue-700 transition-colors"
+            disabled={isAppointmentIncomplete}
+            className={`py-1 px-2 rounded-full font-medium transition-colors ${
+              isAppointmentIncomplete
+                ? "bg-gray-300 disabled:text-gray-500 cursor-not-allowed"
+                : "bg-primary text-white hover:bg-blue-700"
+            }`}
           >
-            <label className="text-sm">Agendar y pagar</label>
+            {isLoading ? (
+              <>
+                <span className="loading loading-spinner loading-md"></span>
+              </>
+            ) : (
+              <>
+                <label className="text-sm">Agendar y pagar</label>
+              </>
+            )}
           </button>
         </div>
       </div>

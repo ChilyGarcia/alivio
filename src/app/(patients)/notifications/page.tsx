@@ -83,7 +83,6 @@ export default function NotificationsPage() {
 
   return (
     <div className="min-h-screen bg-white text-gray-900">
-      {/* Header con fondo azul */}
       <div className="bg-[#0000CC] text-white p-4 flex items-center justify-between">
         <button
           onClick={() => router.push("/")}
@@ -95,7 +94,6 @@ export default function NotificationsPage() {
         <div></div>
       </div>
 
-      {/* Lista de Notificaciones */}
       <div className="p-4">
         {notifications.length === 0 ? (
           <p className="text-gray-500 text-center">No hay notificaciones.</p>
@@ -109,9 +107,9 @@ export default function NotificationsPage() {
                   : "bg-white hover:shadow-lg"
               }`}
             >
-              <div>
-                <h3 className="font-semibold text-gray-900">{notif.title}</h3>
-                <p className="text-sm text-gray-600">{notif.description}</p>
+              <div className="pr-6">
+                <h3 className="font-semibold text-sm text-gray-900">{notif.title}</h3>
+                <p className="text-sm text-gray-600 text-justify mt-2">{notif.description}</p>
               </div>
               <div className="flex gap-3">
                 {!notif.read && (

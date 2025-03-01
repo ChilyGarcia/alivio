@@ -29,6 +29,13 @@ const DoctorCarousel = () => {
     console.log(locations);
   }, [locations]);
 
+  const formatPrice = (price) => {
+    return Number(price)
+      .toFixed(2)
+      .replace(/\.00$/, "")
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
+
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
@@ -93,6 +100,8 @@ const DoctorCarousel = () => {
           const formattedDoctors = data.health_professionals.map((doctor) => {
             const location = doctor.locations?.[0] || null;
 
+            console.log("Este es el doctor master", doctor);
+
             return {
               id: doctor.id,
               user_id: doctor.user_id,
@@ -108,8 +117,8 @@ const DoctorCarousel = () => {
               latitude: location ? location.latitude : null,
               experience: doctor.description,
               accessibility: doctor.accessibilities.map((acc) => acc.type),
-              price: Math.floor(Math.random() * 500000 + 100000),
-              duration: "30-45 minutos",
+              price: formatPrice(doctor.hourly_rate),
+              duration: "45-60 minutos",
             };
           });
 
@@ -185,7 +194,7 @@ const DoctorCarousel = () => {
               latitude: location ? location.latitude : null,
               experience: doctor.description,
               accessibility: doctor.accessibilities.map((acc) => acc.type),
-              price: Math.floor(Math.random() * 500000 + 100000),
+              price: formatPrice(doctor.hourly_rate),
               duration: "30-45 minutos",
             };
           });
@@ -270,42 +279,46 @@ const DoctorCarousel = () => {
           {doctors.length > 0 ? (
             doctors.map((doctor) => (
               <SwiperSlide key={doctor.id}>
-                <div
-                  className="bg-white rounded-lg p-6 border-2 border-blue-600 shadow-lg flex flex-col gap-4"
-                  style={{ height: "320px" }}
-                >
-                  <div className="flex gap-4 items-center">
-                    <div className="w-24 h-24 rounded-full bg-gray-100 overflow-hidden flex-shrink-0">
+                <div className="bg-white rounded-xl p-5  hover:shadow-lg transition-shadow duration-200 flex flex-col h-full w-full max-w-xs border border-primary">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0">
                       <Image
                         src={doctor.img || "/placeholder.svg"}
                         alt={doctor.name}
-                        width={96}
-                        height={96}
+                        width={64}
+                        height={64}
                         className="object-cover w-full h-full"
                       />
                     </div>
-                    <div>
-                      <h2 className="text-xl font-bold text-blue-800">
+                    <div className="flex-1">
+                      <h3 className="text-lg font-semibold text-blue-800 leading-tight">
                         {doctor.name}
-                      </h2>
-                      <p className="text-sm text-gray-500">
+                      </h3>
+                      <p className="text-sm text-blue-600 font-medium">
                         {doctor.specialty}
                       </p>
-                      <p className="text-sm text-gray-500 mt-2 line-clamp-2">
-                        {doctor.experience}
-                      </p>
-                      <div className="flex items-center mt-2 text-yellow-500">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                          <span key={i} className="text-xl">
-                            {i < Math.floor(doctor.rating) ? "★" : "☆"}
-                          </span>
-                        ))}
-                      </div>
                     </div>
                   </div>
 
+                  <p className="text-sm text-gray-600 mb-3 line-clamp-3">
+                    {doctor.experience}
+                  </p>
+
+                  <div className="flex items-center mb-4">
+                    <div className="text-yellow-500 mr-2">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <span key={i} className="text-sm">
+                          {i < Math.floor(doctor.rating) ? "★" : "☆"}
+                        </span>
+                      ))}
+                    </div>
+                    <span className="text-xs text-gray-500">
+                      {doctor.reviews} opiniones
+                    </span>
+                  </div>
+
                   <button
-                    className="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition font-medium"
+                    className="mt-auto bg-primary text-white px-4 py-2 rounded-xl hover:bg-blue-700 transition font-medium"
                     onClick={() => setSelectedDoctor(doctor)}
                   >
                     Ver más
@@ -319,7 +332,7 @@ const DoctorCarousel = () => {
         </Swiper>
 
         {selectedDoctor && (
-          <div className="bg-white rounded-[24px] p-8 border-2 border-blue-600 max-w-2xl mx-auto">
+          <div className="bg-white rounded-[24px] p-8 border border-primary max-w-2xl mx-auto">
             <div className="flex items-start gap-6 mb-8">
               <div className="w-32 h-32 rounded-full bg-sky-100 overflow-hidden flex-shrink-0">
                 <Image
@@ -334,7 +347,7 @@ const DoctorCarousel = () => {
                 <h2 className="text-2xl font-bold text-blue-800 mb-1">
                   {selectedDoctor.name}
                 </h2>
-                <p className="text-lg text-blue-800 font-medium mb-2">
+                <p className="text-lg text-blue-600 font-medium mb-2">
                   {selectedDoctor.specialty}
                 </p>
                 <div className="flex items-center gap-2">
@@ -352,7 +365,6 @@ const DoctorCarousel = () => {
               </div>
             </div>
 
-            {/* Location Section */}
             {selectedDoctor &&
             selectedDoctor.latitude &&
             selectedDoctor.longitude ? (
@@ -387,7 +399,6 @@ const DoctorCarousel = () => {
                     </div>
                   </div>
 
-                  {/* Map Placeholder */}
                   <div className="mt-4 h-48 bg-gray-100 rounded-lg overflow-hidden">
                     <MapWithNoSSR
                       markers={{
@@ -407,7 +418,6 @@ const DoctorCarousel = () => {
               <></>
             )}
 
-            {/* Accessibility Section */}
             <div className="mb-6">
               <h3 className="font-bold text-blue-800 mb-2">Accesibilidad a:</h3>
               <div className="space-y-2">
@@ -493,13 +503,10 @@ const DoctorCarousel = () => {
               </div>
             </div>
 
-            {/* Price and Duration */}
             <div className="mb-6 space-y-2">
               <div className="flex items-center gap-2">
                 <span className="text-blue-800 font-bold">COP</span>
-                <span className="text-gray-700">
-                  {selectedDoctor.price.toLocaleString()}
-                </span>
+                <span className="text-gray-700">{selectedDoctor.price}</span>
               </div>
               <div className="flex items-center gap-2">
                 <svg
@@ -519,7 +526,6 @@ const DoctorCarousel = () => {
               </div>
             </div>
 
-            {/* Experience Section */}
             <div className="mb-8">
               <h3 className="font-bold text-blue-800 mb-2">Experiencia</h3>
               <p className="text-gray-700 whitespace-pre-line">
@@ -527,7 +533,6 @@ const DoctorCarousel = () => {
               </p>
             </div>
 
-            {/* Action Buttons */}
             <div className="grid grid-cols-1 gap-4">
               <button
                 className="w-full bg-blue-800 text-white py-3 rounded-full font-medium hover:bg-blue-700 transition"
@@ -543,7 +548,6 @@ const DoctorCarousel = () => {
               </button>
             </div>
 
-            {/* Modal */}
             {isModalOpen && (
               <AppointmentModal
                 isOpen={isModalOpen}

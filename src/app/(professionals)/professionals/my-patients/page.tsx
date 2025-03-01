@@ -213,7 +213,7 @@ export default function ProfessionalPanel() {
               {appointments.map((appointment) => (
                 <div
                   key={appointment.id}
-                  className="bg-white border border-gray-200 rounded-xl p-6 space-y-4 shadow-sm hover:shadow-md transition-shadow ring-1 ring-gray-100"
+                  className="bg-white border border-primary rounded-xl p-6 space-y-4 shadow-sm hover:shadow-md transition-shadow ring-1 ring-gray-100"
                 >
                   <div className="flex flex-col sm:flex-row justify-between items-start">
                     <div className="flex gap-4">

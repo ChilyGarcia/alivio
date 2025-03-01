@@ -337,8 +337,6 @@ export default function Hero() {
                 className="flex items-center space-x-2 text-primary font-bold hover:text-blue-700 transition-colors"
               >
                 <img src="/icons/arrow-left-icon.png"></img>
-                {/* <span className="text-xl">←</span> */}
-                {/* <span className="text-sm">Volver</span> */}
               </button>
             </div>
           )}
@@ -362,10 +360,7 @@ export default function Hero() {
       </section>
 
       <div className="h-screen bg-secondary relative flex flex-col items-center justify-center space-y-8">
-        {/* Título */}
         <h1 className="text-4xl font-extrabold text-primary">Tres pilares</h1>
-
-        {/* Contenedor de las tarjetas */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <CardHero
             title="Agendar Citas"
@@ -407,13 +402,10 @@ export default function Hero() {
           </div>
           <div className="mt-32">
             <div className="relative w-[327px] h-[393px] mx-6">
-              {/* Rectángulo principal */}
               <div className="absolute inset-0 w-[327px] h-[300px] bg-blue-200 rounded-2xl"></div>
 
-              {/* Rectángulo largo hacia la derecha, sobresaliendo arriba */}
               <div className="absolute top-[-50px] right-0 w-[180px] h-[393px] bg-blue-200 rounded-2xl"></div>
 
-              {/* Imagen centrada encima */}
               <div className="absolute -top-10">
                 <Showgallery2></Showgallery2>
               </div>
@@ -433,95 +425,6 @@ export default function Hero() {
           </div>
         </div>
       </section>
-
-      {/* Slider de Aliados */}
-      {/* <section className="py-10 bg-white">
-        <div className="max-w-6xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-primary text-center mb-6">
-            Sé parte de nuestra comunidad
-          </h2>
-
-          <Swiper
-            spaceBetween={20}
-            slidesPerView={1}
-            breakpoints={{
-              640: { slidesPerView: 1 },
-              768: { slidesPerView: 2 },
-              1024: { slidesPerView: 3 },
-            }}
-            autoplay={{ delay: 3000 }}
-            pagination={{ clickable: true }}
-            navigation={true}
-            className="swiper-container"
-          >
-            <SwiperSlide>
-              <div className="bg-white rounded-2xl shadow-lg p-6 flex flex-col items-center text-center">
-                <Image
-                  src="/images/doctor1.png"
-                  alt="Doctor con pacientes"
-                  width={250}
-                  height={250}
-                  className="rounded-xl"
-                />
-                <h3 className="text-xl font-bold text-primary mt-4">
-                  ¿Quieres formar parte de nuestra familia?
-                </h3>
-                <p className="text-gray-600 text-sm mt-2">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt.
-                </p>
-                <button className="mt-4 px-4 py-2 bg-primary text-white rounded-xl hover:bg-blue-700 transition">
-                  Más Información
-                </button>
-              </div>
-            </SwiperSlide>
-
-            <SwiperSlide>
-              <div className="bg-white rounded-2xl shadow-lg p-6 flex flex-col items-center text-center">
-                <Image
-                  src="/images/doctor2.png"
-                  alt="Doctor con tablet"
-                  width={250}
-                  height={250}
-                  className="rounded-xl"
-                />
-                <h3 className="text-xl font-bold text-primary mt-4">
-                  Regístrate y conecta con miles de pacientes
-                </h3>
-                <p className="text-gray-600 text-sm mt-2">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt.
-                </p>
-                <button className="mt-4 px-4 py-2 bg-primary text-white rounded-xl hover:bg-blue-700 transition">
-                  Más Información
-                </button>
-              </div>
-            </SwiperSlide>
-
-            <SwiperSlide>
-              <div className="bg-white rounded-2xl shadow-lg p-6 flex flex-col items-center text-center">
-                <Image
-                  src="/images/doctor3.png"
-                  alt="Doctora con celular"
-                  width={250}
-                  height={250}
-                  className="rounded-xl"
-                />
-                <h3 className="text-xl font-bold text-primary mt-4">
-                  Sé parte de la app que transformará tu consulta
-                </h3>
-                <p className="text-gray-600 text-sm mt-2">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt.
-                </p>
-                <button className="mt-4 px-4 py-2 bg-primary text-white rounded-xl hover:bg-blue-700 transition">
-                  Más Información
-                </button>
-              </div>
-            </SwiperSlide>
-          </Swiper>
-        </div>
-      </section> */}
     </div>
   );
 }

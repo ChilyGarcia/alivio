@@ -20,7 +20,7 @@ import { authenticationService } from "@/services/auth.service";
 import { User as UserType } from "@/interfaces/user.interface";
 import { useRouter } from "next/navigation";
 
-const TabBar = () => {
+const TabBar = ({ onToggleNavBar }) => {
   const initialUser: UserType = {
     id: 0,
     name: "",
@@ -95,13 +95,14 @@ const TabBar = () => {
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
+    onToggleNavBar(!menuOpen);
     setShowTabBar(menuOpen);
   };
 
   return (
     <>
       {showTabBar && (
-        <nav className="fixed bottom-0 left-0 w-full bg-white shadow-md p-2 flex justify-around items-center border-t border-gray-300 z-[9999]">
+        <nav className="fixed bottom-0 left-0 w-full bg-white shadow-md p-2 flex justify-around items-center border-t border-gray-300 z-[9000]">
           <TabItem
             href="/"
             icon={<Home size={24} />}

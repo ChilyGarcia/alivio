@@ -9,15 +9,15 @@ import { Check, ChevronDown } from "lucide-react";
 import { Slot } from "@radix-ui/react-slot";
 import NavBar from "@/components/navbar";
 import { authenticationService } from "@/services/auth.service";
-import { backendService } from "@/services/backend.service";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { Appointments } from "@/interfaces/appointment-user.interface";
+import { Toaster, toast } from "sonner";
 
 function cn(...inputs: any[]) {
   return inputs.filter(Boolean).join(" ");
 }
-// Input Component
+
 const Input = ({ name, type, placeholder, value, onChange }) => (
   <input
     name={name}
@@ -123,57 +123,25 @@ const SelectItem = React.forwardRef<
 ));
 SelectItem.displayName = SelectPrimitive.Item.displayName;
 
-const buttonVariants = cva(
-  "inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
-  {
-    variants: {
-      variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
-        destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline:
-          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-        secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
-      },
-      size: {
-        default: "h-10 px-4 py-2",
-        sm: "h-9 rounded-md px-3",
-        lg: "h-11 rounded-md px-8",
-        icon: "h-10 w-10",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-      size: "default",
-    },
-  }
-);
+function luhnCheck(cardNumber: string) {
+  let sum = 0;
+  let shouldDouble = false;
 
-interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
-  asChild?: boolean;
+  for (let i = cardNumber.length - 1; i >= 0; i--) {
+    let digit = parseInt(cardNumber[i], 10);
+    if (shouldDouble) {
+      digit *= 2;
+      if (digit > 9) digit -= 9;
+    }
+    sum += digit;
+    shouldDouble = !shouldDouble;
+  }
+  return sum % 10 === 0;
 }
-
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? Slot : "button";
-    return (
-      <Comp
-        className={cn(buttonVariants({ variant, size, className }))}
-        ref={ref}
-        {...props}
-      />
-    );
-  }
-);
-Button.displayName = "Button";
 
 export default function PaymentForm() {
   const [user, setUser] = React.useState(null);
+
   const [formData, setFormData] = React.useState({
     number: "",
     exp_month: "",
@@ -190,6 +158,14 @@ export default function PaymentForm() {
     },
   });
 
+  const [fieldErrors, setFieldErrors] = React.useState({
+    number: "",
+    exp_month: "",
+    exp_year: "",
+    cvc: "",
+    card_holder: "",
+  });
+
   const [response, setResponse] = React.useState(null);
   const [isLoading, setIsLoading] = React.useState(false);
   const [bodyAppointment, setBodyAppointment] = React.useState({});
@@ -197,21 +173,82 @@ export default function PaymentForm() {
     React.useState<Appointments | null>(null);
   const router = useRouter();
 
-  const handleChange = (e) => {
+  const validatePaymentForm = () => {
+    const { number, exp_month, exp_year, cvc, card_holder } = formData;
+    let errorMsg = "";
+
+    const cardNum = number.replace(/\s/g, "");
+    if (!cardNum || !/^\d{16}$/.test(cardNum)) {
+      errorMsg = "Número de tarjeta inválido. Debe contener 16 dígitos.";
+    } else if (!luhnCheck(cardNum)) {
+      errorMsg = "Número de tarjeta inválido.";
+    } else if (!exp_month || !/^(0[1-9]|1[0-2])$/.test(exp_month)) {
+      errorMsg = "Mes de expiración inválido. Use formato MM (01-12).";
+    } else if (!exp_year || !/^\d{2}$/.test(exp_year)) {
+      errorMsg = "Año de expiración inválido. Use formato AA (dos dígitos).";
+    } else if (!cvc || !/^\d{3,4}$/.test(cvc)) {
+      errorMsg = "CVC inválido. Debe contener 3 o 4 dígitos.";
+    } else if (!card_holder.trim()) {
+      errorMsg = "El nombre del titular es obligatorio.";
+    }
+
+    if (errorMsg) {
+      toast.error(errorMsg);
+      return false;
+    }
+    return true;
+  };
+
+  const validateField = (name: string, value: string) => {
+    if (name === "number") {
+      const cardNum = value.replace(/\s/g, "");
+      if (!/^\d{16}$/.test(cardNum)) {
+        return "Número de tarjeta inválido. Debe contener 16 dígitos.";
+      } else if (!luhnCheck(cardNum)) {
+        return "Número de tarjeta inválido. No supera la verificación de Luhn.";
+      }
+    } else if (name === "exp_month") {
+      if (!/^(0[1-9]|1[0-2])$/.test(value)) {
+        return "Mes de expiración inválido. Use formato MM (01-12).";
+      }
+    } else if (name === "exp_year") {
+      if (!/^\d{2}$/.test(value)) {
+        return "Año de expiración inválido. Use formato AA (dos dígitos).";
+      }
+    } else if (name === "cvc") {
+      if (!/^\d{3,4}$/.test(value)) {
+        return "CVC inválido. Debe contener 3 o 4 dígitos.";
+      }
+    } else if (name === "card_holder") {
+      if (!value.trim()) {
+        return "El nombre del titular es obligatorio.";
+      }
+    }
+    return "";
+  };
+
+  const isPaymentFormValid = React.useMemo(() => {
+    const { number, exp_month, exp_year, cvc, card_holder } = formData;
+    return (
+      !validateField("number", number) &&
+      !validateField("exp_month", exp_month) &&
+      !validateField("exp_year", exp_year) &&
+      !validateField("cvc", cvc) &&
+      !validateField("card_holder", card_holder)
+    );
+  }, [formData]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-      ...(name === "installments" && {
-        payment_method: { ...prev.payment_method, installments: Number(value) },
-      }),
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    const errorMsg = validateField(name, value);
+    setFieldErrors((prev) => ({ ...prev, [name]: errorMsg }));
   };
 
   const fetchUserDetails = async () => {
     try {
       const response = await authenticationService.userDetails();
-
       setUser(response);
       return response;
     } catch (error) {
@@ -251,19 +288,17 @@ export default function PaymentForm() {
   }, []);
 
   React.useEffect(() => {
-    console.log("Este es el user que llega del servidor", user);
-
-    setFormData((prev) => ({
-      ...prev,
-      customer_email: user?.email,
-    }));
+    if (user?.email) {
+      setFormData((prev) => ({
+        ...prev,
+        customer_email: user.email,
+      }));
+    }
   }, [user]);
 
-  React.useEffect(() => {
-    console.log("Pendientes, este es el cuerpo del pago", formData);
-  }, [formData]);
-
   const handleSubmit = async () => {
+    if (!validatePaymentForm()) return;
+
     setIsLoading(true);
     const token = Cookies.get("token");
     try {
@@ -284,8 +319,6 @@ export default function PaymentForm() {
         throw new Error(
           appointmentData.message || "Failed to create appointment"
         );
-
-      console.log(appointmentData);
 
       setResponseAppointment(appointmentData);
 
@@ -311,24 +344,17 @@ export default function PaymentForm() {
         setResponse(paymentData);
 
         localStorage.removeItem("appointmentDetails");
-
         (
           document.getElementById("my_modal_5") as HTMLDialogElement
         ).showModal();
       } else {
         throw new Error(paymentData.message || "Failed to process payment");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error en la solicitud:", error);
       alert("Ocurrió un error: " + error.message);
     }
   };
-
-  React.useEffect(() => {
-    if (responseAppointment) {
-      console.log(responseAppointment.appointment);
-    }
-  }, [responseAppointment]);
 
   const handleHome = () => {
     (document.getElementById("my_modal_5") as HTMLDialogElement).close();
@@ -337,7 +363,8 @@ export default function PaymentForm() {
 
   return (
     <>
-      <NavBar></NavBar>
+      <NavBar />
+      <Toaster />
 
       <div className="min-h-screen bg-white p-4 md:p-6 mt-12">
         <div className="mx-auto max-w-md space-y-6">
@@ -364,22 +391,8 @@ export default function PaymentForm() {
                   </SelectContent>
                 </Select>
                 <div className="mt-2 flex gap-2">
-                  {/* <Image
-                  src="/icons/master-icon.png"
-                  alt="Visa"
-                  width={40}
-                  height={25}
-                  className="h-6 w-auto object-contain"
-                /> */}
-                  {/* <Image
-                  src="/icons/visa-icon.png"
-                  alt="Mastercard"
-                  width={40}
-                  height={25}
-                  className="h-6 w-auto object-contain"
-                /> */}
-                  <img src="/icons/visa-icon.png" className="w-14 h-6"></img>
-                  <img src="/icons/master-icon.png" className="w-14 h-7"></img>
+                  <img src="/icons/visa-icon.png" className="w-14 h-6" />
+                  <img src="/icons/master-icon.png" className="w-14 h-7" />
                 </div>
               </div>
 
@@ -392,58 +405,89 @@ export default function PaymentForm() {
                     value={formData.number}
                     onChange={handleChange}
                   />
+                  {fieldErrors.number && (
+                    <p className="text-xs text-red-500 mt-1">
+                      {fieldErrors.number}
+                    </p>
+                  )}
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <Input
-                    name="exp_month"
-                    type="text"
-                    placeholder="MM"
-                    value={formData.exp_month}
-                    onChange={handleChange}
-                  />
-                  <Input
-                    name="exp_year"
-                    type="text"
-                    placeholder="AA"
-                    value={formData.exp_year}
-                    onChange={handleChange}
-                  />
-                </div>
-                <Input
-                  name="cvc"
-                  type="text"
-                  placeholder="CVC"
-                  value={formData.cvc}
-                  onChange={handleChange}
-                />
-                <Input
-                  name="card_holder"
-                  type="text"
-                  placeholder="Nombre del titular"
-                  value={formData.card_holder}
-                  onChange={handleChange}
-                />
-              </div>
 
-              {/* <div>
-                <h3 className="mb-2 text-sm text-primary">Datos opcionales</h3>
-                <Input
-                  type="text"
-                  placeholder="NN"
-                  className="rounded-full border-primary px-4 py-6"
-                />
-              </div> */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Input
+                      name="exp_month"
+                      type="text"
+                      placeholder="MM"
+                      value={formData.exp_month}
+                      onChange={handleChange}
+                    />
+                    {fieldErrors.exp_month && (
+                      <p className="text-xs text-red-500 mt-1">
+                        {fieldErrors.exp_month}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <Input
+                      name="exp_year"
+                      type="text"
+                      placeholder="AA"
+                      value={formData.exp_year}
+                      onChange={handleChange}
+                    />
+                    {fieldErrors.exp_year && (
+                      <p className="text-xs text-red-500 mt-1">
+                        {fieldErrors.exp_year}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <Input
+                    name="cvc"
+                    type="text"
+                    placeholder="CVC"
+                    value={formData.cvc}
+                    onChange={handleChange}
+                  />
+                  {fieldErrors.cvc && (
+                    <p className="text-xs text-red-500 mt-1">
+                      {fieldErrors.cvc}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <Input
+                    name="card_holder"
+                    type="text"
+                    placeholder="Nombre del titular"
+                    value={formData.card_holder}
+                    onChange={handleChange}
+                  />
+                  {fieldErrors.card_holder && (
+                    <p className="text-xs text-red-500 mt-1">
+                      {fieldErrors.card_holder}
+                    </p>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
 
           <button
-            className="w-full h-12 rounded-full bg-primary px-6 py-3 text-white hover:bg-primary/90 shadow-lg transform transition-transform duration-300 hover:scale-105"
+            disabled={!isPaymentFormValid || isLoading}
             onClick={handleSubmit}
+            className={`w-full h-12 rounded-full px-6 py-3 text-white shadow-lg transform transition-transform duration-300 ${
+              !isPaymentFormValid || isLoading
+                ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                : "bg-primary hover:bg-primary/90 hover:scale-105"
+            }`}
           >
             {isLoading ? (
-              <>
-                <span className="loading loading-spinner loading-md"></span>
-              </>
+              <span className="loading loading-spinner loading-md"></span>
             ) : (
               <>Pagar</>
             )}
@@ -457,7 +501,7 @@ export default function PaymentForm() {
             <i className="fas fa-check-circle"></i>
           </div>
 
-          <img src="/icons/success.png"></img>
+          <img src="/icons/success.png" alt="Éxito" />
           <h3 className="font-bold text-2xl mt-4">
             Su pago se efectuó con éxito
           </h3>

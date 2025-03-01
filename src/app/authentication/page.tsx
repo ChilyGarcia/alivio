@@ -2,9 +2,10 @@
 
 import * as React from "react";
 import NavBar from "@/components/navbar";
-import { useEffect } from "react";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
+import { Toaster, toast } from "sonner";
+import { isDataView } from "util/types";
 
 function Checkbox({ id, className = "", ...props }) {
   return (
@@ -222,10 +223,9 @@ export default function RegistroForm() {
 
     setIsLoading(true);
     try {
-
       const modifiedRegisterData = {
         ...registerData,
-        phone_number: `57${registerData.phone_number}`
+        phone_number: `57${registerData.phone_number}`,
       };
 
       const response = await fetch(
@@ -241,7 +241,19 @@ export default function RegistroForm() {
         setIsLoading(false);
       });
       const data = await response.json();
-      console.log("Registro exitoso:", data);
+
+      if (!response.ok) {
+        if (data.errors) {
+          const firstErrorKey = Object.keys(data.errors)[0];
+          const firstErrorMessage = data.errors[firstErrorKey][0];
+          toast.error(firstErrorMessage || "Error en el registro");
+        } else {
+          toast.error(data.error || "Error en el registro");
+        }
+        return;
+      }
+
+      toast.success("Registro exitoso!");
       Cookies.set("token", data.access_token, { expires: 1 });
 
       if (appointmentDetails) {
@@ -249,14 +261,16 @@ export default function RegistroForm() {
       } else {
         router.push("/");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error registrando:", error.message);
+      toast.error("Error registrando: " + error.message);
     }
   };
 
   const fetchLogin = async () => {
     const appointmentDetails = localStorage.getItem("appointmentDetails");
 
+    setIsLoading(true);
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
@@ -267,19 +281,29 @@ export default function RegistroForm() {
           },
           body: JSON.stringify(loginData),
         }
-      );
+      ).finally(() => {
+        setIsLoading(false);
+      });
       const data = await response.json();
-      console.log("Login exitoso:", data);
+
+      console.log(data.error);
+
+      if (!response.ok) {
+        toast.error(data.error || "Error al iniciar sesion");
+        return;
+      }
+
+      toast.success("Login exitoso!");
+      Cookies.set("token", data.access_token, { expires: 1 });
 
       if (appointmentDetails) {
         router.push("/payments");
       } else {
         router.push("/");
       }
-
-      Cookies.set("token", data.access_token, { expires: 1 });
-    } catch (error) {
-      console.error("Error registrando:", error.message);
+    } catch (error: any) {
+      console.error("Error en el login:", error.message);
+      toast.error("Error al iniciar sesión: " + error.message);
     }
   };
 
@@ -302,6 +326,8 @@ export default function RegistroForm() {
   return (
     <>
       <NavBar></NavBar>
+
+      <Toaster />
 
       <div className="min-h-screen bg-white p-4 md:p-6 mt-12">
         <div className="mx-auto max-w-md space-y-6">
