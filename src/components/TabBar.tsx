@@ -134,7 +134,7 @@ const TabBar = ({ onToggleNavBar }) => {
             </>
           )}
           <TabItem
-            href="/planes"
+            href="/services"
             icon={<CreditCard size={24} />}
             label="Planes"
             onClick={() => handleTabItemAuthentication("/planes")}
@@ -196,7 +196,7 @@ const TabBar = ({ onToggleNavBar }) => {
                   </>
                 )}
                 <NavItem
-                  href="/planes"
+                  href="/services"
                   icon={<CreditCard size={20} />}
                   label="Planes"
                   active={false}
@@ -208,18 +208,18 @@ const TabBar = ({ onToggleNavBar }) => {
                   active={false}
                 />
               </DropdownMenu>
-              <NavItem
+              {/* <NavItem
                 href="/farmacias"
                 icon={<Store size={20} />}
                 label="Farmacias"
                 active={false}
-              />
-              <NavItem
+              /> */}
+              {/* <NavItem
                 href="/my-chats"
                 icon={<MessageCircle size={20} />}
                 label="Chats disponibles"
                 active={false}
-              />
+              /> */}
               {user.role === "professional" ? (
                 <>
                   <NavItem
