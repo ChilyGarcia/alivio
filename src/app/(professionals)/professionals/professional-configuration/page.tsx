@@ -255,6 +255,7 @@ export default function ProfessionalConfigurationPage() {
             </h1>
           </div>
 
+
           <div className="border-b border-gray-200 flex items-center text-sm md:text-base w-full">
             <button
               onClick={() => setActiveTab("tarifa")}
