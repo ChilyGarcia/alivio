@@ -191,15 +191,20 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
         ))}
       </div>
 
-      {/* Input Area */}
       <div className="p-4 border-t bg-white flex items-center gap-2">
         <input
           type="text"
           placeholder="Escribe tu mensaje aquí"
           value={messageInput}
           onChange={(e) => setMessageInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleSendMessage();
+            }
+          }}
           className="flex-1 px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:border-blue-500"
         />
+
         <button className="p-2">
           <ImageIcon className="w-6 h-6 text-gray-500" />
         </button>
