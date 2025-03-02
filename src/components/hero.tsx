@@ -364,21 +364,21 @@ export default function Hero() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <CardHero
             title="Agendar Citas"
-            description="Programa tu cita con especialistas certificados."
+            description="Programa tu cita con especialistas."
             buttonText="Ingresar"
             imageSrc="/images/card1fix.png"
             reverse={true}
           />
           <CardHero
             title="Planes de Salud"
-            description="Planes personalizados para ti y tu familia."
+            description="Planes personalizados para ti."
             buttonText="Ver Planes"
             imageSrc="/images/card2.png"
             reverse={false}
           />
           <CardHero
             title="Servicios Especiales"
-            description="Atención médica especializada según tus necesidades."
+            description="Atención médica especializada"
             buttonText="Explorar"
             imageSrc="/images/card1fix.png"
             reverse={true}
