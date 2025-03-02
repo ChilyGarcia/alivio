@@ -14,6 +14,7 @@ import {
   LogOut,
   MessageCircle,
   Settings,
+  Stethoscope,
 } from "lucide-react";
 import Cookies from "js-cookie";
 import { authenticationService } from "@/services/auth.service";
@@ -219,20 +220,32 @@ const TabBar = ({ onToggleNavBar }) => {
                 label="Chats disponibles"
                 active={false}
               />
+              {user.role === "professional" ? (
+                <>
+                  <NavItem
+                    href="/professionals/professional-configuration"
+                    icon={<Stethoscope size={20} />}
+                    label="Profesional"
+                    active={false}
+                  />
+                </>
+              ) : (
+                <></>
+              )}
             </nav>
             <div className="mt-auto border-t pt-4">
-              <NavItem
-                href="/configuracion"
-                icon={<Settings size={20} />}
-                label="Configuración"
-                active={false}
-              />
               {token ? (
                 <>
                   <NavItem
                     href="/profile"
                     icon={<User size={20} />}
                     label={user.name}
+                    active={false}
+                  />
+                  <NavItem
+                    href="/configuracion"
+                    icon={<Settings size={20} />}
+                    label="Configuración"
                     active={false}
                   />
                   <Link
