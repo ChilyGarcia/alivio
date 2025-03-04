@@ -262,12 +262,12 @@ export default function Hero() {
           Lorem ipsum dolor sit amet, consectetur adipiscing elit.
         </p>
         <div className="flex flex-col space-y-4">
-          <button
+          {/* <button
             onClick={() => handleSelection("type", "home")}
             className="w-full px-4 py-2 bg-white border border-primary text-primary font-bold text-sm rounded-2xl hover:bg-gray-100 transition-colors"
           >
             Ir a domicilio
-          </button>
+          </button> */}
           <button
             onClick={() => handleSelection("type", "office")}
             className="w-full px-4 py-2 bg-white border border-primary text-primary font-bold text-sm rounded-2xl hover:bg-gray-100 transition-colors"
