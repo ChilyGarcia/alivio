@@ -13,6 +13,8 @@ import {
   eachDayOfInterval,
   isSameMonth,
   isSameDay,
+  isBefore,
+  startOfToday,
 } from "date-fns";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
@@ -339,19 +341,23 @@ const AppointmentModal = ({
               ))}
             </div>
 
-            {/* Calendar Days */}
             <div className="grid grid-cols-7 gap-1">
               {days.map((day) => {
                 const isCurrentMonth = isSameMonth(day, currentMonth);
                 const isSelected = selectedDate && isSameDay(day, selectedDate);
+                const isPastDate = isBefore(day, startOfToday());
+                const isDisabled = isPastDate;
 
                 return (
                   <button
                     key={day.toISOString()}
-                    onClick={() => handleDateClick(day)}
+                    onClick={() => !isDisabled && handleDateClick(day)}
+                    disabled={isDisabled}
                     className={`aspect-square rounded-full flex items-center justify-center text-sm ${
                       isSelected
                         ? "bg-primary text-white"
+                        : isDisabled
+                        ? "text-gray-300 cursor-not-allowed bg-gray-100"
                         : isCurrentMonth
                         ? "hover:bg-gray-100"
                         : "text-gray-400"
