@@ -94,6 +94,11 @@ const TabBar = ({ onToggleNavBar }) => {
     fetchLogOut();
   };
 
+  const getShortName = (fullName: string) => {
+    const firstWord = fullName.split(' ')[0];
+    return firstWord.length > 10 ? firstWord.slice(0, 10) + '...' : firstWord;
+  };
+
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
     onToggleNavBar(!menuOpen);
@@ -143,7 +148,7 @@ const TabBar = ({ onToggleNavBar }) => {
             <TabItem
               href="/profile"
               icon={<User size={24} />}
-              label={user.name}
+              label={getShortName(user.name)}
               onClick={() => handleTabItemAuthentication("/")}
             />
           ) : (
@@ -239,7 +244,7 @@ const TabBar = ({ onToggleNavBar }) => {
                   <NavItem
                     href="/profile"
                     icon={<User size={20} />}
-                    label={user.name}
+                    label={getShortName(user.name)}
                     active={false}
                   />
                   <NavItem

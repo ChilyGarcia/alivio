@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
 import NavBar from "@/components/navbar";
 
@@ -13,7 +12,6 @@ export default function Page() {
       <NavBar></NavBar>
 
       <div className="min-h-screen bg-white">
-        {/* Header */}
         <header className="border-b p-4">
           <div className="flex items-center gap-3">
             <button
@@ -41,7 +39,6 @@ export default function Page() {
             Planes Médicos y Servicios Especiales
           </h2>
 
-          {/* Custom Tabs */}
           <div className="mt-4 border-b w-full">
             <div className="flex gap-6">
               <button
@@ -68,7 +65,6 @@ export default function Page() {
           </div>
         </header>
 
-        {/* Search and Filters */}
         <div className="p-4">
           <div className="relative">
             <svg
@@ -124,7 +120,6 @@ export default function Page() {
             </button>
           </div>
 
-          {/* Status Filters */}
           <div className="mt-4 flex gap-2">
             <button className="rounded-full border border-gray-300 px-4 py-1.5 text-sm text-gray-700 hover:bg-blue-900 hover:text-white">
               Activos
@@ -137,7 +132,6 @@ export default function Page() {
             </button>
           </div>
 
-          {/* Next Plan Section */}
           <div className="mt-6">
             <div className="flex items-center gap-2">
               <div className="h-2 w-2 rounded-full bg-blue-800"></div>
