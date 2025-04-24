@@ -117,7 +117,7 @@ export default function ProfilePage() {
       console.error(error);
     }
   };
-  
+
   const fetchNotifications = async () => {
     try {
       const token = Cookies.get("token");
@@ -168,7 +168,6 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-[#0000CC]">
-      {/* Header */}
       <div className="relative flex items-center justify-between p-4 text-white">
         <Button
           variant="ghost"
@@ -178,10 +177,10 @@ export default function ProfilePage() {
         >
           <ArrowLeft className="h-6 w-6" />
         </Button>
-        <span className="text-lg font-medium"> {user.name} </span>
+
         <div className="flex gap-2">
           <Button
-          variant="ghost"
+            variant="ghost"
             className="relative text-white hover:text-white/80"
             onClick={handleNotification}
           >

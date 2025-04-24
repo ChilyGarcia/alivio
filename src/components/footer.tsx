@@ -1,5 +1,7 @@
+'use client';
+
 import React from "react";
-import { Heart } from "lucide-react";
+import { Heart, Facebook, Instagram, Youtube } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -13,13 +15,13 @@ export default function Footer() {
             </div>
             <div className="mt-4 flex gap-4">
               <a href="#" className="text-white hover:text-gray-200">
-                <i className="fab fa-facebook"></i>
+                <Facebook size={20} />
               </a>
               <a href="#" className="text-white hover:text-gray-200">
-                <i className="fab fa-instagram"></i>
+                <Instagram size={20} />
               </a>
               <a href="#" className="text-white hover:text-gray-200">
-                <i className="fab fa-youtube"></i>
+                <Youtube size={20} />
               </a>
             </div>
           </div>
@@ -81,7 +83,7 @@ export default function Footer() {
         {/* Copyright with lines */}
         <div className="mt-8 pt-8 text-center relative">
           <div className="absolute left-0 right-0 top-1/2 h-px bg-white/20"></div>
-          <span className="relative bg-primary px-4">AENS TECH ©2023</span>
+          <span className="relative bg-primary px-4">AENS TECH 2023</span>
         </div>
       </div>
     </footer>

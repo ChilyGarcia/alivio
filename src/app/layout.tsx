@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
 import "./globals.css";
 import { montserrat } from "../../public/fonts/font";
+import ClientWrapper from "@/components/client-wrapper";
 import Footer from "@/components/footer";
 
 export const metadata: Metadata = {
@@ -15,10 +15,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${montserrat.className} antialiased`}>
-        {children}
-        <Footer />
+    <html lang="en" suppressHydrationWarning>
+      <body className={montserrat.className}>
+        <ClientWrapper>
+          <main className="antialiased">
+            {children}
+          </main>
+          <Footer />
+        </ClientWrapper>
       </body>
     </html>
   );
