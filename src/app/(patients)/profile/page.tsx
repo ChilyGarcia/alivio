@@ -182,7 +182,7 @@ function MenuItem({
   sublabelClassName,
   href,
 }: {
-  icon: React.ComponentType<{ size?: number }>;
+  icon: React.ComponentType<any>;
   label: string;
   sublabel: string;
   sublabelClassName?: string;
@@ -192,26 +192,20 @@ function MenuItem({
 
   return (
     <li>
-      <button
-        onClick={() => router.push(href)}
-        className="w-full flex items-center gap-4 bg-white rounded-full p-4 shadow-md hover:shadow-lg transition-all duration-300"
+      <a
+        href={href}
+        className="flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 transition-all duration-300"
       >
-        <div className="relative flex-shrink-0 w-12 h-12">
-          <div className="absolute inset-0 flex items-center justify-center rounded-full border border-[#0000CC] bg-white">
-            <Icon size={20} className="text-[#0000CC]" />
-          </div>
+        <div className="h-12 w-12 rounded-full bg-primary/5 flex items-center justify-center">
+          <Icon className="h-6 w-6 text-primary" />
         </div>
-        <div className="flex-1 min-w-0 text-left">
-          <h3 className="text-gray-900 font-medium truncate">{label}</h3>
-          <p
-            className={`mt-1 text-sm truncate ${
-              sublabelClassName || "text-gray-500"
-            }`}
-          >
+        <div className="flex-1">
+          <p className="text-sm font-medium text-gray-900">{label}</p>
+          <p className={cn("text-sm text-gray-500", sublabelClassName)}>
             {sublabel}
           </p>
         </div>
-      </button>
+      </a>
     </li>
   );
 }

@@ -45,13 +45,16 @@ export const authenticationService = {
     try {
       const token = Cookies.get("token");
 
-      const response = await fetchWithInterceptor(`${BACKEND_URL}/auth/logout`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetchWithInterceptor(
+        `${BACKEND_URL}/auth/logout`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -117,6 +120,33 @@ export const authenticationService = {
     } catch (error) {
       console.error("Error getting user details:", (error as Error).message);
       return false;
+    }
+  },
+
+  updateUser: async (userData: any) => {
+    try {
+      const token = Cookies.get("token");
+      const response = await fetchWithInterceptor(
+        `${BACKEND_URL}/auth/update-profile`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(userData),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error updating user:", (error as Error).message);
+      throw error;
     }
   },
 };
