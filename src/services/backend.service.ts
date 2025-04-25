@@ -9,14 +9,18 @@ const handleUnauthorizedError = () => {
 
 const fetchWithAuth = async (url: string, options: RequestInit = {}) => {
   const token = Cookies.get("token");
-  const headers = {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-    ...options.headers,
+  const defaultOptions: RequestInit = {
+    ...options,
+    headers: {
+      ...options.headers,
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
   };
 
   try {
-    const response = await fetch(url, { ...options, headers });
+    const response = await fetch(url, defaultOptions);
+    console.log('Respuesta raw:', response);
 
     if (response.status === 401) {
       Cookies.remove("token");
@@ -28,7 +32,9 @@ const fetchWithAuth = async (url: string, options: RequestInit = {}) => {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
-    return await response.json();
+    const data = await response.json();
+    console.log('Datos parseados:', data);
+    return data;
   } catch (error) {
     console.error("API request error:", (error as Error).message);
     return null;
@@ -42,6 +48,18 @@ export const backendService = {
 
   getNotifications: async () => {
     return await fetchWithAuth(`${BACKEND_URL}/notifications`);
+  },
+
+  getFavorites: async () => {
+    const data = await fetchWithAuth(`${BACKEND_URL}/favorite-health-professional`);
+    console.log('Datos en getFavorites:', data);
+    return data;
+  },
+
+  removeFavorite: async (id: number) => {
+    return await fetchWithAuth(`${BACKEND_URL}/favorite-health-professional/${id}`, {
+      method: 'DELETE',
+    });
   },
 
   filteredProfessionals: async (body: any) => {

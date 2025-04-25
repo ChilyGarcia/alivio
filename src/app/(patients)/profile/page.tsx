@@ -13,83 +13,11 @@ import {
   PenToolIcon as Tool,
   Heart,
 } from "lucide-react";
-import Link from "next/link";
 import * as React from "react";
 import { authenticationService } from "@/services/auth.service";
 import { User as UserInterface } from "@/interfaces/user.interface";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
-
-const Button = React.forwardRef<
-  HTMLButtonElement,
-  React.ButtonHTMLAttributes<HTMLButtonElement> & {
-    variant?: "ghost" | "default";
-    size?: "icon" | "default";
-  }
->(({ className, variant = "default", size = "default", ...props }, ref) => {
-  return (
-    <button
-      className={cn(
-        "inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
-        {
-          "bg-primary text-primary-foreground shadow hover:bg-primary/90":
-            variant === "default",
-          "hover:bg-primary/90 hover:text-accent-foreground":
-            variant === "ghost",
-          "h-9 px-4": size === "default",
-          "h-9 w-9": size === "icon",
-        },
-        className
-      )}
-      ref={ref}
-      {...props}
-    />
-  );
-});
-Button.displayName = "Button";
-
-// Avatar Components
-const Avatar = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn(
-      "relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full",
-      className
-    )}
-    {...props}
-  />
-));
-Avatar.displayName = "Avatar";
-
-const AvatarImage = React.forwardRef<
-  HTMLImageElement,
-  React.ImgHTMLAttributes<HTMLImageElement>
->(({ className, ...props }, ref) => (
-  <img
-    ref={ref}
-    className={cn("aspect-square h-full w-full", className)}
-    {...props}
-  />
-));
-AvatarImage.displayName = "AvatarImage";
-
-const AvatarFallback = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn(
-      "flex h-full w-full items-center justify-center rounded-full bg-muted",
-      className
-    )}
-    {...props}
-  />
-));
-AvatarFallback.displayName = "AvatarFallback";
 
 const initialUserState: UserInterface = {
   id: 0,
@@ -104,154 +32,144 @@ const initialUserState: UserInterface = {
 
 export default function ProfilePage() {
   const [user, setUser] = React.useState<UserInterface>(initialUserState);
-  const [unreadNotifications, setUnreadNotifications] = React.useState(false);
+  const [unread, setUnread] = React.useState(false);
   const router = useRouter();
 
-  const fetchUserDetails = async () => {
-    try {
-      const response = await authenticationService.userDetails();
-
-      setUser(response);
-      return response;
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const fetchNotifications = async () => {
-    try {
-      const token = Cookies.get("token");
-
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/notifications`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      const hasUnread = data.some((notif) => !notif.read);
-      setUnreadNotifications(hasUnread);
-    } catch (error) {
-      console.error("Error obteniendo notificaciones:", error);
-    }
-  };
-
   React.useEffect(() => {
-    fetchUserDetails();
-    fetchNotifications();
+    async function load() {
+      try {
+        const u = await authenticationService.userDetails();
+        setUser(u);
+        const token = Cookies.get("token");
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/notifications`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        if (res.ok) {
+          const notes = await res.json();
+          setUnread(notes.some((n: any) => !n.read));
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    load();
   }, []);
 
-  const handleBack = () => {
-    console.log("Back button");
-    router.push("/");
-  };
-
-  const handleNotification = () => {
-    console.log("Notification button");
-    router.push("/notifications");
-  };
-
-  const handleSettings = () => {
-    console.log("Settings button");
-    router.push("/settings");
+  const handleLogout = () => {
+    Cookies.remove("token");
+    router.push("/login");
   };
 
   return (
-    <div className="min-h-screen bg-[#0000CC]">
-      <div className="relative flex items-center justify-between p-4 text-white">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="text-white hover:text-white/80"
-          onClick={() => handleBack()}
-        >
-          <ArrowLeft className="h-6 w-6" />
-        </Button>
-
-        <div className="flex gap-2">
-          <Button
-            variant="ghost"
-            className="relative text-white hover:text-white/80"
-            onClick={handleNotification}
-          >
-            <Bell className="h-6 w-6" />
-            {unreadNotifications && (
-              <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500"></span>
-            )}
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
+    <div className="min-h-screen bg-gray-100">
+      {/* Blue Header Container with bottom rounding */}
+      <div className="bg-[#0000CC] rounded-b-3xl pb-8">
+        {/* Header */}
+        <header className="relative flex items-center justify-between px-4 py-4">
+          <button
+            onClick={() => router.back()}
             className="text-white hover:text-white/80"
-            onClick={() => handleSettings()}
           >
-            <Settings className="h-6 w-6" />
-          </Button>
-        </div>
+            <ArrowLeft className="h-6 w-6" />
+          </button>
+          <h2 className="absolute left-1/2 transform -translate-x-1/2 text-white font-semibold">
+            Perfil
+          </h2>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => router.push("/notifications")}
+              className="relative text-white hover:text-white/80"
+            >
+              <Bell className="h-6 w-6" />
+              {unread && (
+                <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500" />
+              )}
+            </button>
+            <button
+              onClick={() => router.push("/settings")}
+              className="text-white hover:text-white/80"
+            >
+              <Settings className="h-6 w-6" />
+            </button>
+          </div>
+        </header>
+
+        {/* Profile Info */}
+        <section className="flex flex-col items-center">
+          <div className="h-24 w-24 rounded-full border-4 border-white overflow-hidden">
+            {user.profile_image ? (
+              <img
+                src={user.profile_image}
+                alt="avatar"
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center bg-gray-200 text-xl font-semibold text-gray-600">
+                {user.name.charAt(0) || "P"}
+              </div>
+            )}
+          </div>
+          <h1 className="mt-2 text-lg font-semibold text-white">
+            {user.name || "Pepito Pérez"}
+          </h1>
+        </section>
       </div>
 
-      {/* Profile Section */}
-      <div className="flex flex-col items-center pt-4 pb-6 text-white">
-        <Avatar className="h-24 w-24 border-2 border-white">
-          <AvatarImage
-            src={user.profile_image || "/images/doc1.png"}
-            alt="Profile picture"
+      {/* White Content */}
+      <div className="bg-white pt-8 px-4 pb-8">
+        <ul className="space-y-4">
+          <MenuItem
+            icon={User}
+            label="Datos Personales"
+            sublabel={user.name || "Pepito Pérez"}
+            href="/edit-my-profile"
           />
-          <AvatarFallback>PP</AvatarFallback>
-        </Avatar>
-        <h1 className="mt-2 text-xl font-semibold"> {user.name}</h1>
-      </div>
-
-      {/* Menu Items */}
-      <div className="rounded-t-3xl bg-white p-4">
-        <div className="space-y-2">
-          <MenuItem icon={User} label="Datos Personales" sublabel={user.name} />
           <MenuItem
             icon={Calendar}
             label="Citas"
-            sublabel="Prev. Cita - 22.01.25 08:00 AM."
+            sublabel="Prox. Cita - 22.01.25 08:00 AM."
+            sublabelClassName="text-[#0000CC]"
+            href="/my-appointments"
           />
           <MenuItem
             icon={MessageSquare}
-            label="Chats"
-            sublabel="Chat para hablar con los especialistas"
-          />
-          <MenuItem
-            icon={History}
-            label="Tu Historial"
+            label="Consultas"
             sublabel="Consulta o edita tu información, históricos e informes de especialistas."
+            href="/consultations"
           />
           <MenuItem
             icon={ShoppingCart}
             label="Compras"
             sublabel="Aquí puedes ver tus compras realizadas."
+            href="/purchases"
           />
           <MenuItem
             icon={Package2}
             label="Planes y Servicios"
             sublabel="Puedes ver los planes y servicios que has comprado."
+            href="/plans-services"
           />
           <MenuItem
             icon={Tool}
             label="Herramientas"
             sublabel="Herramientas para tu salud."
+            href="/tools"
           />
           <MenuItem
             icon={Heart}
             label="Guardados"
             sublabel="Puedes ver y categorizar tus especialistas, planes y servicios guardados."
+            href="/favorite-health-professional"
           />
-        </div>
+        </ul>
+        <button
+          onClick={handleLogout}
+          className="mt-6 w-full bg-[#0000CC] text-white py-3 rounded-full flex items-center justify-center space-x-2"
+        >
+          <ArrowLeft className="h-5 w-5 rotate-180" />
+          <span>Cerrar Sesión</span>
+        </button>
       </div>
     </div>
   );
@@ -261,24 +179,40 @@ function MenuItem({
   icon: Icon,
   label,
   sublabel,
+  sublabelClassName,
+  href,
 }: {
-  icon: any;
+  icon: React.ComponentType<{ size?: number }>;
   label: string;
   sublabel: string;
+  sublabelClassName?: string;
+  href: string;
 }) {
+  const router = useRouter();
+
   return (
-    <Link
-      href="#"
-      className="flex items-start gap-4 rounded-lg p-3 transition-colors hover:bg-gray-50"
-    >
-      <div className="rounded-full bg-blue-50 p-2 text-blue-600">
-        <Icon className="h-5 w-5" />
-      </div>
-      <div className="flex-1">
-        <h3 className="font-medium text-gray-900">{label}</h3>
-        <p className="text-sm text-gray-500">{sublabel}</p>
-      </div>
-    </Link>
+    <li>
+      <button
+        onClick={() => router.push(href)}
+        className="w-full flex items-center gap-4 bg-white rounded-full p-4 shadow-md hover:shadow-lg transition-all duration-300"
+      >
+        <div className="relative flex-shrink-0 w-12 h-12">
+          <div className="absolute inset-0 flex items-center justify-center rounded-full border border-[#0000CC] bg-white">
+            <Icon size={20} className="text-[#0000CC]" />
+          </div>
+        </div>
+        <div className="flex-1 min-w-0 text-left">
+          <h3 className="text-gray-900 font-medium truncate">{label}</h3>
+          <p
+            className={`mt-1 text-sm truncate ${
+              sublabelClassName || "text-gray-500"
+            }`}
+          >
+            {sublabel}
+          </p>
+        </div>
+      </button>
+    </li>
   );
 }
 
