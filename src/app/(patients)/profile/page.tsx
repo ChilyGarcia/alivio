@@ -26,13 +26,13 @@ const initialUserState: UserInterface = {
   email_verified_at: null,
   created_at: null,
   updated_at: new Date(),
-  profile_image: "",
   role: "",
 };
 
 export default function ProfilePage() {
   const [user, setUser] = React.useState<UserInterface>(initialUserState);
   const [unread, setUnread] = React.useState(false);
+  const [loading, setLoading] = React.useState(true);
   const router = useRouter();
 
   React.useEffect(() => {
@@ -46,15 +46,25 @@ export default function ProfilePage() {
           { headers: { Authorization: `Bearer ${token}` } }
         );
         if (res.ok) {
-          const notes = await res.json();
-          setUnread(notes.some((n: any) => !n.read));
+          const data = await res.json();
+          setUnread(data.unread > 0);
         }
-      } catch (e) {
-        console.error(e);
+      } catch (error) {
+        console.error("Error loading user data:", error);
+      } finally {
+        setLoading(false);
       }
     }
     load();
   }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex justify-center items-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   const handleLogout = () => {
     Cookies.remove("token");
@@ -64,14 +74,14 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Blue Header Container with bottom rounding */}
-      <div className="bg-[#0000CC] rounded-b-3xl pb-8">
+      <div className="bg-[#0000CC] rounded-b-3xl pb-8 animate-fade-in">
         {/* Header */}
         <header className="relative flex items-center justify-between px-4 py-4">
           <button
             onClick={() => router.back()}
-            className="text-white hover:text-white/80"
+            className="p-2.5 rounded-full hover:bg-white/10 transition-all duration-300"
           >
-            <ArrowLeft className="h-6 w-6" />
+            <ArrowLeft className="h-6 w-6 text-white" />
           </button>
           <h2 className="absolute left-1/2 transform -translate-x-1/2 text-white font-semibold">
             Perfil
@@ -79,28 +89,28 @@ export default function ProfilePage() {
           <div className="flex items-center gap-4">
             <button
               onClick={() => router.push("/notifications")}
-              className="relative text-white hover:text-white/80"
+              className="relative p-2.5 rounded-full hover:bg-white/10 transition-all duration-300"
             >
-              <Bell className="h-6 w-6" />
+              <Bell className="h-6 w-6 text-white" />
               {unread && (
-                <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500" />
+                <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-red-500 rounded-full"></span>
               )}
             </button>
             <button
               onClick={() => router.push("/settings")}
-              className="text-white hover:text-white/80"
+              className="p-2.5 rounded-full hover:bg-white/10 transition-all duration-300"
             >
-              <Settings className="h-6 w-6" />
+              <Settings className="h-6 w-6 text-white" />
             </button>
           </div>
         </header>
 
         {/* Profile Info */}
-        <section className="flex flex-col items-center">
-          <div className="h-24 w-24 rounded-full border-4 border-white overflow-hidden">
-            {user.profile_image ? (
+        <section className="flex flex-col items-center animate-fade-in">
+          <div className="h-24 w-24 rounded-full border-4 border-white overflow-hidden transition-transform duration-300 hover:scale-105">
+            {user.profile_image_url ? (
               <img
-                src={user.profile_image}
+                src={user.profile_image_url}
                 alt="avatar"
                 className="h-full w-full object-cover"
               />
@@ -118,7 +128,7 @@ export default function ProfilePage() {
 
       {/* White Content */}
       <div className="bg-white pt-8 px-4 pb-8">
-        <ul className="space-y-4">
+        <ul className="space-y-4 animate-fade-in">
           <MenuItem
             icon={User}
             label="Datos Personales"
@@ -148,7 +158,7 @@ export default function ProfilePage() {
             icon={Package2}
             label="Planes y Servicios"
             sublabel="Puedes ver los planes y servicios que has comprado."
-            href="/plans-services"
+            href="/services"
           />
           <MenuItem
             icon={Tool}

@@ -6,11 +6,27 @@ import Image from "next/image";
 import { Showgallery2 } from "../components/ImageGallery";
 import { useState, useEffect } from "react";
 import CitySearchComponent from "@/components/CitySearchComponent";
+import { motion } from "framer-motion";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 
 export default function Hero() {
+  const fadeInUp = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 },
+  };
+
+  const staggerContainer = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+      },
+    },
+  };
+
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [responses, setResponses] = useState({
@@ -129,7 +145,12 @@ export default function Hero() {
 
   const steps = {
     1: (
-      <div>
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={fadeInUp}
+        transition={{ duration: 0.5 }}
+      >
         <h3 className="text-2xl font-extrabold text-center text-primary mb-6">
           ¿Motivo de su cita?
         </h3>
@@ -137,112 +158,194 @@ export default function Hero() {
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
           eiusmod.
         </p>
-        <div className="flex justify-between space-x-4">
-          <button
-            className="flex-1 px-4 py-2 bg-white border border-primary text-primary font-bold text-sm rounded-2xl hover:bg-gray-100 transition-colors"
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          animate="visible"
+          className="flex justify-between space-x-4"
+        >
+          <motion.button
+            variants={fadeInUp}
+            className={`flex-1 px-4 py-2 ${
+              responses.motivo === "Urgencia"
+                ? "bg-primary text-white hover:bg-primary"
+                : "bg-white text-primary hover:bg-gray-100"
+            } border border-primary font-bold text-sm rounded-2xl transition-colors`}
             onClick={() => handleSelection("motivo", "Urgencia")}
           >
             Urgencia
-          </button>
-          <button
-            className="flex-1 px-4 py-2 bg-white border border-primary text-primary font-bold text-sm rounded-2xl hover:bg-gray-100 transition-colors"
+          </motion.button>
+          <motion.button
+            variants={fadeInUp}
+            className={`flex-1 px-4 py-2 ${
+              responses.motivo === "Agendar"
+                ? "bg-primary text-white hover:bg-primary"
+                : "bg-white text-primary hover:bg-gray-100"
+            } border border-primary font-bold text-sm rounded-2xl transition-colors`}
             onClick={() => handleSelection("motivo", "Agendar")}
           >
             Agendar
-          </button>
-        </div>
-      </div>
+          </motion.button>
+        </motion.div>
+      </motion.div>
     ),
     2: (
-      <div>
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={fadeInUp}
+        transition={{ duration: 0.5 }}
+      >
         <h3 className="text-2xl font-extrabold text-center text-primary mb-6">
           ¿Motivo de la cita? Servicio requerido
         </h3>
-        <p className="text-center text-sm text-gray-600 mb-6">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-        </p>
-        <div className="flex flex-col space-y-4">
-          {groups.map((group) => (
-            <button
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          animate="visible"
+          className="flex flex-col space-y-4"
+        >
+          {groups.map((group, index) => (
+            <motion.button
               key={group.id}
-              className="w-full px-4 py-2 bg-white border border-primary text-primary font-bold text-sm rounded-2xl hover:bg-gray-100 transition-colors"
+              variants={fadeInUp}
+              custom={index}
+              className={`w-full px-4 py-2 ${
+                responses.servicio === group.id
+                  ? "bg-primary text-white hover:bg-primary"
+                  : "bg-white text-primary hover:bg-gray-100"
+              } border border-primary font-bold text-sm rounded-2xl transition-colors`}
               onClick={() => handleSelection("servicio", group.id)}
             >
               {group.name}
-            </button>
+            </motion.button>
           ))}
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     ),
-
     3: (
-      <div>
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={fadeInUp}
+        transition={{ duration: 0.5 }}
+      >
         <h3 className="text-2xl font-extrabold text-center text-primary mb-6">
           ¿Qué formato prefieres?
         </h3>
         <p className="text-center text-sm text-gray-600 mb-6">
           Lorem ipsum dolor sit amet, consectetur adipiscing elit.
         </p>
-        <div className="flex flex-col space-y-4">
-          <button
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          animate="visible"
+          className="flex flex-col space-y-4"
+        >
+          <motion.button
+            variants={fadeInUp}
             onClick={() => handleSelection("formato", "Presencial")}
-            className="w-full px-4 py-2 bg-white border border-primary text-primary font-bold text-sm rounded-2xl hover:bg-gray-100 transition-colors"
+            className={`w-full px-4 py-2 ${
+              responses.formato === "Presencial"
+                ? "bg-primary text-white hover:bg-primary"
+                : "bg-white text-primary hover:bg-gray-100"
+            } border border-primary font-bold text-sm rounded-2xl transition-colors`}
           >
             Presencial
-          </button>
-          <button
+          </motion.button>
+          <motion.button
+            variants={fadeInUp}
             onClick={() => {
               handleSelection("formato", "Videollamada");
               handleSelection("type", "videocall");
             }}
-            className="w-full px-4 py-2 bg-white border border-primary text-primary font-bold text-sm rounded-2xl hover:bg-gray-100 transition-colors"
+            className={`w-full px-4 py-2 ${
+              responses.formato === "Videollamada"
+                ? "bg-primary text-white hover:bg-primary"
+                : "bg-white text-primary hover:bg-gray-100"
+            } border border-primary font-bold text-sm rounded-2xl transition-colors`}
           >
             Videollamada
-          </button>
-          <button
+          </motion.button>
+          <motion.button
+            variants={fadeInUp}
             onClick={() => {
               handleSelection("formato", "Chat");
               handleSelection("type", "chat");
             }}
-            className="w-full px-4 py-2 bg-white border border-primary text-primary font-bold text-sm rounded-2xl hover:bg-gray-100 transition-colors"
+            className={`w-full px-4 py-2 ${
+              responses.formato === "Chat"
+                ? "bg-primary text-white hover:bg-primary"
+                : "bg-white text-primary hover:bg-gray-100"
+            } border border-primary font-bold text-sm rounded-2xl transition-colors`}
           >
             Chat (Consulta rápida)
-          </button>
-        </div>
-      </div>
+          </motion.button>
+        </motion.div>
+      </motion.div>
     ),
     4: (
-      <div>
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={fadeInUp}
+        transition={{ duration: 0.5 }}
+      >
         <h3 className="text-2xl font-extrabold text-center text-primary mb-6">
           ¿Cuál es tu sexo?
         </h3>
         <p className="text-center text-sm text-gray-600 mb-6">
           Lorem ipsum dolor sit amet, consectetur adipiscing elit.
         </p>
-        <div className="flex flex-col space-y-4">
-          <button
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          animate="visible"
+          className="flex flex-col space-y-4"
+        >
+          <motion.button
+            variants={fadeInUp}
             onClick={() => handleSelection("sexo", "Hombre")}
-            className="w-full px-4 py-2 bg-white border border-primary text-primary font-bold text-sm rounded-2xl hover:bg-gray-100 transition-colors"
+            className={`w-full px-4 py-2 ${
+              responses.sexo === "Hombre"
+                ? "bg-primary text-white hover:bg-primary"
+                : "bg-white text-primary hover:bg-gray-100"
+            } border border-primary font-bold text-sm rounded-2xl transition-colors`}
           >
             Hombre
-          </button>
-          <button
+          </motion.button>
+          <motion.button
+            variants={fadeInUp}
             onClick={() => handleSelection("sexo", "Mujer")}
-            className="w-full px-4 py-2 bg-white border border-primary text-primary font-bold text-sm rounded-2xl hover:bg-gray-100 transition-colors"
+            className={`w-full px-4 py-2 ${
+              responses.sexo === "Mujer"
+                ? "bg-primary text-white hover:bg-primary"
+                : "bg-white text-primary hover:bg-gray-100"
+            } border border-primary font-bold text-sm rounded-2xl transition-colors`}
           >
             Mujer
-          </button>
-          <button
+          </motion.button>
+          <motion.button
+            variants={fadeInUp}
             onClick={() => handleSelection("sexo", "Otro")}
-            className="w-full px-4 py-2 bg-white border border-primary text-primary font-bold text-sm rounded-2xl hover:bg-gray-100 transition-colors"
+            className={`w-full px-4 py-2 ${
+              responses.sexo === "Otro"
+                ? "bg-primary text-white hover:bg-primary"
+                : "bg-white text-primary hover:bg-gray-100"
+            } border border-primary font-bold text-sm rounded-2xl transition-colors`}
           >
             Otro
-          </button>
-        </div>
-      </div>
+          </motion.button>
+        </motion.div>
+      </motion.div>
     ),
     5: (
-      <div>
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={fadeInUp}
+        transition={{ duration: 0.5 }}
+      >
         <h3 className="text-2xl font-extrabold text-center text-primary mb-6">
           ¿Cuál es tu ubicación actual?
         </h3>
@@ -250,46 +353,63 @@ export default function Hero() {
           Ingresa la ciudad para encontrar especialistas cercanos.
         </p>
         <CitySearchComponent apiUrl={process.env.NEXT_PUBLIC_API_URL} />
-      </div>
+      </motion.div>
     ),
-
     6: (
-      <div>
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={fadeInUp}
+        transition={{ duration: 0.5 }}
+      >
         <h3 className="text-2xl font-extrabold text-center text-primary mb-6">
           ¿Que tipo de cita necesitas?
         </h3>
         <p className="text-center text-sm text-gray-600 mb-6">
           Lorem ipsum dolor sit amet, consectetur adipiscing elit.
         </p>
-        <div className="flex flex-col space-y-4">
-          {/* <button
-            onClick={() => handleSelection("type", "home")}
-            className="w-full px-4 py-2 bg-white border border-primary text-primary font-bold text-sm rounded-2xl hover:bg-gray-100 transition-colors"
-          >
-            Ir a domicilio
-          </button> */}
-          <button
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          animate="visible"
+          className="flex flex-col space-y-4"
+        >
+          <motion.button
+            variants={fadeInUp}
             onClick={() => handleSelection("type", "office")}
-            className="w-full px-4 py-2 bg-white border border-primary text-primary font-bold text-sm rounded-2xl hover:bg-gray-100 transition-colors"
+            className={`w-full px-4 py-2 ${
+              responses.type === "office"
+                ? "bg-primary text-white hover:bg-primary"
+                : "bg-white text-primary hover:bg-gray-100"
+            } border border-primary font-bold text-sm rounded-2xl transition-colors`}
           >
             Ir a consultorio
-          </button>
-        </div>
-      </div>
+          </motion.button>
+        </motion.div>
+      </motion.div>
     ),
   };
 
   return (
     <div className="mt-12">
-      <div className="relative bg-gradient-to-b h-screen from-white via-[#E8F8FF] to-[#15B5FC] flex items-center">
-        {/* Contenedor principal */}
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={fadeInUp}
+        transition={{ duration: 0.6 }}
+        className="relative bg-gradient-to-b h-screen from-white via-[#E8F8FF] to-[#15B5FC] flex items-center"
+      >
         <div className="h-full max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
           <div className="relative h-full flex flex-col">
-            {/* Contenido de texto */}
             <div className="mt-5 mx-auto w-full px-4 sm:mt-24 sm:px-6 lg:mt-32">
-              <div className="lg:grid lg:grid-cols-12 lg:gap-8 items-center">
-                {/* Lado izquierdo */}
-                <div className="sm:text-center lg:text-left lg:col-span-6">
+              <div className="relative lg:grid lg:grid-cols-12 lg:gap-8 items-center">
+                <motion.div
+                  variants={fadeInUp}
+                  initial="hidden"
+                  animate="visible"
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                  className="sm:text-center lg:text-left lg:col-span-6"
+                >
                   <h1 className="text-4xl tracking-tight text-primary font-extrabold sm:text-4xl md:text-6xl">
                     Mira nuestros nuevos beneficios para los miembros
                   </h1>
@@ -300,10 +420,15 @@ export default function Hero() {
                     nostrum ipsam similique quibusdam, at neque laboriosam
                     iusto.
                   </p>
-                </div>
+                </motion.div>
 
-                {/* Imagen Haeros - Responsiva */}
-                <div className="lg:col-span-6 flex justify-center">
+                <motion.div
+                  variants={fadeInUp}
+                  initial="hidden"
+                  animate="visible"
+                  transition={{ duration: 0.6, delay: 0.4 }}
+                  className="lg:col-span-6 flex justify-center"
+                >
                   <div className="relative w-full max-w-[600px] sm:max-w-[500px] md:max-w-[550px] lg:max-w-[600px]">
                     <Image
                       src="/images/Heros.png"
@@ -313,80 +438,115 @@ export default function Hero() {
                       className="w-full h-auto object-contain"
                     />
                   </div>
-                </div>
+                </motion.div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       <section className="h-[60vh] w-full relative bg-white flex justify-center">
         <div className="bg-white border-2 border-primary rounded-2xl shadow-lg absolute top-[-55px] left-1/2 transform -translate-x-1/2 w-[calc(100%-2rem)] max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl p-6 z-10">
-          <div className="flex items-center justify-center ">
-            <label className="text-sm font-bold text-primary">
-              {currentStep > 1 ? <>Formulario</> : <>Citas con Especialistas</>}
-            </label>
-          </div>
-          <div className="-mx-6 mb-6 mt-4">
-            <hr className="border-primary" />
-          </div>
-          {currentStep > 1 && (
-            <div className="absolute top-5 left-4">
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={fadeInUp}
+            transition={{ duration: 0.6 }}
+            className="w-full"
+          >
+            <div className="flex items-center justify-center ">
+              <label className="text-sm font-bold text-primary">
+                {currentStep > 1 ? <>Formulario</> : <>Citas con Especialistas</>}
+              </label>
+            </div>
+            <div className="-mx-6 mb-6 mt-4">
+              <hr className="border-primary" />
+            </div>
+            {currentStep > 1 && (
+              <div className="absolute top-5 left-4">
+                <button
+                  onClick={handlePrevStep}
+                  className="flex items-center space-x-2 text-primary font-bold hover:text-blue-700 transition-colors"
+                >
+                  <img src="/icons/arrow-left-icon.png"></img>
+                </button>
+              </div>
+            )}
+            <div className="mt-10">{steps[currentStep]}</div>
+            <div className="flex justify-between mt-6">
               <button
-                onClick={handlePrevStep}
-                className="flex items-center space-x-2 text-primary font-bold hover:text-blue-700 transition-colors"
+                onClick={handleNextStep}
+                disabled={!isStepValid()}
+                className="px-4 py-2 bg-primary w-full text-white font-medium text-sm rounded-2xl transition-colors hover:bg-blue-700 disabled:bg-gray-300 disabled:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <img src="/icons/arrow-left-icon.png"></img>
+                {isLoading ? (
+                  <span className="loading loading-spinner loading-md"></span>
+                ) : currentStep === 4 ? (
+                  "Finalizar"
+                ) : (
+                  "Siguiente"
+                )}
               </button>
             </div>
-          )}
-          <div className="mt-10">{steps[currentStep]}</div>
-          <div className="flex justify-between mt-6">
-            <button
-              onClick={handleNextStep}
-              disabled={!isStepValid()}
-              className="px-4 py-2 bg-primary w-full text-white font-medium text-sm rounded-2xl transition-colors hover:bg-blue-700 disabled:bg-gray-300 disabled:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isLoading ? (
-                <span className="loading loading-spinner loading-md"></span>
-              ) : currentStep === 4 ? (
-                "Finalizar"
-              ) : (
-                "Siguiente"
-              )}
-            </button>
-          </div>
+          </motion.div>
         </div>
       </section>
 
-      <div className="h-screen bg-secondary relative flex flex-col items-center justify-center space-y-8">
-        <h1 className="text-4xl font-extrabold text-primary">Tres pilares</h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          <CardHero
-            title="Agendar Citas"
-            description="Programa tu cita con especialistas."
-            buttonText="Ingresar"
-            imageSrc="/images/card1fix.png"
-            reverse={true}
-          />
-          <CardHero
-            title="Planes de Salud"
-            description="Planes personalizados para ti."
-            buttonText="Ver Planes"
-            imageSrc="/images/card2.png"
-            reverse={false}
-          />
-          <CardHero
-            title="Servicios Especiales"
-            description="Atención médica especializada"
-            buttonText="Explorar"
-            imageSrc="/images/card1fix.png"
-            reverse={true}
-          />
-        </div>
-      </div>
+      <motion.div
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        variants={staggerContainer}
+        className="h-screen bg-secondary relative flex flex-col items-center justify-center space-y-8"
+      >
+        <motion.h1
+          variants={fadeInUp}
+          className="text-4xl font-extrabold text-primary"
+        >
+          Tres pilares
+        </motion.h1>
+        <motion.div
+          variants={staggerContainer}
+          className="grid grid-cols-1 sm:grid-cols-2 gap-6"
+        >
+          {/* Cada CardHero se animará automáticamente gracias al staggerChildren */}
+          <motion.div variants={fadeInUp}>
+            <CardHero
+              title="Agendar Citas"
+              description="Programa tu cita con especialistas."
+              buttonText="Ingresar"
+              imageSrc="/images/card1fix.png"
+              reverse={true}
+            />
+          </motion.div>
+          <motion.div variants={fadeInUp}>
+            <CardHero
+              title="Planes de Salud"
+              description="Planes personalizados para ti."
+              buttonText="Ver Planes"
+              imageSrc="/images/card2.png"
+              reverse={false}
+            />
+          </motion.div>
+          <motion.div variants={fadeInUp}>
+            <CardHero
+              title="Servicios Especiales"
+              description="Atención médica especializada"
+              buttonText="Explorar"
+              imageSrc="/images/card1fix.png"
+              reverse={true}
+            />
+          </motion.div>
+        </motion.div>
+      </motion.div>
 
-      <section className="h-[170vh] relative bg-white">
+      <motion.section
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        variants={fadeInUp}
+        className="h-[170vh] relative bg-white"
+      >
         <div>
           <h1 className="text-4xl font-extrabold text-primary mt-20 mx-7">
             Aliados
@@ -424,7 +584,7 @@ export default function Hero() {
             </div>
           </div>
         </div>
-      </section>
+      </motion.section>
     </div>
   );
 }

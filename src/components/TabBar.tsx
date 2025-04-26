@@ -95,6 +95,7 @@ const TabBar = ({ onToggleNavBar }) => {
   };
 
   const getShortName = (fullName: string) => {
+    if (!fullName) return '';
     const firstWord = fullName.split(' ')[0];
     return firstWord.length > 10 ? firstWord.slice(0, 10) + '...' : firstWord;
   };
@@ -244,7 +245,7 @@ const TabBar = ({ onToggleNavBar }) => {
                   <NavItem
                     href="/profile"
                     icon={<User size={20} />}
-                    label={getShortName(user.name)}
+                    label={user?.name ? getShortName(user.name) : 'Perfil'}
                     active={false}
                   />
                   <NavItem

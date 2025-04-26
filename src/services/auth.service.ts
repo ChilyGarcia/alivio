@@ -123,23 +123,23 @@ export const authenticationService = {
     }
   },
 
-  updateUser: async (userData: any) => {
+  updateUser: async (userData: FormData) => {
     try {
       const token = Cookies.get("token");
       const response = await fetchWithInterceptor(
         `${BACKEND_URL}/auth/update-profile`,
         {
-          method: "PUT",
+          method: "POST",
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(userData),
+          body: userData,
         }
       );
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorData = await response.json();
+        throw new Error(JSON.stringify(errorData));
       }
 
       const data = await response.json();

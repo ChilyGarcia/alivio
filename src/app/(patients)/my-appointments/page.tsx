@@ -31,31 +31,53 @@ export default function AppointmentsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [statusFilter, setStatusFilter] = useState("scheduled");
+  const [loading, setLoading] = useState(true);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   const router = useRouter();
 
   useEffect(() => {
     const fetchAppointments = async () => {
-      const response = await backendService.listAppointments(
-        currentPage,
-        statusFilter
-      );
+      try {
+        // Solo mostrar loading en la carga inicial
+        if (isInitialLoad) {
+          setLoading(true);
+        }
+        
+        const response = await backendService.listAppointments(
+          currentPage,
+          statusFilter
+        );
 
-      console.log("📌 Respuesta de agendamiento:", response.data);
+        console.log("📌 Respuesta de agendamiento:", response.data);
 
-      const appointmentsAsDates = response.data.map((item: any) => {
-        const [year, month, day] = item.date.split("-");
-        return {
-          ...item,
-          date: new Date(Number(year), Number(month) - 1, Number(day)),
-        };
-      });
+        const appointmentsAsDates = response.data.map((item: any) => {
+          const [year, month, day] = item.date.split("-");
+          return {
+            ...item,
+            date: new Date(Number(year), Number(month) - 1, Number(day)),
+          };
+        });
 
-      setAppointments(appointmentsAsDates);
-      setTotalPages(response.data.last_page);
+        setAppointments(appointmentsAsDates);
+        setTotalPages(response.data.last_page);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+        setIsInitialLoad(false);
+      }
     };
     fetchAppointments();
-  }, [currentPage, statusFilter]);
+  }, [currentPage, statusFilter, isInitialLoad]);
+
+  if (loading) {
+    return (
+      <div className="fixed inset-0 bg-white flex justify-center items-center z-50">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   const handleStatusFilter = (status: string) => {
     setStatusFilter(status);
@@ -65,7 +87,7 @@ export default function AppointmentsPage() {
     <>
       <NavBar />
 
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-10 mt-12">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-10 mt-12 animate-fade-in">
         <div className="max-w-2xl mx-auto px-4">
           {/* Encabezado de la página */}
           <div className="flex items-center gap-3 mb-6">

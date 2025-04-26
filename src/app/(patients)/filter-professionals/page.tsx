@@ -12,6 +12,7 @@ import ProfesionalProfile from "@/components/ProfessionalProfile";
 import "leaflet/dist/leaflet.css";
 import { MapWithNoSSR } from "@/components/MapComponents";
 import { MapLocation } from "@/components/MapComponents";
+import { motion } from "framer-motion";
 
 const DoctorCarousel = () => {
   const [selectedDoctor, setSelectedDoctor] = useState(null);
@@ -24,6 +25,22 @@ const DoctorCarousel = () => {
   const [selectedUserProfessional, setSelectedUserProfessional] = useState();
   const [isOffice, setIsOffice] = useState(false);
   const [locations, setLocations] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fadeInUp = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 },
+  };
+
+  const staggerContainer = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
 
   useEffect(() => {
     console.log(locations);
@@ -126,6 +143,8 @@ const DoctorCarousel = () => {
         }
       } catch (error) {
         console.error("Error fetching doctors:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -220,15 +239,33 @@ const DoctorCarousel = () => {
     setIsModalOpen(true);
   };
 
-  return (
-    <>
-      <NavBar></NavBar>
+  if (loading) {
+    return (
+      <div className="fixed inset-0 bg-white flex justify-center items-center z-50">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
+  return (
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      variants={staggerContainer}
+      className="min-h-screen bg-white"
+    >
+      <NavBar></NavBar>
       <div className="container mx-auto p-4 mt-12">
-        <h1 className="text-3xl font-bold mb-4 text-blue-800">
+        <motion.h1
+          variants={fadeInUp}
+          className="text-3xl font-bold mb-4 text-blue-800"
+        >
           Selecciona los especialistas
-        </h1>
-        <p className="text-sm text-gray-500 mb-6">
+        </motion.h1>
+        <motion.p
+          variants={fadeInUp}
+          className="text-sm text-gray-500 mb-6"
+        >
           Tu última búsqueda fue{" "}
           <span className="font-semibold text-blue-800">Fisioterapia</span>, hoy
           a las 7:39 pm. Puedes ver tu historial de búsquedas{" "}
@@ -236,12 +273,15 @@ const DoctorCarousel = () => {
             aquí
           </a>
           .
-        </p>
+        </motion.p>
 
         <div className="flex gap-2 overflow-x-auto scrollbar-hide mb-6">
           {categories.map((category) => (
-            <button
+            <motion.button
               key={category.id}
+              initial="hidden"
+              animate="visible"
+              variants={fadeInUp}
               onClick={() => handleCategoryClick(category)}
               className={`px-4 py-2 flex-shrink-0 rounded-full border ${
                 selectedCategory?.id === category.id
@@ -250,7 +290,7 @@ const DoctorCarousel = () => {
               }`}
             >
               {category.name}
-            </button>
+            </motion.button>
           ))}
         </div>
 
@@ -279,11 +319,16 @@ const DoctorCarousel = () => {
           {doctors.length > 0 ? (
             doctors.map((doctor) => (
               <SwiperSlide key={doctor.id}>
-                <div className="bg-white rounded-xl p-5  hover:shadow-lg transition-shadow duration-200 flex flex-col h-full w-full max-w-xs border border-primary">
+                <motion.div
+                  initial="hidden"
+                  animate="visible"
+                  variants={fadeInUp}
+                  className="bg-white rounded-xl p-5  hover:shadow-lg transition-shadow duration-200 flex flex-col h-full w-full max-w-xs border border-primary"
+                >
                   <div className="flex items-center gap-4 mb-4">
                     <div className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0">
                       <Image
-                        src={doctor.img || "/placeholder.svg"}
+                        src={doctor.img || "/images/card1fix.png"}
                         alt={doctor.name}
                         width={64}
                         height={64}
@@ -323,7 +368,7 @@ const DoctorCarousel = () => {
                   >
                     Ver más
                   </button>
-                </div>
+                </motion.div>
               </SwiperSlide>
             ))
           ) : (
@@ -332,7 +377,12 @@ const DoctorCarousel = () => {
         </Swiper>
 
         {selectedDoctor && (
-          <div className="bg-white rounded-[24px] p-8 border border-primary max-w-2xl mx-auto">
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={fadeInUp}
+            className="bg-white rounded-[24px] p-8 border border-primary max-w-2xl mx-auto"
+          >
             <div className="flex items-start gap-6 mb-8">
               <div className="w-32 h-32 rounded-full bg-sky-100 overflow-hidden flex-shrink-0">
                 <Image
@@ -449,7 +499,7 @@ const DoctorCarousel = () => {
                         <path
                           strokeLinecap="round"
                           strokeLinejoin="round"
-                          d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z"
+                          d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
                         />
                       </svg>
                     ) : option === "chat" ? (
@@ -556,7 +606,7 @@ const DoctorCarousel = () => {
                 selectedUserProfessional={selectedUserProfessional}
               />
             )}
-          </div>
+          </motion.div>
         )}
       </div>
 
@@ -565,7 +615,7 @@ const DoctorCarousel = () => {
         onClose={() => setIsModalProfileOpen(false)}
         professional={selectedDoctor}
       />
-    </>
+    </motion.div>
   );
 };
 
