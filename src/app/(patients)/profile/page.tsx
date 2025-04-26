@@ -12,6 +12,7 @@ import {
   Package2,
   PenToolIcon as Tool,
   Heart,
+  Lock,
 } from "lucide-react";
 import * as React from "react";
 import { authenticationService } from "@/services/auth.service";
@@ -145,6 +146,12 @@ export default function ProfilePage() {
           <MenuItem
             icon={MessageSquare}
             label="Consultas"
+            sublabel="Chatea con los especialistas"
+            href="/consultations"
+          />
+          <MenuItem
+            icon={Lock}
+            label="Historial"
             sublabel="Consulta o edita tu información, históricos e informes de especialistas."
             href="/consultations"
           />

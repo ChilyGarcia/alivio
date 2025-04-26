@@ -152,11 +152,10 @@ export default function Hero() {
         transition={{ duration: 0.5 }}
       >
         <h3 className="text-2xl font-extrabold text-center text-primary mb-6">
-          ¿Motivo de su cita?
+          ¿Qué necesitas hoy?
         </h3>
         <p className="text-center text-sm text-gray-600 mb-6">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod.
+          Elige si necesitas atención inmediata o puedes agendarla.
         </p>
         <motion.div
           variants={staggerContainer}
@@ -197,8 +196,12 @@ export default function Hero() {
         transition={{ duration: 0.5 }}
       >
         <h3 className="text-2xl font-extrabold text-center text-primary mb-6">
-          ¿Motivo de la cita? Servicio requerido
+          Selecciona la especialidad que necesitas
         </h3>
+
+        <p className="text-center text-sm text-gray-600 mb-6">
+          Estamos contigo en cada área de tu bienestar.
+        </p>
         <motion.div
           variants={staggerContainer}
           initial="hidden"
@@ -231,10 +234,10 @@ export default function Hero() {
         transition={{ duration: 0.5 }}
       >
         <h3 className="text-2xl font-extrabold text-center text-primary mb-6">
-          ¿Qué formato prefieres?
+          Elige tu tipo de consulta
         </h3>
         <p className="text-center text-sm text-gray-600 mb-6">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+          ¿Cómo prefieres recibir la atención?
         </p>
         <motion.div
           variants={staggerContainer}
@@ -294,9 +297,7 @@ export default function Hero() {
         <h3 className="text-2xl font-extrabold text-center text-primary mb-6">
           ¿Cuál es tu sexo?
         </h3>
-        <p className="text-center text-sm text-gray-600 mb-6">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-        </p>
+
         <motion.div
           variants={staggerContainer}
           initial="hidden"
@@ -366,7 +367,7 @@ export default function Hero() {
           ¿Que tipo de cita necesitas?
         </h3>
         <p className="text-center text-sm text-gray-600 mb-6">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+          Esta es la opcion de cita presencial disponible.
         </p>
         <motion.div
           variants={staggerContainer}
@@ -411,14 +412,12 @@ export default function Hero() {
                   className="sm:text-center lg:text-left lg:col-span-6"
                 >
                   <h1 className="text-4xl tracking-tight text-primary font-extrabold sm:text-4xl md:text-6xl">
-                    Mira nuestros nuevos beneficios para los miembros
+                    Tu salud conectada en un solo lugar
                   </h1>
                   <p className="mt-7 text-base text-black sm:text-lg md:text-xl">
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                    Voluptate delectus veritatis perspiciatis, alias mollitia,
-                    quaerat numquam aliquam eos provident harum magnam dicta
-                    nostrum ipsam similique quibusdam, at neque laboriosam
-                    iusto.
+                    AliviApp te conecta con médicos, psicólogos, terapeutas y
+                    servicios especializados para ti y tu familia. Todo desde tu
+                    móvil.
                   </p>
                 </motion.div>
 
@@ -456,7 +455,11 @@ export default function Hero() {
           >
             <div className="flex items-center justify-center ">
               <label className="text-sm font-bold text-primary">
-                {currentStep > 1 ? <>Formulario</> : <>Citas con Especialistas</>}
+                {currentStep > 1 ? (
+                  <>Formulario</>
+                ) : (
+                  <>Citas con Especialistas</>
+                )}
               </label>
             </div>
             <div className="-mx-6 mb-6 mt-4">
@@ -509,7 +512,6 @@ export default function Hero() {
           variants={staggerContainer}
           className="grid grid-cols-1 sm:grid-cols-2 gap-6"
         >
-          {/* Cada CardHero se animará automáticamente gracias al staggerChildren */}
           <motion.div variants={fadeInUp}>
             <CardHero
               title="Agendar Citas"
