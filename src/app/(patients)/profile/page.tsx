@@ -2,17 +2,16 @@
 
 import {
   ArrowLeft,
+  MessageSquare,
   Bell,
   Settings,
   User,
   Calendar,
-  MessageSquare,
-  History,
-  ShoppingCart,
-  Package2,
-  PenToolIcon as Tool,
-  Heart,
-  Lock,
+  Package2 as ServicesIcon,
+  Building,
+  UserCheck,
+  BarChart2,
+  LogOut,
 } from "lucide-react";
 import * as React from "react";
 import { authenticationService } from "@/services/auth.service";
@@ -67,185 +66,140 @@ export default function ProfilePage() {
     );
   }
 
+  const menuItems = [
+    { icon: User, label: "Datos de Perfil", href: "/edit-my-profile" },
+    { icon: ServicesIcon, label: "Servicios", href: "/services" },
+    { icon: Calendar, label: "Citas", href: "/my-appointments" },
+    { icon: MessageSquare, label: "Chats", href: "/chats" },
+    { icon: Building, label: "Empresas", href: "/companies" },
+    { icon: UserCheck, label: "Sé un usuario", href: "/become-user" },
+    { icon: BarChart2, label: "Tus estadísticas", href: "/statistics" },
+    { icon: Calendar, label: "Calendario", href: "/calendar" },
+  ];
+
   const handleLogout = () => {
     Cookies.remove("token");
     router.push("/login");
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Blue Header Container with bottom rounding */}
-      <div className="bg-[#0000CC] rounded-b-3xl pb-8 animate-fade-in">
-        {/* Header */}
-        <header className="relative flex items-center justify-between px-4 py-4">
+    <div className="min-h-screen bg-white">
+      <header className="flex items-center justify-between px-4 py-3">
+        <button
+          onClick={() => router.back()}
+          className="p-2 rounded-full hover:bg-gray-50 transition"
+        >
+          <ArrowLeft className="h-6 w-6 text-primary" />
+        </button>
+        <h2 className="text-lg font-semibold text-primary">Perfil</h2>
+        <div className="flex items-center gap-3">
           <button
-            onClick={() => router.back()}
-            className="p-2.5 rounded-full hover:bg-white/10 transition-all duration-300"
+            onClick={() => router.push("/chats")}
+            className="p-2 rounded-full hover:bg-gray-50 transition"
           >
-            <ArrowLeft className="h-6 w-6 text-white" />
+            <MessageSquare className="h-6 w-6 text-primary" />
           </button>
-          <h2 className="absolute left-1/2 transform -translate-x-1/2 text-white font-semibold">
-            Perfil
-          </h2>
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => router.push("/notifications")}
-              className="relative p-2.5 rounded-full hover:bg-white/10 transition-all duration-300"
-            >
-              <Bell className="h-6 w-6 text-white" />
-              {unread && (
-                <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-red-500 rounded-full"></span>
-              )}
-            </button>
-            <button
-              onClick={() => router.push("/settings")}
-              className="p-2.5 rounded-full hover:bg-white/10 transition-all duration-300"
-            >
-              <Settings className="h-6 w-6 text-white" />
-            </button>
-          </div>
-        </header>
-
-        {/* Profile Info */}
-        <section className="flex flex-col items-center animate-fade-in">
-          <div className="h-24 w-24 rounded-full border-4 border-white overflow-hidden transition-transform duration-300 hover:scale-105">
-            {user.profile_image_url ? (
-              <img
-                src={user.profile_image_url}
-                alt="avatar"
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center bg-gray-200 text-xl font-semibold text-gray-600">
-                {user.name.charAt(0) || "P"}
-              </div>
+          <button
+            onClick={() => router.push("/notifications")}
+            className="relative p-2 rounded-full hover:bg-gray-50 transition"
+          >
+            <Bell className="h-6 w-6 text-primary" />
+            {unread && (
+              <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-red-500 rounded-full"></span>
             )}
-          </div>
-          <h1 className="mt-2 text-lg font-semibold text-white">
-            {user.name || "Pepito Pérez"}
-          </h1>
-        </section>
+          </button>
+          <button
+            onClick={() => router.push("/settings")}
+            className="p-2 rounded-full hover:bg-gray-50 transition"
+          >
+            <Settings className="h-6 w-6 text-primary" />
+          </button>
+        </div>
+      </header>
+
+      <div className="flex flex-col items-center mt-4 px-4">
+        <div className="h-24 w-24 rounded-full ring-4 ring-primary overflow-hidden hover:scale-105 transition">
+          {user.profile_image_url ? (
+            <img
+              src={user.profile_image_url}
+              alt="avatar"
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center bg-gray-200 text-xl font-semibold text-gray-600">
+              {user.name.charAt(0) || "P"}
+            </div>
+          )}
+        </div>
+        <h1 className="mt-3 text-xl font-semibold text-primary">
+          {user.name || "Dr. José Pérez"}
+        </h1>
+        <h2 className="mt-1 text-sm font-medium text-gray-500">
+          Cardiólogo especializado
+        </h2>
+        <p className="mt-4 text-center text-sm text-gray-600 max-w-[280px] mx-auto leading-relaxed">
+          Administra tu información personal y profesional en tu panel de
+          usuario.&nbsp;
+          <a href="#" className="font-medium text-primary hover:underline">
+            Más información
+          </a>
+        </p>
       </div>
 
-      {/* White Content */}
-      <div className="bg-white pt-8 px-4 pb-8">
-        <ul className="space-y-4 animate-fade-in">
+      <div className="mt-6 px-4 pb-8 space-y-3 ">
+        <ul className="space-y-3">
+          {menuItems.map(({ icon: Icon, label, href }) => (
+            <MenuItem key={label} icon={Icon} label={label} href={href} />
+          ))}
           <MenuItem
-            icon={User}
-            label="Datos Personales"
-            sublabel={user.name || "Pepito Pérez"}
-            href="/edit-my-profile"
-          />
-          <MenuItem
-            icon={Calendar}
-            label="Citas"
-            sublabel="Prox. Cita - 22.01.25 08:00 AM."
-            sublabelClassName="text-[#0000CC]"
-            href="/my-appointments"
-          />
-          <MenuItem
-            icon={MessageSquare}
-            label="Consultas"
-            sublabel="Chatea con los especialistas"
-            href="/consultations"
-          />
-          <MenuItem
-            icon={Lock}
-            label="Historial"
-            sublabel="Consulta o edita tu información, históricos e informes de especialistas."
-            href="/consultations"
-          />
-          <MenuItem
-            icon={ShoppingCart}
-            label="Compras"
-            sublabel="Aquí puedes ver tus compras realizadas."
-            href="/purchases"
-          />
-          <MenuItem
-            icon={Package2}
-            label="Planes y Servicios"
-            sublabel="Puedes ver los planes y servicios que has comprado."
-            href="/services"
-          />
-          <MenuItem
-            icon={Tool}
-            label="Herramientas"
-            sublabel="Herramientas para tu salud."
-            href="/tools"
-          />
-          <MenuItem
-            icon={Heart}
-            label="Guardados"
-            sublabel="Puedes ver y categorizar tus especialistas, planes y servicios guardados."
-            href="/favorite-health-professional"
+            icon={LogOut}
+            label="Cerrar Sesión"
+            onClick={handleLogout}
           />
         </ul>
-        <button
-          onClick={handleLogout}
-          className="mt-6 w-full bg-[#0000CC] text-white py-3 rounded-full flex items-center justify-center space-x-2"
-        >
-          <ArrowLeft className="h-5 w-5 rotate-180" />
-          <span>Cerrar Sesión</span>
-        </button>
       </div>
     </div>
   );
 }
 
-function MenuItem({
-  icon: Icon,
-  label,
-  sublabel,
-  sublabelClassName,
-  href,
-}: {
+interface MenuItemProps {
   icon: React.ComponentType<any>;
   label: string;
-  sublabel: string;
-  sublabelClassName?: string;
-  href: string;
-}) {
-  const router = useRouter();
+  href?: string;
+  onClick?: () => void;
+}
+
+function MenuItem({ icon: Icon, label, href, onClick }: MenuItemProps) {
+  const baseStyles =
+    "flex items-center gap-3 p-3 border border-primary rounded-full w-full shadow-sm hover:shadow-md transition";
+  const content = (
+    <>
+      <div className="h-8 w-8 rounded-full border-2 border-primary flex items-center justify-center">
+        <Icon className="h-4 w-4 text-primary" />
+      </div>
+      <span className="text-sm font-medium text-primary">{label}</span>
+    </>
+  );
+
+  if (onClick) {
+    return (
+      <li>
+        <button
+          type="button"
+          onClick={onClick}
+          className={`${baseStyles} text-left hover:bg-gray-50 transition`}
+        >
+          {content}
+        </button>
+      </li>
+    );
+  }
 
   return (
     <li>
-      <a
-        href={href}
-        className="flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 transition-all duration-300"
-      >
-        <div className="h-12 w-12 rounded-full bg-primary/5 flex items-center justify-center">
-          <Icon className="h-6 w-6 text-primary" />
-        </div>
-        <div className="flex-1">
-          <p className="text-sm font-medium text-gray-900">{label}</p>
-          <p className={cn("text-sm text-gray-500", sublabelClassName)}>
-            {sublabel}
-          </p>
-        </div>
+      <a href={href} className={`${baseStyles} hover:bg-gray-50 transition`}>
+        {content}
       </a>
     </li>
   );
-}
-
-function cn(
-  ...classes: (
-    | string
-    | boolean
-    | undefined
-    | null
-    | { [key: string]: boolean }
-  )[]
-) {
-  return classes
-    .filter(Boolean)
-    .map((className) => {
-      if (typeof className === "object") {
-        return Object.entries(className)
-          .filter(([, value]) => value)
-          .map(([key]) => key)
-          .join(" ");
-      }
-      return className;
-    })
-    .join(" ");
 }

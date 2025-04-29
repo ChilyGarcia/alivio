@@ -9,11 +9,11 @@ export default function Showgallery() {
     <div className="gallery-container relative">
       <ImageGallery
         items={sliderImages1}
-        showThumbnails={false} // Desactiva las miniaturas
-        showFullscreenButton={false} // Desactiva el botón de fullscreen
-        showPlayButton={false} // Desactiva el botón de reproducción
-        showBullets={true} // Asegúrate de que los puntos (bullets) estén habilitados
-        showNav={false} // Desactiva las flechas de navegación por defecto
+        showThumbnails={false}
+        showFullscreenButton={false}
+        showPlayButton={false}
+        showBullets={true}
+        showNav={false}
       />
       <style jsx global>{`
         /* Personaliza la posición de los puntos (bullets) */
@@ -78,7 +78,6 @@ export default function Showgallery() {
 }
 
 export function Showgallery2() {
-  //esta funcion renderiza el slider con texto y boton//
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const sliderTexts = [
