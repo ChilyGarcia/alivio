@@ -1,22 +1,9 @@
 import { Credentials } from "@/interfaces/credentials.interface";
 import { RegisterCredentials } from "@/interfaces/register.interface";
 import Cookies from "js-cookie";
+import { fetchWithInterceptor } from "./fetch.interceptor";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL; // https://clownfish-app-8pq82.ondigitalocean.app/api/auth    http://127.0.0.1:8000/api/auth
-
-const fetchWithInterceptor = async (url: string, options: RequestInit) => {
-  const response = await fetch(url, options);
-
-  if (response.status === 401) {
-    console.error("Unauthorized! Redirecting to login...");
-
-    Cookies.remove("token");
-
-    window.location.href = "/";
-  }
-
-  return response;
-};
 
 export const authenticationService = {
   login: async (credentials: Credentials) => {
@@ -68,7 +55,7 @@ export const authenticationService = {
   },
   register: async (credentials: RegisterCredentials) => {
     try {
-      const response = await fetch(`${BACKEND_URL}/register`, {
+      const response = await fetchWithInterceptor(`${BACKEND_URL}/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
