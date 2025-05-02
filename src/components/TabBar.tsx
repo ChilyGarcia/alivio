@@ -129,7 +129,7 @@ const TabBar = ({ onToggleNavBar }) => {
                 <TabItem
                   href="/professionals/my-patients"
                   icon={<Calendar size={24} />}
-                  label="Mis pacientes"
+                  label="Citas"
                   onClick={() =>
                     handleTabItemAuthentication("/my-appointments")
                   }
@@ -264,7 +264,7 @@ const TabBar = ({ onToggleNavBar }) => {
               ) : (
                 <>
                   <NavItem
-                    href="/authentication"
+                    href="/authentication/login"
                     icon={<User size={20} />}
                     label="Ingresar"
                     active={false}
