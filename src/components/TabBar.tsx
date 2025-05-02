@@ -10,9 +10,7 @@ import {
   User,
   Menu,
   X,
-  Store,
   LogOut,
-  MessageCircle,
   Settings,
   Stethoscope,
 } from "lucide-react";
@@ -95,9 +93,9 @@ const TabBar = ({ onToggleNavBar }) => {
   };
 
   const getShortName = (fullName: string) => {
-    if (!fullName) return '';
-    const firstWord = fullName.split(' ')[0];
-    return firstWord.length > 10 ? firstWord.slice(0, 10) + '...' : firstWord;
+    if (!fullName) return "";
+    const firstWord = fullName.split(" ")[0];
+    return firstWord.length > 10 ? firstWord.slice(0, 10) + "..." : firstWord;
   };
 
   const toggleMenu = () => {
@@ -154,10 +152,10 @@ const TabBar = ({ onToggleNavBar }) => {
             />
           ) : (
             <TabItem
-              href="/authentication"
+              href="/authentication/login"
               icon={<User size={24} />}
               label="Ingresar"
-              onClick={() => handleTabItemAuthentication("/authentication")}
+              onClick={() => handleTabItemAuthentication("/authentication/login")}
             />
           )}
           <button
@@ -245,7 +243,7 @@ const TabBar = ({ onToggleNavBar }) => {
                   <NavItem
                     href="/profile"
                     icon={<User size={20} />}
-                    label={user?.name ? getShortName(user.name) : 'Perfil'}
+                    label={user?.name ? getShortName(user.name) : "Perfil"}
                     active={false}
                   />
                   <NavItem

@@ -67,7 +67,9 @@ export default function ProfilePage() {
   }
 
   const route =
-    user.role === "professional" ? "/professionals/profile" : "/profile";
+    user.role === "professional"
+      ? "/professionals/profile"
+      : "/edit-my-profile";
 
   const menuItems = [
     { icon: User, label: "Datos de Perfil", href: route },

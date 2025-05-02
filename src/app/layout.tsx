@@ -3,6 +3,7 @@ import "./globals.css";
 import { montserrat } from "../../public/fonts/font";
 import ClientWrapper from "@/components/client-wrapper";
 import Footer from "@/components/footer";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "CSalud",
@@ -23,6 +24,7 @@ export default function RootLayout({
           </main>
           <Footer />
         </ClientWrapper>
+        <Toaster richColors />
       </body>
     </html>
   );

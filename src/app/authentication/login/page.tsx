@@ -218,7 +218,10 @@ export default function LoginPage() {
 
           <p className="text-center text-sm text-primary">
             ¿No tienes cuenta?{" "}
-            <Link href="/register" className="font-medium underline">
+            <Link
+              href="/authentication/register"
+              className="font-medium underline"
+            >
               Regístrate
             </Link>
           </p>

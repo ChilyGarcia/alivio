@@ -7,6 +7,7 @@ import { authenticationService } from "@/services/auth.service";
 import { professionalService } from "@/services/professional.service";
 import { ChevronDown, Pencil, FileText, X, Download } from "lucide-react";
 import Cookies from "js-cookie";
+import { toast } from "sonner";
 
 const LabeledField = React.memo(function LabeledField({
   label,
@@ -60,32 +61,51 @@ export default function ProfileEditForm({
     };
 
     fetchProfessionalData();
-  }, []);
+  }, [initialUser.id]);
 
   const handleProfChange = useCallback((field: string, value: string) => {
     setProfessional((prev) => ({ ...prev, [field]: value }));
   }, []);
 
-  const [savingProf, setSavingProf] = useState(false);
+  // Estados de carga separados
+  const [savingProfGeneral, setSavingProfGeneral] = useState(false);
+  const [savingEducation, setSavingEducation] = useState(false);
 
-  const handleSaveProfessional = async () => {
-    setSavingProf(true);
+  // Guardar descripción, sobre mí y experiencia
+  const handleSaveProfessionalGeneral = async () => {
+    setSavingProfGeneral(true);
     try {
       await professionalService.updateProfessional(initialUser.id, {
         description: professional.description,
-        experience: professional.experience,
         about_me: professional.about_me,
-        education: professional.education,
+        experience: professional.experience,
       });
-      alert("Información profesional actualizada correctamente");
+      toast.success("Información profesional actualizada correctamente");
     } catch (err) {
       console.error(err);
-      alert("Error al actualizar información profesional");
+      toast.error("Error al actualizar información profesional");
     } finally {
-      setSavingProf(false);
+      setSavingProfGeneral(false);
     }
   };
 
+  // Guardar solo formación
+  const handleSaveEducation = async () => {
+    setSavingEducation(true);
+    try {
+      await professionalService.updateProfessional(initialUser.id, {
+        education: professional.education,
+      });
+      toast.success("Formación actualizada correctamente");
+    } catch (err) {
+      console.error(err);
+      toast.error("Error al actualizar formación");
+    } finally {
+      setSavingEducation(false);
+    }
+  };
+
+  // Formulario de datos personales
   const [form, setForm] = useState({
     name: initialUser.name || "",
     email: initialUser.email || "",
@@ -95,7 +115,6 @@ export default function ProfileEditForm({
   });
   const [saving, setSaving] = useState(false);
   const router = useRouter();
-  const token = Cookies.get("token");
 
   const handleChange = useCallback((field: string, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -103,7 +122,7 @@ export default function ProfileEditForm({
 
   const handleSave = async () => {
     if (!form.name || !form.email || !form.phone_number) {
-      alert("Por favor completa todos los campos requeridos");
+      toast.error("Por favor completa todos los campos requeridos");
       return;
     }
     setSaving(true);
@@ -120,7 +139,7 @@ export default function ProfileEditForm({
       router.back();
     } catch (err) {
       console.error(err);
-      alert("Error al actualizar el perfil: " + (err as Error).message);
+      toast.error("Error al actualizar el perfil: " + (err as Error).message);
     } finally {
       setSaving(false);
     }
@@ -128,6 +147,7 @@ export default function ProfileEditForm({
 
   return (
     <>
+      {/* Datos Personales */}
       <div className="bg-white rounded-2xl shadow-md p-6 space-y-6">
         <LabeledField label="Nombre completo">
           <input
@@ -200,13 +220,15 @@ export default function ProfileEditForm({
           </button>
         </div>
       </div>
-      {/* Sección Información Profesional */}
+
+      {/* Información Profesional */}
       <div className="bg-white rounded-2xl shadow-md p-6 space-y-4">
         <h3 className="text-sm font-semibold text-primary">
           Información Profesional
         </h3>
         <p className="text-xs text-gray-500">
-          Puedes editar tu descripción inicial y tu experiencia profesional.{" "}
+          Puedes editar tu descripción inicial y tu experiencia
+          profesional.&nbsp;
           <a href="#" className="underline text-primary">
             Más información
           </a>
@@ -241,26 +263,19 @@ export default function ProfileEditForm({
               className="w-full mt-1 border border-primary rounded-2xl p-4 text-sm outline-none"
             />
           </div>
-          <div>
-            <p className="text-xs text-gray-500 font-medium">Formación</p>
-            <input
-              type="text"
-              value={professional.education}
-              onChange={(e) => handleProfChange("education", e.target.value)}
-              placeholder="Universidad de Pamplona"
-              className="w-full mt-1 border border-primary rounded-full px-4 py-3 text-sm outline-none"
-            />
-          </div>
           <button
-            onClick={handleSaveProfessional}
-            disabled={savingProf}
+            onClick={handleSaveProfessionalGeneral}
+            disabled={savingProfGeneral}
             className="w-full h-12 bg-primary text-sm font-medium text-white rounded-full hover:bg-primary/90 disabled:opacity-50"
           >
-            {savingProf ? "Guardando..." : "Guardar Información Profesional"}
+            {savingProfGeneral
+              ? "Guardando..."
+              : "Guardar Información Profesional"}
           </button>
         </div>
       </div>
 
+      {/* Información Educativa Superior */}
       <div className="bg-white rounded-2xl shadow-md p-6 space-y-4">
         <h3 className="text-sm font-semibold text-primary">
           Información Educativa Superior
@@ -268,19 +283,27 @@ export default function ProfileEditForm({
         <p className="text-xs text-gray-500">
           Puedes editar la información de tu formación universitaria.
         </p>
-        <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+        <div className="space-y-4">
           <div>
             <p className="text-xs text-gray-500 font-medium">Formación</p>
-            <p className="mt-1 text-sm text-gray-900">
-              Universidad los Santos de Cúcuta
-            </p>
+            <input
+              type="text"
+              value={professional.education}
+              onChange={(e) => handleProfChange("education", e.target.value)}
+              placeholder="Universidad los Santos de Cúcuta"
+              className="w-full mt-1 border border-primary rounded-full px-4 py-3 text-sm outline-none"
+            />
           </div>
-          <button className="h-10 px-4 border border-gray-200 rounded-full flex items-center gap-2 text-sm text-gray-600 hover:bg-gray-50">
-            <Pencil className="h-4 w-4 text-gray-500" />
-            Editar
+          <button
+            onClick={handleSaveEducation}
+            disabled={savingEducation}
+            className="w-full h-12 bg-primary text-sm font-medium text-white rounded-full hover:bg-primary/90 disabled:opacity-50"
+          >
+            {savingEducation ? "Guardando..." : "Guardar Formación"}
           </button>
         </div>
       </div>
+
       <div className="bg-white rounded-2xl shadow-md p-6 space-y-4">
         <h3 className="text-sm font-semibold text-primary">Certificaciones</h3>
         <p className="text-xs text-gray-500">
