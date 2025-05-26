@@ -5,6 +5,31 @@ import { authenticationService } from "@/services/auth.service";
 import { useEffect, useState, Suspense } from "react";
 import Cookies from "js-cookie";
 import { useSearchParams } from "next/navigation";
+import { motion } from "framer-motion";
+
+// Animation variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      duration: 0.5,
+      when: "beforeChildren",
+      staggerChildren: 0.2,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      duration: 0.5,
+    },
+  },
+};
 
 function ChatContainer() {
   const [sender_id, setSender] = useState<number | null>(null);
@@ -56,24 +81,45 @@ function ChatContainer() {
       .catch((error) => {
         console.error("Error fetching messages:", (error as Error).message);
       });
-  }, [receiver_id, sender_id]);
+  }, [receiver_id, sender_id, token]);
+
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen bg-white flex justify-center items-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
-    <>
-      {isLoaded && sender_id !== null && receiver_id !== null && (
-        <Chat
-          sender_id={sender_id}
-          receiver_id={receiver_id}
-          messages={messages}
-        />
-      )}
-    </>
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className="min-h-screen bg-white"
+    >
+      <motion.div variants={itemVariants} className="w-full h-full">
+        {sender_id !== null && receiver_id !== null && (
+          <Chat
+            sender_id={sender_id}
+            receiver_id={receiver_id}
+            messages={messages}
+          />
+        )}
+      </motion.div>
+    </motion.div>
   );
 }
 
 export default function ChatPage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-white flex justify-center items-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+        </div>
+      }
+    >
       <ChatContainer />
     </Suspense>
   );

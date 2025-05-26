@@ -279,7 +279,7 @@ const AppointmentModal = ({
     if (token) {
       router.push("/payments");
     } else {
-      router.push("/authentication");
+      router.push("/authentication/login");
     }
   };
 

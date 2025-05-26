@@ -27,6 +27,7 @@ export interface Datum {
     total_cost_cents:       number;
     created_at:             Date;
     updated_at:             Date;
+    reason?:                string;
     patient:                Patient;
     accesibility:           Accesibility;
     health_professional:    HealthProfessional;
@@ -64,6 +65,7 @@ export interface Patient {
     created_at:        Date;
     updated_at:        Date;
     role:              string;
+    avatarUrl?:        string;
     profile_image:     null;
     profile_image_url: null;
 }

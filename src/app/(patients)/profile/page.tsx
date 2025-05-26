@@ -67,13 +67,13 @@ export default function ProfilePage() {
     );
   }
 
-  const profileHref =
+  const route =
     user.role === "professional"
       ? "/professionals/profile"
       : "/edit-my-profile";
 
   const menuItems = [
-    { icon: User, label: "Datos de Perfil", href: profileHref },
+    { icon: User, label: "Datos de Perfil", href: route },
     { icon: ServicesIcon, label: "Servicios", href: "/services" },
     { icon: Calendar, label: "Citas", href: "/my-appointments" },
     { icon: MessageSquare, label: "Chats", href: "/chats" },
