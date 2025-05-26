@@ -35,12 +35,13 @@ export default function ProfileDataForm({ user }: { user: UserInterface }) {
     last_name: "",
     document_type: user.document_type || "cc",
     document_number: user.document_number || "",
-    email: "",
-    phone_number: "",
-    birth_date: user.birth_date || "",
+    email: user.email || "",
+    phone_number: user.phone_number || "",
+    // Using optional properties that might not be in the User interface
+    birth_date: (user as any).birth_date || "",
     gender: user.gender || "",
-    department: user.department || "",
-    municipality: user.municipality || "",
+    department: (user as any).department || "",
+    municipality: (user as any).municipality || "",
   });
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
@@ -63,11 +64,21 @@ export default function ProfileDataForm({ user }: { user: UserInterface }) {
   const handleSave = async () => {
     // build and send payload
     try {
-      const payload = {
-        ...form,
-        name: `${form.first_name} ${form.last_name}`.trim(),
-      };
-      await authenticationService.updateUser(payload);
+      // Create a FormData object instead of a plain JavaScript object
+      const formData = new FormData();
+      
+      // Add the name field with first and last name combined
+      formData.append('name', `${form.first_name} ${form.last_name}`.trim());
+      
+      // Add all other form fields to the FormData object
+      Object.entries(form).forEach(([key, value]) => {
+        // Skip first_name and last_name as they're already combined into name
+        if (key !== 'first_name' && key !== 'last_name' && value !== undefined) {
+          formData.append(key, value);
+        }
+      });
+      
+      await authenticationService.updateUser(formData);
       router.back();
     } catch (err: any) {
       console.error(err);

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { ArrowLeft, MessageSquare, Bell, Settings } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
