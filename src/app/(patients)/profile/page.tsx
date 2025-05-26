@@ -40,6 +40,7 @@ export default function ProfilePage() {
       try {
         const u = await authenticationService.userDetails();
         setUser(u);
+
         const token = Cookies.get("token");
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/notifications`,
@@ -66,8 +67,13 @@ export default function ProfilePage() {
     );
   }
 
+  const profileHref =
+    user.role === "professional"
+      ? "/professionals/profile"
+      : "/edit-my-profile";
+
   const menuItems = [
-    { icon: User, label: "Datos de Perfil", href: "/edit-my-profile" },
+    { icon: User, label: "Datos de Perfil", href: profileHref },
     { icon: ServicesIcon, label: "Servicios", href: "/services" },
     { icon: Calendar, label: "Citas", href: "/my-appointments" },
     { icon: MessageSquare, label: "Chats", href: "/chats" },

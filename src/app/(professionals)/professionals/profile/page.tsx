@@ -1,20 +1,20 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   ArrowLeft,
   MessageSquare,
   Bell,
   Settings,
-  Pencil,
-  Plus,
   ChevronDown,
   ChevronUp,
+  Plus,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import { authenticationService } from "@/services/auth.service";
 import { User as UserInterface } from "@/interfaces/user.interface";
+import ProfileDataForm from "@/components/ProfileDataForm";
 
 export default function ProfileTabsPage() {
   const [user, setUser] = useState<UserInterface | null>(null);
@@ -24,6 +24,8 @@ export default function ProfileTabsPage() {
     "Datos de Perfil" | "Servicios" | "Citas"
   >("Datos de Perfil");
   const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -48,6 +50,48 @@ export default function ProfileTabsPage() {
     load();
   }, []);
 
+  const handleImageClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setUser((prev) =>
+        prev ? { ...prev, profile_image_url: reader.result as string } : prev
+      );
+    };
+    reader.readAsDataURL(file);
+
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("profile_image", file);
+      const token = Cookies.get("token");
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/users/${user.id}/profile_image`,
+        {
+          method: "PUT",
+          headers: { Authorization: `Bearer ${token}` },
+          body: formData,
+        }
+      );
+      if (res.ok) {
+        const updated = await res.json();
+        setUser(updated);
+      } else {
+        console.error("Error updating profile image");
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setUploading(false);
+    }
+  };
+
   if (loading || !user) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
@@ -58,6 +102,15 @@ export default function ProfileTabsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Hidden file input for profile image */}
+      <input
+        type="file"
+        accept="image/*"
+        ref={fileInputRef}
+        className="hidden"
+        onChange={handleFileChange}
+      />
+
       {/* Header blanco */}
       <header className="flex items-center justify-between p-4 bg-white shadow-sm">
         <button
@@ -95,7 +148,12 @@ export default function ProfileTabsPage() {
       {/* Perfil: avatar, nombre, subtítulo, descripción */}
       <div className="mt-4 px-4">
         <div className="flex flex-col items-center bg-white rounded-2xl p-6 shadow-md">
-          <div className="h-24 w-24 rounded-full ring-4 ring-[#0000CC] overflow-hidden hover:scale-105 transition">
+          <div
+            onClick={handleImageClick}
+            className={`h-24 w-24 rounded-full ring-4 ring-[#0000CC] overflow-hidden hover:scale-105 transition cursor-pointer ${
+              uploading ? "opacity-50" : ""
+            }`}
+          >
             {user.profile_image_url ? (
               <img
                 src={user.profile_image_url}
@@ -154,42 +212,6 @@ export default function ProfileTabsPage() {
         {activeTab === "Datos de Perfil" && <ProfileDataForm user={user} />}
         {activeTab === "Servicios" && <ServicesSection />}
         {activeTab === "Citas" && <CitasSection />}
-      </div>
-    </div>
-  );
-}
-
-function ProfileDataForm({ user }: { user: UserInterface }) {
-  return (
-    <div className="bg-white rounded-2xl shadow-md p-6 space-y-4">
-      <h3 className="text-sm font-medium text-gray-600">
-        Información Personal Básica
-      </h3>
-      <div className="space-y-4">
-        {/* Nombre */}
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-xs text-gray-500">Nombre</p>
-            <p className="font-medium text-gray-900">{user.name}</p>
-          </div>
-          <Pencil className="h-5 w-5 text-gray-400 hover:text-gray-600 cursor-pointer" />
-        </div>
-        {/* Email */}
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-xs text-gray-500">Email</p>
-            <p className="font-medium text-gray-900">{user.email}</p>
-          </div>
-          <Pencil className="h-5 w-5 text-gray-400 hover:text-gray-600 cursor-pointer" />
-        </div>
-        {/* Teléfono */}
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-xs text-gray-500">Teléfono</p>
-            <p className="font-medium text-gray-900">312 345 6789</p>
-          </div>
-          <Pencil className="h-5 w-5 text-gray-400 hover:text-gray-600 cursor-pointer" />
-        </div>
       </div>
     </div>
   );
