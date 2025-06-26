@@ -93,32 +93,34 @@ export function Showgallery2() {
   ];
 
   return (
-    <div className="gallery-container relative">
+    <div className="gallery-container relative w-[327px] mx-auto">
       {/* Slider */}
-      <ImageGallery
-        items={sliderImages2}
-        showThumbnails={false}
-        showFullscreenButton={false}
-        showPlayButton={false}
-        showBullets={true}
-        showNav={false}
-        onSlide={(index) => setCurrentSlide(index)}
-      />
+      <div className="relative">
+        <ImageGallery
+          items={sliderImages2}
+          showThumbnails={false}
+          showFullscreenButton={false}
+          showPlayButton={false}
+          showBullets={true}
+          showNav={false}
+          onSlide={(index) => setCurrentSlide(index)}
+        />
+      </div>
 
       {/* Texto dinámico */}
-      <div className="absolute bg-white w-full">
-        <div className="mt-4">
-          <h2 className="text-4xl font-extrabold mt-12 text-primary">
+      <div className="relative bg-white w-full z-20 px-4 pt-4 pb-16 shadow-lg rounded-b-xl">
+        <div>
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-primary">
             {sliderTexts[currentSlide] || "Texto predeterminado"}
           </h2>
 
-          <p className="text-lg text-black mt-8">
+          <p className="text-sm sm:text-base md:text-lg text-black mt-4">
             {sliderDescriptions[currentSlide] || "Descripción predeterminada"}
           </p>
 
           <button
             onClick={() => console.log("Botón de más información")}
-            className="w-1/2 h-[45px] mt-8 px-1 py-3 bg-primary text-white font-medium text-base rounded-3xl hover:bg-blue-700 transition-colors"
+            className="w-full sm:w-1/2 h-[45px] mt-6 px-1 py-3 bg-primary text-white font-medium text-base rounded-3xl hover:bg-blue-700 transition-colors"
           >
             Más información
           </button>
@@ -126,14 +128,14 @@ export function Showgallery2() {
       </div>
 
       <style jsx global>{`
-        .image-gallery-bullets {
+        .gallery-container .image-gallery-bullets {
           position: absolute;
-          bottom: 50px; /* Ajusta para colocar debajo del botón */
+          bottom: 15px;
           left: 50%;
           transform: translateX(-50%);
-          z-index: 10;
+          z-index: 30;
         }
-        .image-gallery-bullet {
+        .gallery-container .image-gallery-bullet {
           width: 12px;
           height: 12px;
           margin: 0 5px;
@@ -141,9 +143,14 @@ export function Showgallery2() {
           border-radius: 50%;
           transition: background-color 0.3s ease;
         }
-        .image-gallery-bullet.active {
+        .gallery-container .image-gallery-bullet.active {
           background-color: #0c0caa !important;
           border-color: #0c0caa !important;
+        }
+        .gallery-container .image-gallery,
+        .gallery-container .image-gallery-content,
+        .gallery-container .image-gallery-slide-wrapper {
+          overflow: visible !important;
         }
       `}</style>
     </div>

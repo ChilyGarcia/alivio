@@ -38,7 +38,6 @@ export default function Hero() {
   });
   const [groups, setGroups] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isPresencial, setIsPresencial] = useState(false);
 
   const fetchGroup = async () => {
     try {
@@ -391,18 +390,28 @@ export default function Hero() {
     ),
   };
 
+  // Add smooth scroll behavior to the page
+  useEffect(() => {
+    // Set smooth scroll behavior
+    document.documentElement.style.scrollBehavior = "smooth";
+
+    return () => {
+      document.documentElement.style.scrollBehavior = "";
+    };
+  }, []);
+
   return (
-    <div className="mt-12">
+    <div className="overflow-hidden">
       <motion.div
         initial="hidden"
         animate="visible"
         variants={fadeInUp}
-        transition={{ duration: 0.6 }}
-        className="relative bg-gradient-to-b h-screen from-white via-[#E8F8FF] to-[#15B5FC] flex items-center"
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="relative bg-gradient-to-b from-white via-[#E8F8FF] to-[#15B5FC] flex items-center py-16 md:py-24"
       >
         <div className="h-full max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
           <div className="relative h-full flex flex-col">
-            <div className="mt-5 mx-auto w-full px-4 sm:mt-24 sm:px-6 lg:mt-32">
+            <div className="mx-auto w-full px-4 sm:px-6">
               <div className="relative lg:grid lg:grid-cols-12 lg:gap-8 items-center">
                 <motion.div
                   variants={fadeInUp}
@@ -429,13 +438,15 @@ export default function Hero() {
                   className="lg:col-span-6 flex justify-center"
                 >
                   <div className="relative w-full max-w-[600px] sm:max-w-[500px] md:max-w-[550px] lg:max-w-[600px]">
-                    <Image
-                      src="/images/Heros.png"
-                      alt="Hero Image"
-                      width={600}
-                      height={600}
-                      className="w-full h-auto object-contain"
-                    />
+                    <div className="relative">
+                      <Image
+                        src="/images/Heros.png"
+                        alt="Hero Image"
+                        width={600}
+                        height={600}
+                        className="w-full h-auto object-contain"
+                      />
+                    </div>
                   </div>
                 </motion.div>
               </div>
@@ -444,8 +455,8 @@ export default function Hero() {
         </div>
       </motion.div>
 
-      <section className="h-[60vh] w-full relative bg-white flex justify-center">
-        <div className="bg-white border-2 border-primary rounded-2xl shadow-lg absolute top-[-55px] left-1/2 transform -translate-x-1/2 w-[calc(100%-2rem)] max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl p-6 z-10">
+      <section className="py-24 w-full relative bg-white flex justify-center">
+        <div className="bg-white border-2 border-primary rounded-2xl shadow-lg absolute top-[-80px] left-1/2 transform -translate-x-1/2 w-[calc(100%-2rem)] max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl p-6 z-10">
           <motion.div
             initial="hidden"
             animate="visible"
@@ -498,24 +509,24 @@ export default function Hero() {
       <motion.div
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true }}
+        viewport={{ once: true, amount: 0.3 }}
         variants={staggerContainer}
-        className="h-screen bg-secondary relative flex flex-col items-center justify-center space-y-8"
+        className="py-20 md:py-24 bg-secondary relative flex flex-col items-center justify-center space-y-8 overflow-hidden"
       >
         <motion.h1
           variants={fadeInUp}
-          className="text-4xl font-extrabold text-primary"
+          className="text-4xl font-extrabold text-primary mt-12"
         >
           Tres pilares
         </motion.h1>
         <motion.div
           variants={staggerContainer}
-          className="grid grid-cols-1 sm:grid-cols-2 gap-6"
+          className="w-full flex flex-wrap justify-center gap-8 px-4"
         >
           <motion.div variants={fadeInUp}>
             <CardHero
-              title="Agendar Citas"
-              description="Programa tu cita con especialistas."
+              title="Citas y consultas"
+              description="Agenda o solicita atención inmediata con profesionales de confianza. Virtual o presencial."
               buttonText="Ingresar"
               imageSrc="/images/card1fix.png"
               reverse={true}
@@ -523,8 +534,8 @@ export default function Hero() {
           </motion.div>
           <motion.div variants={fadeInUp}>
             <CardHero
-              title="Planes de Salud"
-              description="Planes personalizados para ti."
+              title="Planes"
+              description="Suscríbete a combos de salud con beneficios, como paquetes médicos, psicológicos, odontológicos y más."
               buttonText="Ver Planes"
               imageSrc="/images/card2.png"
               reverse={false}
@@ -533,7 +544,7 @@ export default function Hero() {
           <motion.div variants={fadeInUp}>
             <CardHero
               title="Servicios Especiales"
-              description="Atención médica especializada"
+              description="Solicita certificados médicos, exámenes laborales y otros servicios personalizados de salud."
               buttonText="Explorar"
               imageSrc="/images/card1fix.png"
               reverse={true}
@@ -545,14 +556,13 @@ export default function Hero() {
       <motion.section
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true }}
+        viewport={{ once: true, amount: 0.1 }}
         variants={fadeInUp}
-        className="h-[170vh] relative bg-white"
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="py-20 pb-64 md:pb-80 relative bg-white overflow-hidden"
       >
         <div>
-          <h1 className="text-4xl font-extrabold text-primary mt-20 mx-7">
-            Aliados
-          </h1>
+          <h1 className="text-4xl font-extrabold text-primary mx-7">Aliados</h1>
           <div className="flex justify-center items-center space-x-4 mt-10 mb-10">
             <Image src="/images/IPS.png" alt="IPS" width={154} height={57} />
             <Image
@@ -563,25 +573,13 @@ export default function Hero() {
             />
           </div>
           <div className="mt-32">
-            <div className="relative w-[327px] h-[393px] mx-6">
+            <div className="relative w-[327px] h-[393px] mx-auto">
               <div className="absolute inset-0 w-[327px] h-[300px] bg-blue-200 rounded-2xl"></div>
 
               <div className="absolute top-[-50px] right-0 w-[180px] h-[393px] bg-blue-200 rounded-2xl"></div>
 
-              <div className="absolute -top-10">
+              <div className="absolute -top-10 z-10">
                 <Showgallery2></Showgallery2>
-              </div>
-            </div>
-
-            <div className="absolute bottom-[30px] w-full flex justify-center items-center">
-              <div className="shadow-xl">
-                <CardHero
-                  title="Servicios Especiales"
-                  description="Lorem ipsum dolor sit amet."
-                  buttonText="Ingresar"
-                  imageSrc="/images/card1fix.png"
-                  reverse={true}
-                />
               </div>
             </div>
           </div>
