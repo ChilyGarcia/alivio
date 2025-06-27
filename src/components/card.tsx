@@ -27,7 +27,7 @@ export default function CardHero({
 
     <div className="flex-1 h-full flex flex-col justify-center items-center text-center p-3 sm:p-4">
       <h3 className="text-lg font-extrabold text-[#0C0CAA] mb-2">{title}</h3>
-      <p className="text-xs sm:text-sm text-gray-700 line-clamp-4 overflow-hidden">{description}</p>
+      <p className="text-xs sm:text-sm text-gray-700 overflow-hidden">{description}</p>
       <button className="mt-3 sm:mt-4 bg-[#0C0CAA] text-white py-1.5 sm:py-2 px-6 sm:px-8 rounded-full text-xs sm:text-sm font-medium hover:bg-blue-800 transition-colors">
         {buttonText}
       </button>
