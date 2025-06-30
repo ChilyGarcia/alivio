@@ -17,12 +17,14 @@ interface Notification {
 export default function NotificationsPage() {
   const router = useRouter();
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     fetchNotifications();
   }, []);
 
   const fetchNotifications = async () => {
+    setIsLoading(true);
     const token = Cookies.get("token");
 
     try {
@@ -40,6 +42,8 @@ export default function NotificationsPage() {
       setNotifications(data);
     } catch (error) {
       console.error("Error obteniendo notificaciones:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -95,7 +99,11 @@ export default function NotificationsPage() {
       </div>
 
       <div className="p-4">
-        {notifications.length === 0 ? (
+        {isLoading ? (
+          <div className="flex justify-center items-center py-10">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0000CC]"></div>
+          </div>
+        ) : notifications.length === 0 ? (
           <p className="text-gray-500 text-center">No hay notificaciones.</p>
         ) : (
           notifications.map((notif) => (
@@ -108,8 +116,12 @@ export default function NotificationsPage() {
               }`}
             >
               <div className="pr-6">
-                <h3 className="font-semibold text-sm text-gray-900">{notif.title}</h3>
-                <p className="text-sm text-gray-600 text-justify mt-2">{notif.description}</p>
+                <h3 className="font-semibold text-sm text-gray-900">
+                  {notif.title}
+                </h3>
+                <p className="text-sm text-gray-600 text-justify mt-2">
+                  {notif.description}
+                </p>
               </div>
               <div className="flex gap-3">
                 {!notif.read && (

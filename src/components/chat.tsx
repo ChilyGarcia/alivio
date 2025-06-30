@@ -123,13 +123,13 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
   };
 
   const handleRouterMyAppointments = () => {
-    router.push("/my-appointments");
+    router.push("/");
   };
 
   return (
     <div className="flex flex-col h-screen max-w-md mx-auto bg-gray-50">
       <header className="flex items-center gap-4 p-4 bg-blue-700 text-white">
-        <button className="p-1" onClick={() => router.push("/my-appointments")}>
+        <button className="p-1" onClick={() => router.push("/")}>
           <ChevronLeft
             className="w-6 h-6"
             onClick={() => handleRouterMyAppointments()}
