@@ -17,7 +17,9 @@ import { motion } from "framer-motion";
 const DoctorCarousel = () => {
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedCompany, setSelectedCompany] = useState(null);
   const [categories, setCategories] = useState([]);
+  const [companies, setCompanies] = useState([]);
   const [doctors, setDoctors] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalProfileOpen, setIsModalProfileOpen] = useState(false);
@@ -166,10 +168,165 @@ const DoctorCarousel = () => {
         console.error("Error parsing localStorage data:", error);
       }
     }
+
+    // Fetch companies data
+    const fetchCompanies = async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/companies`);
+        if (!response.ok) {
+          throw new Error("Error fetching companies");
+        }
+        const data = await response.json();
+        setCompanies(data);
+      } catch (error) {
+        console.error("Error fetching companies:", error);
+      }
+    };
+
+    fetchCompanies();
   }, []);
 
+  const handleCompanyClick = (company) => {
+    // Toggle selection if clicking the same company
+    if (selectedCompany && selectedCompany.id === company.id) {
+      setSelectedCompany(null);
+      // Fetch the default doctors list when deselecting
+      fetchInitialDoctors();
+      return;
+    }
+    
+    setSelectedCompany(company);
+    setDoctors([]);
+    
+    const fetchProfessionalsByCompany = async () => {
+      try {
+        let group = localStorage.getItem("group");
+        let storedData = localStorage.getItem("responses");
+        let accessibilityType = "";
+
+        if (storedData) {
+          try {
+            const parsedData = JSON.parse(storedData);
+            if (parsedData.type) {
+              accessibilityType = parsedData.type.toLowerCase();
+            }
+          } catch (error) {
+            console.error("Error parsing JSON from localStorage:", error);
+          }
+        }
+
+        // Using the same endpoint as initial load but with company_id parameter
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/professional-by-group-accesibility?group_ids[]=${group}&accessibility_types[]=${accessibilityType}&company_id=${company.id}`
+        );
+        
+        if (!response.ok) {
+          throw new Error("Error fetching professionals by company");
+        }
+        
+        const data = await response.json();
+
+        if (data.health_professionals) {
+          const formattedDoctors = data.health_professionals.map((doctor) => {
+            const location = doctor.locations?.[0] || null;
+
+            return {
+              id: doctor.id,
+              user_id: doctor.user_id,
+              name: doctor.user.name,
+              specialty: doctor.specialty.name,
+              rating: parseFloat(doctor.rating),
+              reviews: doctor.reviews,
+              img: doctor.user.profile_image_url || "/images/card1fix.png",
+              location: location
+                ? location.location
+                : "Ubicación no disponible",
+              longitude: location ? location.longitude : null,
+              latitude: location ? location.latitude : null,
+              experience: doctor.description,
+              accessibility: doctor.accessibilities.map((acc) => acc.type),
+              price: formatPrice(doctor.hourly_rate),
+              duration: "30-45 minutos",
+            };
+          });
+
+          setDoctors(formattedDoctors);
+        }
+      } catch (error) {
+        console.error("Error fetching doctors by company:", error);
+      }
+    };
+
+    fetchProfessionalsByCompany();
+  };
+
+  // Helper function to fetch initial doctors list
+  const fetchInitialDoctors = async () => {
+    try {
+      setDoctors([]);
+      let group = localStorage.getItem("group");
+      let storedData = localStorage.getItem("responses");
+      let accessibilityType = "";
+
+      if (storedData) {
+        try {
+          const parsedData = JSON.parse(storedData);
+          if (parsedData.type) {
+            accessibilityType = parsedData.type.toLowerCase();
+          }
+        } catch (error) {
+          console.error("Error parsing JSON from localStorage:", error);
+        }
+      }
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/professional-by-group-accesibility?group_ids[]=${group}&accessibility_types[]=${accessibilityType}`
+      );
+      const data = await response.json();
+
+      if (data.health_professionals) {
+        const formattedDoctors = data.health_professionals.map((doctor) => {
+          const location = doctor.locations?.[0] || null;
+          
+          return {
+            id: doctor.id,
+            user_id: doctor.user_id,
+            name: doctor.user.name,
+            specialty: doctor.specialty.name,
+            rating: parseFloat(doctor.rating),
+            reviews: doctor.reviews,
+            img: doctor.user.profile_image_url || "/images/card1fix.png",
+            location: location
+              ? location.location
+              : "Ubicación no disponible",
+            longitude: location ? location.longitude : null,
+            latitude: location ? location.latitude : null,
+            experience: doctor.description,
+            accessibility: doctor.accessibilities.map((acc) => acc.type),
+            price: formatPrice(doctor.hourly_rate),
+            duration: "45-60 minutos",
+          };
+        });
+
+        setDoctors(formattedDoctors);
+      }
+    } catch (error) {
+      console.error("Error fetching default doctors list:", error);
+    }
+  };
+
   const handleCategoryClick = (category) => {
+    // Toggle selection if clicking the same category
+    if (selectedCategory && selectedCategory.id === category.id) {
+      setSelectedCategory(null);
+      // Fetch the default doctors list when deselecting
+      fetchInitialDoctors();
+      return;
+    }
+    
     setSelectedCategory(category);
+    // Reset company selection when a category is selected
+    setSelectedCompany(null);
     setDoctors([]);
 
     let group = localStorage.getItem("group");
@@ -290,6 +447,26 @@ const DoctorCarousel = () => {
               }`}
             >
               {category.name}
+            </motion.button>
+          ))}
+        </div>
+
+        <h3 className="font-bold text-lg text-blue-800 mb-2">Empresas de salud</h3>
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide mb-6">
+          {companies.map((company) => (
+            <motion.button
+              key={company.id}
+              initial="hidden"
+              animate="visible"
+              variants={fadeInUp}
+              onClick={() => handleCompanyClick(company)}
+              className={`px-4 py-2 flex-shrink-0 rounded-full border ${
+                selectedCompany?.id === company.id
+                  ? "bg-blue-600 text-white"
+                  : "bg-white text-blue-600 border-blue-600"
+              }`}
+            >
+              {company.name}
             </motion.button>
           ))}
         </div>
