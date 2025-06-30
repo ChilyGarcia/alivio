@@ -80,25 +80,29 @@ export default function LoginPage() {
     setErrors((prev) => ({ ...prev, [name]: error }));
   };
 
-  const validateForm = () => {
-    const isValid =
-      loginData.email.trim() &&
-      loginData.password.trim() &&
-      !errors.email &&
-      !errors.password;
-    setIsValidated(!!isValid);
+  const validateForm = (email = loginData.email, password = loginData.password) => {
+    // Direct validation without relying on the errors state
+    const emailValid = email.trim() !== "";
+    const passwordValid = password.trim() !== "";
+    setIsValidated(emailValid && passwordValid);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setLoginData((prev) => ({ ...prev, [name]: value }));
-    validateForm();
+    const updatedData = { ...loginData, [name]: value };
+    setLoginData(updatedData);
+    validateField(name, value);
+    
+    // Pass the current field values directly to validateForm
+    validateForm(updatedData.email, updatedData.password);
   };
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     validateField(name, value);
-    validateForm();
+    // Use current values directly
+    const updatedData = { ...loginData, [name]: value };
+    validateForm(updatedData.email, updatedData.password);
   };
 
   const fetchLogin = async () => {
