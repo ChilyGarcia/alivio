@@ -299,6 +299,12 @@ export default function PaymentForm() {
   const handleSubmit = async () => {
     if (!validatePaymentForm()) return;
 
+    // Asegurar que tenemos el email del usuario antes de continuar
+    if (!user?.email) {
+      toast.error("No se pudo obtener la información del usuario");
+      return;
+    }
+
     setIsLoading(true);
     const token = Cookies.get("token");
     try {
@@ -322,6 +328,13 @@ export default function PaymentForm() {
 
       setResponseAppointment(appointmentData);
 
+      // Crear el objeto de pago con el email actualizado
+      const paymentPayload = {
+        ...formData,
+        customer_email: user.email, // Usar directamente el email del usuario
+        appointment_id: appointmentData.appointment.id,
+      };
+
       const paymentResponse = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/wompi/payment-card`,
         {
@@ -330,10 +343,7 @@ export default function PaymentForm() {
             Authorization: "Bearer pub_test_IqJy5M43H63iF8vLNh9JHJiM2vNZsEhg",
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            ...formData,
-            appointment_id: appointmentData.appointment.id,
-          }),
+          body: JSON.stringify(paymentPayload),
         }
       );
 
