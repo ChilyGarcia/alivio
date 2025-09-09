@@ -456,7 +456,7 @@ export default function Hero() {
       </motion.div>
 
       <section className="py-24 md:pt-60 md:pb-60 w-full relative bg-white flex justify-center">
-        <div className="md:mt-12 bg-white border-2 border-primary rounded-2xl shadow-lg absolute top-[-80px] left-1/2 transform -translate-x-1/2 w-[calc(100%-2rem)] max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl p-6 z-10">
+        <div className="md:mt-12 bg-white border-2 border-primary rounded-[25px] shadow-lg absolute top-[-80px] left-1/2 transform -translate-x-1/2 w-[calc(100%-2rem)] max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl p-6 z-10">
           <motion.div
             initial="hidden"
             animate="visible"
