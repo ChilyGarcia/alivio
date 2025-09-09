@@ -150,10 +150,10 @@ export default function Hero() {
         variants={fadeInUp}
         transition={{ duration: 0.5 }}
       >
-        <h3 className="text-2xl font-extrabold text-center text-primary mb-6">
+        <h3 className="text-2xl font-extrabold text-center text-primary mb-6 md:py-5">
           ¿Qué necesitas hoy?
         </h3>
-        <p className="text-center text-sm text-gray-600 mb-6">
+        <p className="text-center text-sm text-gray-600 mb-6 md:py-5">
           Elige si necesitas atención inmediata o puedes agendarla.
         </p>
         <motion.div
@@ -166,8 +166,8 @@ export default function Hero() {
             variants={fadeInUp}
             className={`flex-1 px-4 py-2 ${
               responses.motivo === "Urgencia"
-                ? "bg-primary text-white hover:bg-primary"
-                : "bg-white text-primary hover:bg-gray-100"
+                ? "bg-primary text-white hover:bg-primary md:py-3 md:rounded-[25px] md:mb-8"
+                : "bg-white text-primary hover:bg-gray-100 md:py-3 md:rounded-[25px] md:mb-8"
             } border border-primary font-bold text-sm rounded-2xl transition-colors`}
             onClick={() => handleSelection("motivo", "Urgencia")}
           >
@@ -177,8 +177,8 @@ export default function Hero() {
             variants={fadeInUp}
             className={`flex-1 px-4 py-2 ${
               responses.motivo === "Agendar"
-                ? "bg-primary text-white hover:bg-primary"
-                : "bg-white text-primary hover:bg-gray-100"
+                ? "bg-primary text-white hover:bg-primary md:py-3 md:rounded-[25px] md:mb-8"
+                : "bg-white text-primary hover:bg-gray-100 md:py-3 md:rounded-[25px] md:mb-8"
             } border border-primary font-bold text-sm rounded-2xl transition-colors`}
             onClick={() => handleSelection("motivo", "Agendar")}
           >
@@ -455,8 +455,8 @@ export default function Hero() {
         </div>
       </motion.div>
 
-      <section className="py-24 w-full relative bg-white flex justify-center">
-        <div className="bg-white border-2 border-primary rounded-2xl shadow-lg absolute top-[-80px] left-1/2 transform -translate-x-1/2 w-[calc(100%-2rem)] max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl p-6 z-10">
+      <section className="py-24 md:pt-60 md:pb-60 w-full relative bg-white flex justify-center">
+        <div className="md:mt-12 bg-white border-2 border-primary rounded-2xl shadow-lg absolute top-[-80px] left-1/2 transform -translate-x-1/2 w-[calc(100%-2rem)] max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl p-6 z-10">
           <motion.div
             initial="hidden"
             animate="visible"
@@ -464,7 +464,7 @@ export default function Hero() {
             transition={{ duration: 0.6 }}
             className="w-full"
           >
-            <div className="flex items-center justify-center ">
+            <div className="flex items-center justify-center">
               <label className="text-sm font-bold text-primary">
                 {currentStep > 1 ? (
                   <>Formulario</>
@@ -480,21 +480,21 @@ export default function Hero() {
               <div className="absolute top-5 left-4">
                 <button
                   onClick={handlePrevStep}
-                  className="flex items-center space-x-2 text-primary font-bold hover:text-blue-700 transition-colors"
+                  className="flex items-center space-x-2 text-primary font-bold hover:text-blue-700 transition-colors "
                 >
                   <img src="/icons/arrow-left-icon.png"></img>
                 </button>
               </div>
             )}
             <div className="mt-10">{steps[currentStep]}</div>
-            <div className="flex justify-between mt-6">
+            <div className="flex justify-between mt-6 ">
               <button
                 onClick={handleNextStep}
                 disabled={!isStepValid()}
-                className="px-4 py-2 bg-primary w-full text-white font-medium text-sm rounded-2xl transition-colors hover:bg-blue-700 disabled:bg-gray-300 disabled:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="md:py-3 md:w-1/2 md:mx-auto px-4 py-2 bg-primary w-full text-white font-medium text-sm rounded-[25px] transition-colors hover:bg-blue-700 disabled:bg-gray-300 disabled:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? (
-                  <span className="loading loading-spinner loading-md"></span>
+                  <span className="loading loading-spinner loading-md "></span>
                 ) : currentStep === 4 ? (
                   "Finalizar"
                 ) : (
