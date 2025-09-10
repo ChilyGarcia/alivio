@@ -32,7 +32,7 @@ export default function CardHero({
         <p className="text-xs sm:text-sm text-gray-700 overflow-hidden md:mb-4">
           {description}
         </p>
-        <button className="mt-3 sm:mt-4 bg-[#0C0CAA] text-white py-1.5 sm:py-2 px-6 sm:px-8 rounded-full text-xs sm:text-sm font-medium hover:bg-blue-800 transition-colors">
+        <button className="mt-3 sm:mt-4 bg-[#0C0CAA] text-white py-1.5 sm:py-2 px-6 sm:px-8 rounded-full text-xs sm:text-sm font-medium hover:bg-blue-800 transition-colors md:ml-2 md:self-start">
           {buttonText}
         </button>
       </div>
