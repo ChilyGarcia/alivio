@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React from "react";
 import { Heart, Facebook, Instagram, Youtube } from "lucide-react";
@@ -81,7 +81,7 @@ export default function Footer() {
         </div>
 
         {/* Copyright with lines */}
-        <div className="mt-8 pt-8 text-center relative">
+        <div className="mt-8 pt-8 text-center relative pb-8">
           <div className="absolute left-0 right-0 top-1/2 h-px bg-white/20"></div>
           <span className="relative bg-primary px-4">AENS TECH 2023</span>
         </div>
