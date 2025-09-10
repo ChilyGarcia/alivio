@@ -564,10 +564,9 @@ export default function Hero() {
         <div>
           <h1 className="text-4xl font-extrabold text-primary mx-7">Aliados</h1>
           <div className="flex justify-center items-center space-x-4 mt-10 mb-10">
-            <Image src="/images/IPS.png" alt="IPS" width={154} height={57} />
             <Image
-              src="/images/Uronorte.png"
-              alt="Uronorte"
+              src="/images/zynovapp.png"
+              alt="zynovapp"
               width={154}
               height={28}
             />
