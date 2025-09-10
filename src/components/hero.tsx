@@ -454,7 +454,6 @@ export default function Hero() {
           </div>
         </div>
       </motion.div>
-
       <section className="py-24 md:pt-60 md:pb-60 w-full relative bg-white flex justify-center">
         <div className="md:mt-12 bg-white border-2 border-primary rounded-[25px] shadow-lg absolute top-[-80px] left-1/2 transform -translate-x-1/2 w-[calc(100%-2rem)] max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl p-6 z-10">
           <motion.div
@@ -505,7 +504,6 @@ export default function Hero() {
           </motion.div>
         </div>
       </section>
-
       <motion.div
         initial="hidden"
         whileInView="visible"
@@ -552,7 +550,6 @@ export default function Hero() {
           </motion.div>
         </motion.div>
       </motion.div>
-
       <motion.section
         initial="hidden"
         whileInView="visible"
@@ -574,17 +571,8 @@ export default function Hero() {
               />
             </div>
           </div>
-          <div className="mt-32">
-            <div className="relative w-[327px] h-[393px] mx-auto">
-              <div className="absolute inset-0 w-[327px] h-[300px] bg-blue-200 rounded-2xl"></div>
 
-              <div className="absolute top-[-50px] right-0 w-[180px] h-[393px] bg-blue-200 rounded-2xl"></div>
-
-              <div className="absolute -top-10 z-10">
-                <Showgallery2></Showgallery2>
-              </div>
-            </div>
-          </div>
+          <Showgallery2 />
         </div>
       </motion.section>
     </div>
