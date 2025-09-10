@@ -17,7 +17,10 @@ export default function Footer() {
               <a href="#" className="text-white hover:text-gray-200">
                 <Facebook size={20} />
               </a>
-              <a href="#" className="text-white hover:text-gray-200">
+              <a
+                href="https://www.instagram.com/aliviapp.co/"
+                className="text-white hover:text-gray-200"
+              >
                 <Instagram size={20} />
               </a>
               <a href="#" className="text-white hover:text-gray-200">
