@@ -159,7 +159,12 @@ export default function LoginPage() {
       <div className="min-h-screen bg-white p-4 md:p-6 mt-12">
         <div className="mx-auto max-w-md space-y-6">
           <div className="space-y-2">
-            <h1 className="text-2xl font-bold text-primary">Iniciar sesión</h1>
+            <h1 className="text-4xl font-extrabold text-primary pb-6 pt-6">
+              Iniciar sesión
+            </h1>
+            <h1 className="text-2xl font-extrabold text-primary pb-6">
+              Bienvenido a aliviapp
+            </h1>
             <p className="text-lg text-primary">
               Introduce tus credenciales para acceder
             </p>
