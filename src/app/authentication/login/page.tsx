@@ -10,7 +10,7 @@ import { Toaster, toast } from "sonner";
 function Input({ className = "", ...props }) {
   return (
     <input
-      className={`flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+      className={`flex h-12 w-full rounded-x5 border-2 border-input bg-transparent px-4 py-2 text-base font-medium shadow-sm transition-colors placeholder:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
       {...props}
     />
   );
@@ -80,7 +80,10 @@ export default function LoginPage() {
     setErrors((prev) => ({ ...prev, [name]: error }));
   };
 
-  const validateForm = (email = loginData.email, password = loginData.password) => {
+  const validateForm = (
+    email = loginData.email,
+    password = loginData.password
+  ) => {
     // Direct validation without relying on the errors state
     const emailValid = email.trim() !== "";
     const passwordValid = password.trim() !== "";
@@ -92,7 +95,7 @@ export default function LoginPage() {
     const updatedData = { ...loginData, [name]: value };
     setLoginData(updatedData);
     validateField(name, value);
-    
+
     // Pass the current field values directly to validateForm
     validateForm(updatedData.email, updatedData.password);
   };
