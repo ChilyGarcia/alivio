@@ -12,7 +12,7 @@ function Checkbox({ id, className = "", ...props }) {
     <input
       type="checkbox"
       id={id}
-      className={`h-4 w-4 rounded border border-input ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+      className={`h-4 w-4 rounded border-2 border-input ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
       {...props}
     />
   );
@@ -21,7 +21,7 @@ function Checkbox({ id, className = "", ...props }) {
 function Input({ className = "", ...props }) {
   return (
     <input
-      className={`flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+      className={`flex h-12 w-full rounded-x5 border-2 border-input bg-transparent px-4 py-2 text-base font-medium shadow-sm transition-colors placeholder:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
       {...props}
     />
   );
@@ -201,14 +201,19 @@ export default function RegisterPage() {
       <div className="min-h-screen bg-white p-4 md:p-6 mt-12">
         <div className="mx-auto max-w-md space-y-6">
           <div className="space-y-2">
-            <h1 className="text-2xl font-bold text-primary">Registro</h1>
+            <h1 className="text-4xl font-bold text-primary pb-6">Registro</h1>
+            <h1 className="text-2xl font-bold text-primary pb-6">
+              Registrate y empieza a cuidar de ti
+            </h1>
             <p className="text-lg text-primary">
               Introduce tu información correspondiente
             </p>
           </div>
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div className="space-y-2">
-              <p className="text-sm font-medium text-primary">Tus datos</p>
+              <p className="text-sm font-bold text-primary">
+                Completa tus datos
+              </p>
               <Input
                 className="rounded-full border-primary px-4 py-2"
                 placeholder="Nombre"
