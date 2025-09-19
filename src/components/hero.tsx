@@ -560,14 +560,15 @@ export default function Hero() {
       >
         <div>
           <h1 className="text-4xl font-extrabold text-primary mx-7">Aliados</h1>
-          <div className="flex justify-center items-center my-16 md:justify-start md:pl-20 md:pb-10">
-            <div className="transform scale-150">
+          <div className="flex justify-center items-center my-12 md:my-16 md:justify-start md:pl-12 lg:pl-20 pb-8 md:pb-10 w-full">
+            <div className="w-full max-w-[280px] sm:max-w-[350px] md:max-w-[400px]">
               <Image
                 src="/images/zynovapp.png"
                 alt="zynovapp"
                 width={400}
                 height={72}
-                className="w-auto h-auto"
+                className="w-full h-auto object-contain"
+                priority
               />
             </div>
           </div>
