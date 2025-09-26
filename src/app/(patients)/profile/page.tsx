@@ -123,33 +123,49 @@ export default function ProfilePage() {
         </div>
       </header>
 
-      <div className="flex flex-col items-center mt-4 px-4">
-        <div className="h-24 w-24 rounded-full ring-4 ring-primary overflow-hidden hover:scale-105 transition">
-          {user.profile_image_url ? (
-            <img
-              src={user.profile_image_url}
-              alt="avatar"
-              className="h-full w-full object-cover"
-            />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center bg-gray-200 text-xl font-semibold text-gray-600">
-              {user.name.charAt(0) || "P"}
+      <div className="bg-white p-6 rounded-2xl mx-5 mt-6 ml-40 shadow-sm relative">
+        <div className="flex items-start">
+          <div className="h-32 w-32 rounded-full bg-white border-4 border-white overflow-hidden shadow-md flex-shrink-0">
+            {user.profile_image_url ? (
+              <img
+                src={user.profile_image_url}
+                alt={user.name || "Usuario"}
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center bg-primary/10 text-4xl font-semibold text-primary">
+                {user.name ? user.name.charAt(0).toUpperCase() : "U"}
+              </div>
+            )}
+          </div>
+          <div className="ml-4 flex-1">
+            <div className="flex justify-between items-start">
+              <div>
+                <h1 className="text-xl font-bold text-primary">
+                  {user.name || "Usuario"}
+                </h1>
+                <p className="text-sm text-primary/80">
+                  {user.email || "usuario@ejemplo.com"}
+                </p>
+                <p className="text-sm text-primary/70">
+                  Miembro desde{" "}
+                  {user.created_at
+                    ? new Date(user.created_at).toLocaleDateString("es-ES", {
+                        year: "numeric",
+                        month: "long",
+                      })
+                    : "hace un tiempo"}
+                </p>
+              </div>
+              <button
+                onClick={() => router.push(route)}
+                className="text-xs bg-white text-primary border border-primary hover:bg-primary/5 font-medium py-1.5 px-3 rounded-lg transition ml-2 whitespace-nowrap"
+              >
+                Editar perfil
+              </button>
             </div>
-          )}
+          </div>
         </div>
-        <h1 className="mt-3 text-xl font-semibold text-primary">
-          {user.name || "Dr. José Pérez"}
-        </h1>
-        <h2 className="mt-1 text-sm font-medium text-gray-500">
-          Cardiólogo especializado
-        </h2>
-        <p className="mt-4 text-center text-sm text-gray-600 max-w-[280px] mx-auto leading-relaxed">
-          Administra tu información personal y profesional en tu panel de
-          usuario.&nbsp;
-          <a href="#" className="font-medium text-primary hover:underline">
-            Más información
-          </a>
-        </p>
       </div>
 
       <div className="mt-6 px-4 pb-8 space-y-3 ">
