@@ -11,7 +11,7 @@ export default function Footer() {
           {/* Logo and Social Media */}
           <div>
             <div className="flex items-center">
-              <span className="text-2xl font-bold">Alivio</span>
+              <span className="text-2xl font-bold">Aliviapp</span>
             </div>
             <div className="mt-4 flex gap-4">
               <a href="#" className="text-white hover:text-gray-200">
