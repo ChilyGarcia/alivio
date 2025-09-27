@@ -123,9 +123,9 @@ export default function ProfilePage() {
         </div>
       </header>
 
-      <div className="bg-white p-6 rounded-2xl mx-5 mt-6 ml-40 shadow-sm relative">
-        <div className="flex items-start">
-          <div className="h-32 w-32 rounded-full bg-white border-4 border-white overflow-hidden shadow-md flex-shrink-0">
+      <div className="bg-white p-4 sm:p-6 rounded-2xl mx-2 sm:mx-5 mt-6 sm:ml-10 lg:ml-40 shadow-sm relative">
+        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
+          <div className="h-24 w-24 sm:h-32 sm:w-32 rounded-full bg-white border-4 border-white overflow-hidden shadow-md flex-shrink-0">
             {user.profile_image_url ? (
               <img
                 src={user.profile_image_url}
@@ -133,14 +133,14 @@ export default function ProfilePage() {
                 className="h-full w-full object-cover"
               />
             ) : (
-              <div className="flex h-full w-full items-center justify-center bg-primary/10 text-4xl font-semibold text-primary">
+              <div className="flex h-full w-full items-center justify-center bg-primary/10 text-3xl sm:text-4xl font-semibold text-primary">
                 {user.name ? user.name.charAt(0).toUpperCase() : "U"}
               </div>
             )}
           </div>
-          <div className="ml-4 flex-1">
-            <div className="flex justify-between items-start">
-              <div>
+          <div className="w-full sm:ml-4 flex-1 text-center sm:text-left">
+            <div className="flex flex-col sm:flex-row justify-between items-center sm:items-start gap-2">
+              <div className="w-full">
                 <h1 className="text-xl font-bold text-primary">
                   {user.name || "Usuario"}
                 </h1>
