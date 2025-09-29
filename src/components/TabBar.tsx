@@ -145,10 +145,14 @@ const TabBar = ({ onToggleNavBar }) => {
           />
           {token ? (
             <TabItem
-              href="/profile"
+              href={user?.role === 'professional' ? '/professionals/profile' : '/profile'}
               icon={<User size={24} />}
               label={getShortName(user.name)}
-              onClick={() => handleTabItemAuthentication("/")}
+              onClick={(e) => {
+                e.preventDefault();
+                const profilePath = user?.role === 'professional' ? '/professionals/profile' : '/profile';
+                handleTabItemAuthentication(profilePath);
+              }}
             />
           ) : (
             <TabItem
@@ -241,7 +245,7 @@ const TabBar = ({ onToggleNavBar }) => {
               {token ? (
                 <>
                   <NavItem
-                    href="/profile"
+                    href={user?.role === 'professional' ? '/professionals/profile' : '/profile'}
                     icon={<User size={20} />}
                     label={user?.name ? getShortName(user.name) : "Perfil"}
                     active={false}
