@@ -145,12 +145,19 @@ const TabBar = ({ onToggleNavBar }) => {
           />
           {token ? (
             <TabItem
-              href={user?.role === 'professional' ? '/professionals/profile' : '/profile'}
+              href={
+                user?.role === "professional"
+                  ? "/professionals/profile"
+                  : "/profile"
+              }
               icon={<User size={24} />}
               label={getShortName(user.name)}
               onClick={(e) => {
                 e.preventDefault();
-                const profilePath = user?.role === 'professional' ? '/professionals/profile' : '/profile';
+                const profilePath =
+                  user?.role === "professional"
+                    ? "/professionals/profile"
+                    : "/profile";
                 handleTabItemAuthentication(profilePath);
               }}
             />
@@ -159,7 +166,9 @@ const TabBar = ({ onToggleNavBar }) => {
               href="/authentication/login"
               icon={<User size={24} />}
               label="Ingresar"
-              onClick={() => handleTabItemAuthentication("/authentication/login")}
+              onClick={() =>
+                handleTabItemAuthentication("/authentication/login")
+              }
             />
           )}
           <button
@@ -180,7 +189,7 @@ const TabBar = ({ onToggleNavBar }) => {
 
           <div className="fixed top-0 right-0 w-64 h-full bg-white shadow-lg p-6 flex flex-col z-50 border-l border-gray-200">
             <div className="flex justify-between items-center mb-6">
-              <img src="/images/alivio-image.png" className="w-32" />
+              <img src="/images/LogoAlivio.png" className="w-32" />
               <button className="text-primary" onClick={toggleMenu}>
                 <X size={28} />
               </button>
@@ -245,7 +254,11 @@ const TabBar = ({ onToggleNavBar }) => {
               {token ? (
                 <>
                   <NavItem
-                    href={user?.role === 'professional' ? '/professionals/profile' : '/profile'}
+                    href={
+                      user?.role === "professional"
+                        ? "/professionals/profile"
+                        : "/profile"
+                    }
                     icon={<User size={20} />}
                     label={user?.name ? getShortName(user.name) : "Perfil"}
                     active={false}
