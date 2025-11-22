@@ -70,7 +70,7 @@ export default function ChatPage() {
         {/* Header */}
         <header className="border-b p-4">
           <div className="flex items-center gap-3">
-            <button className="text-blue-800" onClick={() => router.push("/")}>
+            <button className="text-blue-800" onClick={() => router.back()}>
               <svg
                 width="24"
                 height="24"

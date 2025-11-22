@@ -74,13 +74,9 @@ export default function ProfilePage() {
 
   const menuItems = [
     { icon: User, label: "Datos de Perfil", href: route },
-    { icon: ServicesIcon, label: "Servicios", href: "/services" },
     { icon: Calendar, label: "Citas", href: "/my-appointments" },
-    { icon: MessageSquare, label: "Chats", href: "/chats" },
-    { icon: Building, label: "Empresas", href: "/companies" },
-    { icon: UserCheck, label: "Sé un usuario", href: "/become-user" },
-    { icon: BarChart2, label: "Tus estadísticas", href: "/statistics" },
-    { icon: Calendar, label: "Calendario", href: "/calendar" },
+    { icon: MessageSquare, label: "Chats", href: "/my-chats" },
+    { icon: BarChart2, label: "Tu Historial", href: "/statistics" },
   ];
 
   const handleLogout = () => {
