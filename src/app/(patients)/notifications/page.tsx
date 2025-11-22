@@ -89,7 +89,7 @@ export default function NotificationsPage() {
     <div className="min-h-screen bg-white text-gray-900">
       <div className="bg-[#0000CC] text-white p-4 flex items-center justify-between">
         <button
-          onClick={() => router.push("/")}
+          onClick={() => router.back()}
           className="text-white hover:text-white/80 transition-transform transform hover:scale-105"
         >
           <ArrowLeft className="h-6 w-6" />
