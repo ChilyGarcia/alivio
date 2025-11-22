@@ -9,10 +9,10 @@ const WelcomeModal = () => {
 
   useEffect(() => {
     // Verificar si ya se mostró el modal
-    const hasSeenModal = localStorage.getItem("hasSeenWelcomeModal123");
+    const hasSeenModal = localStorage.getItem("hasSeenWelcomeModal");
     if (!hasSeenModal) {
       setIsOpen(true);
-      localStorage.setItem("hasSeenWelcomeModal12", "true");
+      localStorage.setItem("hasSeenWelcomeModal", "true");
     }
   }, []);
 
