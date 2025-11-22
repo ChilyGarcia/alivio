@@ -1,66 +1,121 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import NavBar from "@/components/navbar";
 import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
+
+interface Chat {
+  id: number;
+  name: string;
+  message: string;
+  time: string;
+  avatar: string;
+  writing?: boolean;
+  hasNotification?: boolean;
+  receiver_id: number;
+  status?: string;
+}
 
 export default function ChatPage() {
   const [searchText, setSearchText] = useState("");
+  const [availableChats, setAvailableChats] = useState<Chat[]>([]);
+  const [closedChats, setClosedChats] = useState<Chat[]>([]);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  const availableChats = [
-    {
-      id: 1,
-      name: "Dr José Pérez",
-      message: "Nuestra cita es para el día...",
-      time: "10:45 PM",
-      avatar: "/images/doc1.png",
-      writing: false,
-    },
-    {
-      id: 2,
-      name: "Dr José Pérez",
-      message: "Escribiendo...",
-      time: "10:45 PM",
-      avatar: "/images/doc1.png",
-      writing: true,
-    },
-  ];
+  useEffect(() => {
+    fetchChats();
+  }, []);
 
-  const closedChats = [
-    {
-      id: 3,
-      name: "Dr José Pérez",
-      message: "Nuestra*",
-      time: "10:45 PM",
-      avatar: "/images/doc1.png",
-      hasNotification: true,
-    },
-    {
-      id: 4,
-      name: "Dr José Pérez",
-      message: "Nuestra cita es para el día...",
-      time: "10:45 PM",
-      avatar: "/images/doc1.png",
-    },
-    {
-      id: 5,
-      name: "Dr José Pérez",
-      message: "Escribiendo...",
-      time: "10:45 PM",
-      avatar: "/images/doc1.png",
-      writing: true,
-    },
-    {
-      id: 6,
-      name: "Dr José Pérez",
-      message: "Nuestra*",
-      time: "10:45 PM",
-      avatar: "/images/doc1.png",
-      hasNotification: true,
-    },
-  ];
+  const fetchChats = async () => {
+    try {
+      const token = Cookies.get("token");
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/conversations`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Error al obtener los chats");
+      }
+
+      const data = await response.json();
+
+      // El backend debería retornar las conversaciones con el último mensaje
+      // Mapear los datos del backend al formato esperado
+      const mappedChats = data.map((conversation: any) => ({
+        id: conversation.other_user.id,
+        name: conversation.other_user.name,
+        message: conversation.last_message.message || "Sin mensajes",
+        time: formatTime(conversation.last_message.created_at),
+        avatar: conversation.other_user.profile_image_url || "/images/doc1.png",
+        writing: false,
+        hasNotification: conversation.unread_count > 0,
+        receiver_id: conversation.other_user.id,
+        status: conversation.status || "active",
+      }));
+
+      // Separar chats activos y cerrados
+      const active = mappedChats.filter(
+        (chat: Chat) => chat.status === "active" || !chat.status
+      );
+      const closed = mappedChats.filter(
+        (chat: Chat) => chat.status === "closed"
+      );
+
+      setAvailableChats(active);
+      setClosedChats(closed);
+    } catch (error) {
+      console.error("Error fetching chats:", error);
+      // En caso de error, mantener arrays vacíos
+      setAvailableChats([]);
+      setClosedChats([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatTime = (dateString: string) => {
+    if (!dateString) return "";
+
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInHours = Math.floor(
+      (now.getTime() - date.getTime()) / (1000 * 60 * 60)
+    );
+
+    if (diffInHours < 24) {
+      return date.toLocaleTimeString("es-ES", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } else {
+      return date.toLocaleDateString("es-ES", {
+        day: "2-digit",
+        month: "2-digit",
+      });
+    }
+  };
+
+  const handleChatClick = (receiverId: number) => {
+    router.push(`/chat?receiver_id=${receiverId}`);
+  };
+
+  const filteredAvailableChats = availableChats.filter((chat) =>
+    chat.name.toLowerCase().includes(searchText.toLowerCase())
+  );
+
+  const filteredClosedChats = closedChats.filter((chat) =>
+    chat.name.toLowerCase().includes(searchText.toLowerCase())
+  );
 
   return (
     <>
@@ -122,82 +177,108 @@ export default function ChatPage() {
         </header>
 
         {/* Chat Lists */}
-        <div className="p-4">
-          {/* Available Chats */}
-          <div className="mb-6">
-            <h2 className="mb-4 text-lg font-bold text-blue-800">
-              Chats Disponibles
-            </h2>
-            <div className="space-y-4">
-              {availableChats.map((chat) => (
-                <div
-                  key={chat.id}
-                  className="flex items-center gap-3 rounded-lg p-2 hover:bg-gray-50"
-                >
-                  <div className="relative h-12 w-12 flex-shrink-0">
-                    <Image
-                      src={chat.avatar || "/placeholder.svg"}
-                      alt={chat.name}
-                      fill
-                      className="rounded-full object-cover"
-                    />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-gray-900">{chat.name}</h3>
-                    <p
-                      className={`truncate text-sm ${
-                        chat.writing ? "text-blue-800" : "text-gray-500"
-                      }`}
-                    >
-                      {chat.message}
-                    </p>
-                  </div>
-                  <div className="text-xs text-gray-500">{chat.time}</div>
-                </div>
-              ))}
-            </div>
+        {loading ? (
+          <div className="flex justify-center items-center py-20">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
           </div>
+        ) : (
+          <div className="p-4">
+            {/* Available Chats */}
+            <div className="mb-6">
+              <h2 className="mb-4 text-lg font-bold text-blue-800">
+                Chats Disponibles
+              </h2>
+              {filteredAvailableChats.length > 0 ? (
+                <div className="space-y-4">
+                  {filteredAvailableChats.map((chat) => (
+                    <div
+                      key={chat.id}
+                      className="flex items-center gap-3 rounded-lg p-2 hover:bg-gray-50 cursor-pointer"
+                      onClick={() => handleChatClick(chat.receiver_id)}
+                    >
+                      <div className="relative h-12 w-12 flex-shrink-0">
+                        <Image
+                          src={chat.avatar || "/placeholder.svg"}
+                          alt={chat.name}
+                          fill
+                          className="rounded-full object-cover"
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-gray-900">
+                          {chat.name}
+                        </h3>
+                        <p
+                          className={`truncate text-sm ${
+                            chat.writing ? "text-blue-800" : "text-gray-500"
+                          }`}
+                        >
+                          {chat.message}
+                        </p>
+                      </div>
+                      <div className="text-xs text-gray-500">{chat.time}</div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-500 text-center py-8">
+                  No hay chats disponibles
+                </p>
+              )}
+            </div>
 
-          {/* Closed Chats */}
-          <div>
-            <h2 className="mb-4 text-lg font-bold text-blue-800">
-              Chats Cerrados
-            </h2>
-            <div className="space-y-4">
-              {closedChats.map((chat) => (
-                <div
-                  key={chat.id}
-                  className="flex items-center gap-3 rounded-lg p-2 hover:bg-gray-50"
-                >
-                  <div className="relative h-12 w-12 flex-shrink-0">
-                    <Image
-                      src={chat.avatar || "/placeholder.svg"}
-                      alt={chat.name}
-                      fill
-                      className="rounded-full object-cover"
-                    />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-gray-900">{chat.name}</h3>
-                    <p
-                      className={`truncate text-sm ${
-                        chat.writing ? "text-blue-800" : "text-gray-500"
-                      }`}
+            {/* Closed Chats */}
+            <div>
+              <h2 className="mb-4 text-lg font-bold text-blue-800">
+                Chats Cerrados
+              </h2>
+              {filteredClosedChats.length > 0 ? (
+                <div className="space-y-4">
+                  {filteredClosedChats.map((chat) => (
+                    <div
+                      key={chat.id}
+                      className="flex items-center gap-3 rounded-lg p-2 hover:bg-gray-50 cursor-pointer"
+                      onClick={() => handleChatClick(chat.receiver_id)}
                     >
-                      {chat.message}
-                    </p>
-                  </div>
-                  <div className="flex flex-col items-end gap-1">
-                    <span className="text-xs text-gray-500">{chat.time}</span>
-                    {chat.hasNotification && (
-                      <div className="h-2 w-2 rounded-full bg-blue-800"></div>
-                    )}
-                  </div>
+                      <div className="relative h-12 w-12 flex-shrink-0">
+                        <Image
+                          src={chat.avatar || "/placeholder.svg"}
+                          alt={chat.name}
+                          fill
+                          className="rounded-full object-cover"
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-gray-900">
+                          {chat.name}
+                        </h3>
+                        <p
+                          className={`truncate text-sm ${
+                            chat.writing ? "text-blue-800" : "text-gray-500"
+                          }`}
+                        >
+                          {chat.message}
+                        </p>
+                      </div>
+                      <div className="flex flex-col items-end gap-1">
+                        <span className="text-xs text-gray-500">
+                          {chat.time}
+                        </span>
+                        {chat.hasNotification && (
+                          <div className="h-2 w-2 rounded-full bg-blue-800"></div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              ) : (
+                <p className="text-gray-500 text-center py-8">
+                  No hay chats cerrados
+                </p>
+              )}
             </div>
           </div>
-        </div>
+        )}
 
         <style jsx global>{`
           @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
