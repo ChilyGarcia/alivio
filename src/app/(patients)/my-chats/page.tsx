@@ -3,9 +3,11 @@
 import { useState } from "react";
 import Image from "next/image";
 import NavBar from "@/components/navbar";
+import { useRouter } from "next/navigation";
 
 export default function ChatPage() {
   const [searchText, setSearchText] = useState("");
+  const router = useRouter();
 
   const availableChats = [
     {
@@ -64,14 +66,11 @@ export default function ChatPage() {
     <>
       <NavBar></NavBar>
 
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white mt-12">
         {/* Header */}
         <header className="border-b p-4">
           <div className="flex items-center gap-3">
-            <button
-              className="text-blue-800"
-              onClick={() => console.log("back clicked")}
-            >
+            <button className="text-blue-800" onClick={() => router.push("/")}>
               <svg
                 width="24"
                 height="24"
