@@ -79,7 +79,7 @@ const WelcomeModal = () => {
                 onClick={() => setIsOpen(false)}
                 className="border-2 border-primary text-primary py-3 px-6 rounded-full text-center font-medium hover:bg-gray-50 transition-colors"
               >
-                Inicia Sesión
+                Inicia Ahora
               </Link>
             </div>
           </div>
