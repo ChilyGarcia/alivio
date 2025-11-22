@@ -353,7 +353,7 @@ const TabBar = ({ onToggleNavBar }) => {
                 label="contacto"
                 active={false}
               />
-              {user.role === "professional" ? (
+              {/* {user.role === "professional" ? (
                 <>
                   <NavItem
                     href="/professionals/professional-configuration"
@@ -364,7 +364,7 @@ const TabBar = ({ onToggleNavBar }) => {
                 </>
               ) : (
                 <></>
-              )}
+              )} */}
             </nav>
             <div className="mt-auto border-t pt-4">
               {token ? (
