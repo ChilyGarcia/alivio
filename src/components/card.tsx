@@ -14,23 +14,15 @@ export default function CardHero({
         reverse ? "flex-row-reverse" : "flex-row"
       } items-center bg-white shadow-xl border border-gray-100 rounded-xl overflow-hidden w-[350px] sm:w-[380px] h-[230px] md:w-[300px] md:h-[400px] hover:shadow-2xl transition-all duration-300 relative`}
     >
-      <div
-        className="md:hidden flex-shrink-0 w-1/2 h-full relative"
-        style={{ zIndex: 10 }}
-      >
-        <div
-          className="absolute inset-0 w-[120%]"
-          style={{ left: reverse ? "-10%" : "0" }}
-        >
-          <Image
-            src={imageSrc}
-            alt={title}
-            fill
-            className={`${
-              reverse ? "object-left" : "object-right"
-            } object-cover`}
-          />
-        </div>
+      <div className="md:hidden flex-shrink-0 w-1/2 h-full relative">
+        <Image
+          src={imageSrc}
+          alt={title}
+          fill
+          className={`${
+            reverse ? "rounded-r-lg" : "rounded-l-lg"
+          } object-cover`}
+        />
       </div>
 
       <div className="flex-1 h-full flex flex-col justify-start items-center text-center p-3 sm:p-4 md:px-6 md:pt-6 md:pb-2">
