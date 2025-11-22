@@ -240,55 +240,55 @@ const TabBar = ({ onToggleNavBar }) => {
                     />
                   </>
                 )}
-                <NavItem
-                  href="/services"
-                  icon={
-                    <div className="w-5 h-5 relative">
-                      <Image
-                        src="/images/images-tabbar/planes.png"
-                        alt="Planes"
-                        width={20}
-                        height={20}
-                        className="object-contain"
-                      />
-                    </div>
-                  }
-                  label="Planes"
-                  active={false}
-                />
-                <NavItem
-                  href="/services"
-                  icon={
-                    <div className="w-5 h-5 relative">
-                      <Image
-                        src="/images/images-tabbar/servisio-especiales.png"
-                        alt="Servicios Especiales"
-                        width={20}
-                        height={20}
-                        className="object-contain"
-                      />
-                    </div>
-                  }
-                  label="Servicios Especiales"
-                  active={false}
-                />
+                {/* <NavItem
+  href="/services"
+  icon={
+    <div className="w-5 h-5 relative">
+      <Image
+        src="/images/images-tabbar/planes.png"
+        alt="Planes"
+        width={20}
+        height={20}
+        className="object-contain"
+      />
+    </div>
+  }
+  label="Planes"
+  active={false}
+/>
+<NavItem
+  href="/services"
+  icon={
+    <div className="w-5 h-5 relative">
+      <Image
+        src="/images/images-tabbar/servisio-especiales.png"
+        alt="Servicios Especiales"
+        width={20}
+        height={20}
+        className="object-contain"
+      />
+    </div>
+  }
+  label="Servicios Especiales"
+  active={false}
+/> */}
               </DropdownMenu>
-              <NavItem
-                href="/farmacias"
-                icon={
-                  <div className="w-5 h-5 relative">
-                    <Image
-                      src="/images/images-tabbar/farmacia.png"
-                      alt="Farmacias"
-                      width={20}
-                      height={20}
-                      className="object-contain"
-                    />
-                  </div>
-                }
-                label="Farmacias"
-                active={false}
-              />
+              {/* <NavItem
+  href="/farmacias"
+  icon={
+    <div className="w-5 h-5 relative">
+      <Image
+        src="/images/images-tabbar/farmacia.png"
+        alt="Farmacias"
+        width={20}
+        height={20}
+        className="object-contain"
+      />
+    </div>
+  }
+  label="Farmacias"
+  active={false}
+/> */}
               <NavItem
                 href="/my-chats"
                 icon={
