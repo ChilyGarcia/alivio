@@ -31,7 +31,7 @@ export default function Footer() {
 
           {/* Compañía */}
           <div>
-            <h3 className="text-lg font-bold mb-4">Compañía</h3>
+            <h3 className="text-lg font-bold mb-4">Aliviapp</h3>
             <ul className="space-y-2">
               <li>
                 <a href="#" className="text-white hover:text-gray-200">
@@ -86,7 +86,7 @@ export default function Footer() {
         {/* Copyright with lines */}
         <div className="mt-8 pt-8 text-center relative pb-8">
           <div className="absolute left-0 right-0 top-1/2 h-px bg-white/20"></div>
-          <span className="relative bg-primary px-4">AENS TECH 2023</span>
+          <span className="relative bg-primary px-4">AliviApp ©2026</span>
         </div>
       </div>
     </footer>

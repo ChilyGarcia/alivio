@@ -4,6 +4,12 @@ import { montserrat } from "../../public/fonts/font";
 import ClientWrapper from "@/components/client-wrapper";
 import Footer from "@/components/footer";
 import { Toaster } from "sonner";
+import dynamic from "next/dynamic";
+
+// Importación dinámica del modal para evitar problemas de hidratación
+const WelcomeModal = dynamic(() => import("@/components/modals/WelcomeModal"), {
+  ssr: false,
+});
 
 export const metadata: Metadata = {
   title: "CSalud",
@@ -25,6 +31,7 @@ export default function RootLayout({
       <body className={montserrat.className}>
         <ClientWrapper>
           <main className="antialiased">
+            <WelcomeModal />
             {children}
           </main>
           <Footer />
