@@ -11,9 +11,12 @@ import {
   Menu,
   X,
   LogOut,
-  Settings,
+  ChevronDown,
+  ChevronUp,
+  UserCircle,
   Stethoscope,
 } from "lucide-react";
+import Image from "next/image";
 import Cookies from "js-cookie";
 import { authenticationService } from "@/services/auth.service";
 import { User as UserType } from "@/interfaces/user.interface";
@@ -194,7 +197,7 @@ const TabBar = ({ onToggleNavBar }) => {
                 <X size={28} />
               </button>
             </div>
-            <nav className="space-y-4">
+            <nav className="space-y-2">
               <NavItem
                 href="/"
                 icon={<Home size={20} />}
@@ -206,7 +209,17 @@ const TabBar = ({ onToggleNavBar }) => {
                   <>
                     <NavItem
                       href="/my-appointments"
-                      icon={<Calendar size={20} />}
+                      icon={
+                        <div className="w-5 h-5 relative">
+                          <Image
+                            src="/images/images-tabbar/citas.png"
+                            alt="Citas"
+                            width={20}
+                            height={20}
+                            className="object-contain"
+                          />
+                        </div>
+                      }
                       label="Citas"
                       active={false}
                     />
@@ -214,29 +227,117 @@ const TabBar = ({ onToggleNavBar }) => {
                 )}
                 <NavItem
                   href="/services"
-                  icon={<CreditCard size={20} />}
+                  icon={
+                    <div className="w-5 h-5 relative">
+                      <Image
+                        src="/images/images-tabbar/planes.png"
+                        alt="Planes"
+                        width={20}
+                        height={20}
+                        className="object-contain"
+                      />
+                    </div>
+                  }
                   label="Planes"
                   active={false}
                 />
                 <NavItem
                   href="/services"
-                  icon={<BriefcaseMedical size={20} />}
+                  icon={
+                    <div className="w-5 h-5 relative">
+                      <Image
+                        src="/images/images-tabbar/servisio-especiales.png"
+                        alt="Servicios Especiales"
+                        width={20}
+                        height={20}
+                        className="object-contain"
+                      />
+                    </div>
+                  }
                   label="Servicios Especiales"
                   active={false}
                 />
               </DropdownMenu>
-              {/* <NavItem
+              <NavItem
                 href="/farmacias"
-                icon={<Store size={20} />}
+                icon={
+                  <div className="w-5 h-5 relative">
+                    <Image
+                      src="/images/images-tabbar/farmacia.png"
+                      alt="Farmacias"
+                      width={20}
+                      height={20}
+                      className="object-contain"
+                    />
+                  </div>
+                }
                 label="Farmacias"
                 active={false}
-              /> */}
-              {/* <NavItem
+              />
+              <NavItem
                 href="/my-chats"
-                icon={<MessageCircle size={20} />}
-                label="Chats disponibles"
+                icon={
+                  <div className="w-5 h-5 relative">
+                    <Image
+                      src="/images/images-tabbar/chats.png"
+                      alt="Chats"
+                      width={20}
+                      height={20}
+                      className="object-contain"
+                    />
+                  </div>
+                }
+                label="Chats"
                 active={false}
-              /> */}
+              />
+              <NavItem
+                href="/notifications"
+                icon={
+                  <div className="w-5 h-5 relative">
+                    <Image
+                      src="/images/images-tabbar/notificaciones.png"
+                      alt="Notificaciones"
+                      width={20}
+                      height={20}
+                      className="object-contain"
+                    />
+                  </div>
+                }
+                label="notificaciones"
+                active={false}
+              />
+              <NavItem
+                href="/we"
+                icon={
+                  <div className="w-5 h-5 relative">
+                    <Image
+                      src="/images/images-tabbar/nosotros.png"
+                      alt="Nosotros"
+                      width={20}
+                      height={20}
+                      className="object-contain"
+                    />
+                  </div>
+                }
+                label="nosotros"
+                active={false}
+              />
+              <NavItem
+                href="/contact"
+                icon={
+                  <div className="w-5 h-5 relative">
+                    <Image
+                      src="/images/images-tabbar/contacto.png"
+                      alt="Contacto"
+                      width={20}
+                      height={20}
+                      className="object-contain"
+                    />
+                  </div>
+                }
+                label="contacto"
+                active={false}
+              />
               {user.role === "professional" ? (
                 <>
                   <NavItem
@@ -265,7 +366,17 @@ const TabBar = ({ onToggleNavBar }) => {
                   />
                   <NavItem
                     href="/configuracion"
-                    icon={<Settings size={20} />}
+                    icon={
+                      <div className="w-5 h-5 relative">
+                        <Image
+                          src="/images/images-tabbar/settings.png"
+                          alt="Configuración"
+                          width={20}
+                          height={20}
+                          className="object-contain"
+                        />
+                      </div>
+                    }
                     label="Configuración"
                     active={false}
                   />
