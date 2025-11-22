@@ -105,6 +105,7 @@ export default function RegisterPage() {
   });
   const [isValidated, setIsValidated] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [termsAccepted, setTermsAccepted] = React.useState(false);
 
   const router = useRouter();
 
@@ -135,7 +136,8 @@ export default function RegisterPage() {
       registerData.email.trim() &&
       registerData.password.trim() &&
       registerData.password === registerData.password_confirmation &&
-      Object.values(errors).every((error) => !error);
+      Object.values(errors).every((error) => !error) &&
+      termsAccepted;
 
     setIsValidated(!!isValid);
   };
@@ -150,6 +152,22 @@ export default function RegisterPage() {
     const { name, value } = e.target;
     setRegisterData((prev) => ({ ...prev, [name]: value }));
     validateForm();
+  };
+
+  const handleTermsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const isChecked = e.target.checked;
+    setTermsAccepted(isChecked);
+
+    // Validar inmediatamente con el nuevo valor
+    const isValid =
+      registerData.name.trim() &&
+      registerData.email.trim() &&
+      registerData.password.trim() &&
+      registerData.password === registerData.password_confirmation &&
+      Object.values(errors).every((error) => !error) &&
+      isChecked;
+
+    setIsValidated(!!isValid);
   };
 
   const fetchRegister = async () => {
@@ -323,6 +341,8 @@ export default function RegisterPage() {
               <Checkbox
                 id="terms"
                 className="border-primary data-[state=checked]:bg-primary"
+                checked={termsAccepted}
+                onChange={handleTermsChange}
               />
               <label
                 htmlFor="terms"
@@ -333,11 +353,10 @@ export default function RegisterPage() {
             </div>
             <button
               type="submit"
-              className={`inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 w-full rounded-full px-4 py-2 ${
-                isValidated
-                  ? "bg-primary text-white hover:bg-primary/90"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
-              }`}
+              className={`inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 w-full rounded-full px-4 py-2 ${isValidated
+                ? "bg-primary text-white hover:bg-primary/90"
+                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
               disabled={!isValidated}
             >
               {isLoading ? (
