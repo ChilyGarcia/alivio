@@ -204,7 +204,22 @@ const TabBar = ({ onToggleNavBar }) => {
                 label="Inicio"
                 active
               />
-              <DropdownMenu label="Pilares">
+              <DropdownMenu
+                label={
+                  <div className="flex items-center">
+                    <div className="w-5 h-5 relative mr-2">
+                      <Image
+                        src="/images/images-tabbar/3pilares.png"
+                        alt="Pilares"
+                        width={20}
+                        height={20}
+                        className="object-contain"
+                      />
+                    </div>
+                    <span>Pilares</span>
+                  </div>
+                }
+              >
                 {token && (
                   <>
                     <NavItem
