@@ -103,7 +103,7 @@ export default function ProfilePage() {
         <h2 className="text-lg font-semibold text-primary">Perfil</h2>
         <div className="flex items-center gap-3">
           <button
-            onClick={() => router.push("/chats")}
+            onClick={() => router.push("/my-chats")}
             className="p-2 rounded-full hover:bg-gray-50 transition"
           >
             <MessageSquare className="h-6 w-6 text-primary" />
