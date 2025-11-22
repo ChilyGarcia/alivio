@@ -9,13 +9,15 @@ import { User as UserInterface } from "@/interfaces/user.interface";
 import ProfileEditForm from "@/components/ProfessionalComponents/ProfileEditForm";
 import ServicesSection from "@/components/ProfessionalComponents/ServicesSection";
 import AppointmentsSection from "@/components/ProfessionalComponents/AppointmentsSection";
+import AvailabilitySection from "@/components/ProfessionalComponents/AvailabilitySection";
+import { Toaster } from "sonner";
 
 export default function ProfileTabsPage() {
   const [user, setUser] = useState<UserInterface | null>(null);
   const [unread, setUnread] = useState(false);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<
-    "Datos de Perfil" | "Servicios" | "Citas"
+    "Datos de Perfil" | "Servicios" | "Citas" | "Disponibilidad"
   >("Datos de Perfil");
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const router = useRouter();
@@ -77,6 +79,7 @@ export default function ProfileTabsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Toaster />
       <header className="flex items-center justify-between p-4 bg-white shadow-sm">
         <button
           onClick={() => router.back()}
@@ -150,19 +153,21 @@ export default function ProfileTabsPage() {
 
       <div className="mt-6 px-4">
         <nav className="flex space-x-6 border-b border-gray-200">
-          {["Datos de Perfil", "Servicios", "Citas"].map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab as any)}
-              className={`pb-2 text-sm font-medium ${
-                activeTab === tab
-                  ? "text-primary border-b-2 border-primary"
-                  : "text-gray-500"
-              }`}
-            >
-              {tab}
-            </button>
-          ))}
+          {["Datos de Perfil", "Servicios", "Citas", "Disponibilidad"].map(
+            (tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab as any)}
+                className={`pb-2 text-sm font-medium ${
+                  activeTab === tab
+                    ? "text-primary border-b-2 border-primary"
+                    : "text-gray-500"
+                }`}
+              >
+                {tab}
+              </button>
+            )
+          )}
         </nav>
         <p className="mt-2 text-xs text-gray-500">
           {activeTab === "Datos de Perfil" &&
@@ -180,6 +185,7 @@ export default function ProfileTabsPage() {
         )}
         {activeTab === "Servicios" && <ServicesSection />}
         {activeTab === "Citas" && <AppointmentsSection />}
+        {activeTab === "Disponibilidad" && <AvailabilitySection />}
       </div>
     </div>
   );
