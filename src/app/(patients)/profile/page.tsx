@@ -79,9 +79,16 @@ export default function ProfilePage() {
     { icon: BarChart2, label: "Tu Historial", href: "/statistics" },
   ];
 
-  const handleLogout = () => {
-    Cookies.remove("token");
-    router.push("/login");
+  const handleLogout = async () => {
+    try {
+      const response = await authenticationService.logOut();
+      if (response) {
+        Cookies.remove("token");
+        router.push("/");
+      }
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
   };
 
   return (
