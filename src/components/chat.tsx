@@ -108,18 +108,42 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
   const handleSendMessage = () => {
     if (messageInput.trim() === "") return;
 
+    // Crear el mensaje optimista
+    const newMessage: Message = {
+      sender_id: sender_id,
+      receiver_id: receiver_id,
+      message: messageInput,
+      created_at: new Date().toISOString(),
+    };
+
+    // Agregar el mensaje inmediatamente a la lista local
+    setMessages((prevMessages) => [...prevMessages, newMessage]);
+
+    // Limpiar el input inmediatamente
+    const messageToSend = messageInput;
+    setMessageInput("");
+
+    // Enviar al servidor
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/message`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ message: messageInput, receiver_id: receiver_id }),
-    }).then((response) => {
-      if (response.ok) {
-        setMessageInput("");
-      }
-    });
+      body: JSON.stringify({
+        message: messageToSend,
+        receiver_id: receiver_id,
+      }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          // Si falla, podrías remover el mensaje optimista o mostrar un error
+          console.error("Error al enviar mensaje");
+        }
+      })
+      .catch((error) => {
+        console.error("Error al enviar mensaje:", error);
+      });
   };
 
   const handleRouterMyAppointments = () => {
