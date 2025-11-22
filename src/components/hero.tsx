@@ -537,6 +537,7 @@ export default function Hero() {
               buttonText="Ver Planes"
               imageSrc="/images/card2.png"
               reverse={false}
+              buttonClassName="mt-4"
             />
           </motion.div>
           <motion.div variants={fadeInUp}>

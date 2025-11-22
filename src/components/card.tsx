@@ -7,6 +7,7 @@ export default function CardHero({
   buttonText,
   imageSrc,
   reverse = false,
+  buttonClassName = "",
 }: CardProps) {
   return (
     <div
@@ -37,9 +38,14 @@ export default function CardHero({
         <h3 className="text-lg font-extrabold text-[#0C0CAA] mb-2 md:mb-3">
           {title}
         </h3>
-        <p className="text-xs sm:text-sm text-gray-700 overflow-hidden md:pb-1">
+        <p className="text-xs sm:text-sm text-gray-700 overflow-hidden md:pb-1 mb-3">
           {description}
         </p>
+        <button
+          className={`bg-[#0C0CAA] text-white font-semibold py-2 px-6 rounded-full hover:bg-[#0909BB] transition-colors duration-300 text-sm ${buttonClassName}`}
+        >
+          {buttonText}
+        </button>
       </div>
 
       <div className="hidden md:flex absolute bottom-0 right-0 w-3/4 h-3/4 p-0 overflow-visible">
