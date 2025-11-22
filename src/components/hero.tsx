@@ -165,17 +165,6 @@ export default function Hero() {
           <motion.button
             variants={fadeInUp}
             className={`flex-1 px-4 py-2 ${
-              responses.motivo === "Urgencia"
-                ? "bg-primary text-white hover:bg-primary md:py-3 md:rounded-[25px] md:mb-8"
-                : "bg-white text-primary hover:bg-gray-100 md:py-3 md:rounded-[25px] md:mb-8"
-            } border border-primary font-bold text-sm rounded-2xl transition-colors`}
-            onClick={() => handleSelection("motivo", "Urgencia")}
-          >
-            Urgencia
-          </motion.button>
-          <motion.button
-            variants={fadeInUp}
-            className={`flex-1 px-4 py-2 ${
               responses.motivo === "Agendar"
                 ? "bg-primary text-white hover:bg-primary md:py-3 md:rounded-[25px] md:mb-8"
                 : "bg-white text-primary hover:bg-gray-100 md:py-3 md:rounded-[25px] md:mb-8"
@@ -183,6 +172,17 @@ export default function Hero() {
             onClick={() => handleSelection("motivo", "Agendar")}
           >
             Agendar
+          </motion.button>
+          <motion.button
+            variants={fadeInUp}
+            className={`flex-1 px-4 py-2 ${
+              responses.motivo === "Urgencia"
+                ? "bg-primary text-white hover:bg-primary md:py-3 md:rounded-[25px] md:mb-8"
+                : "bg-white text-primary hover:bg-gray-100 md:py-3 md:rounded-[25px] md:mb-8"
+            } border border-primary font-bold text-sm rounded-2xl transition-colors whitespace-nowrap`}
+            onClick={() => handleSelection("motivo", "Urgencia")}
+          >
+            Atención Urgente
           </motion.button>
         </motion.div>
       </motion.div>
