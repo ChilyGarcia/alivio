@@ -49,8 +49,6 @@ export default function ChatPage() {
 
       const data = await response.json();
 
-      // El backend debería retornar las conversaciones con el último mensaje
-      // Mapear los datos del backend al formato esperado
       const mappedChats = data.map((conversation: any) => ({
         id: conversation.other_user.id,
         name: conversation.other_user.name,
@@ -75,7 +73,6 @@ export default function ChatPage() {
       setClosedChats(closed);
     } catch (error) {
       console.error("Error fetching chats:", error);
-      // En caso de error, mantener arrays vacíos
       setAvailableChats([]);
       setClosedChats([]);
     } finally {
