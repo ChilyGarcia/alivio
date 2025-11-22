@@ -140,12 +140,12 @@ const TabBar = ({ onToggleNavBar }) => {
               )}
             </>
           )}
-          <TabItem
-            href="/services"
-            icon={<CreditCard size={24} />}
-            label="Planes"
-            onClick={() => handleTabItemAuthentication("/planes")}
-          />
+          {/* <TabItem
+          href="/services"
+          icon={<CreditCard size={24} />}
+          label="Planes"
+          onClick={() => handleTabItemAuthentication("/planes")}
+        /> */}
           {token ? (
             <TabItem
               href={
