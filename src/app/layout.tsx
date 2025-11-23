@@ -7,9 +7,9 @@ import { Toaster } from "sonner";
 import dynamic from "next/dynamic";
 
 // Importación dinámica del modal para evitar problemas de hidratación
-const WelcomeModal = dynamic(() => import("@/components/modals/WelcomeModal"), {
-  ssr: false,
-});
+// const WelcomeModal = dynamic(() => import("@/components/modals/WelcomeModal"), {
+//   ssr: false,
+// });
 
 export const metadata: Metadata = {
   title: "CSalud",
@@ -31,7 +31,7 @@ export default function RootLayout({
       <body className={montserrat.className}>
         <ClientWrapper>
           <main className="antialiased">
-            <WelcomeModal />
+            {/* <WelcomeModal /> */}
             {children}
           </main>
           <Footer />
