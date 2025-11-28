@@ -64,7 +64,25 @@ export default function LoginPage() {
     email?: string;
     password?: string;
   }>({});
-  const [loginData, setLoginData] = React.useState({ email: "", password: "" });
+  const [loginData, setLoginData] = React.useState(() => {
+    // Check if there are saved credentials in localStorage
+    if (typeof window !== "undefined") {
+      const savedEmail = localStorage.getItem("rememberedEmail");
+      const savedPassword = localStorage.getItem("rememberedPassword");
+      if (savedEmail && savedPassword) {
+        return {
+          email: savedEmail,
+          password: savedPassword,
+          remember: true,
+        };
+      }
+    }
+    return {
+      email: "",
+      password: "",
+      remember: false,
+    };
+  });
   const [isValidated, setIsValidated] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
 
@@ -91,13 +109,18 @@ export default function LoginPage() {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    const updatedData = { ...loginData, [name]: value };
+    const { name, type, checked, value } = e.target;
+    const newValue = type === "checkbox" ? checked : value;
+    const updatedData = { ...loginData, [name]: newValue };
     setLoginData(updatedData);
-    validateField(name, value);
 
-    // Pass the current field values directly to validateForm
-    validateForm(updatedData.email, updatedData.password);
+    if (type !== "checkbox") {
+      validateField(name, value);
+      validateForm(
+        name === "email" ? value : updatedData.email,
+        name === "password" ? value : updatedData.password
+      );
+    }
   };
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
@@ -148,6 +171,16 @@ export default function LoginPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Save or remove credentials based on remember me checkbox
+    if (loginData.remember) {
+      localStorage.setItem("rememberedEmail", loginData.email);
+      localStorage.setItem("rememberedPassword", loginData.password);
+    } else {
+      localStorage.removeItem("rememberedEmail");
+      localStorage.removeItem("rememberedPassword");
+    }
+
     fetchLogin();
   };
 
@@ -209,6 +242,19 @@ export default function LoginPage() {
                     <Eye className="h-4 w-4" />
                   )}
                 </button>
+              </div>
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="remember"
+                  name="remember"
+                  checked={loginData.remember}
+                  onChange={handleChange}
+                  className="h-4 w-4 rounded border-primary text-primary focus:ring-primary"
+                />
+                <label htmlFor="remember" className="text-sm text-gray-600">
+                  Recordar
+                </label>
               </div>
             </div>
             <button
