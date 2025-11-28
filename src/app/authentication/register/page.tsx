@@ -83,6 +83,7 @@ export default function RegisterPage() {
   const [isValidated, setIsValidated] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
   const [termsAccepted, setTermsAccepted] = React.useState(false);
+  const [rememberMe, setRememberMe] = React.useState(false);
 
   const router = useRouter();
 
@@ -183,6 +184,15 @@ export default function RegisterPage() {
 
       toast.success("Registro exitoso!");
       Cookies.set("token", data.access_token, { expires: 1 });
+
+      // Save credentials if remember me is checked
+      if (rememberMe) {
+        localStorage.setItem("rememberedEmail", registerData.email);
+        localStorage.setItem("rememberedPassword", registerData.password);
+      } else {
+        localStorage.removeItem("rememberedEmail");
+        localStorage.removeItem("rememberedPassword");
+      }
 
       if (appointmentDetails) {
         router.push("/payments");
@@ -323,6 +333,17 @@ export default function RegisterPage() {
               label="Acepta nuestros términos y condiciones como..."
               labelClassName="text-sm leading-none text-primary"
             />
+
+            <div className="pt-2">
+              <Checkbox
+                id="remember"
+                name="remember"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                label="Recordar"
+                labelClassName="text-sm leading-none text-primary"
+              />
+            </div>
             <button
               type="submit"
               className={`inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 w-full rounded-full px-4 py-2 ${
