@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Heart, Facebook, Instagram, Youtube } from "lucide-react";
+import Image from "next/image";
 
 export default function Footer() {
   return (
@@ -11,7 +12,13 @@ export default function Footer() {
           {/* Logo and Social Media */}
           <div>
             <div className="flex items-center">
-              <span className="text-2xl font-bold">Aliviapp</span>
+              <Image
+                src="/images/icon-footer.png"
+                alt="Aliviapp"
+                width={80}
+                height={20}
+                className="h-8 w-auto"
+              />
             </div>
             <div className="mt-4 flex gap-4">
               <a href="#" className="text-white hover:text-gray-200">
