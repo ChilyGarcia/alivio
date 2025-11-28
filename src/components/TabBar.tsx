@@ -380,7 +380,7 @@ const TabBar = ({ onToggleNavBar }) => {
                     active={false}
                   />
                   <NavItem
-                    href="/configuracion"
+                    href="/settings"
                     icon={
                       <div className="w-5 h-5 relative">
                         <Image
