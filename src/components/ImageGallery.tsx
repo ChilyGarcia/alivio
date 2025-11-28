@@ -108,7 +108,7 @@ export function Showgallery2() {
       </div>
 
       {/* Texto dinámico */}
-      <div className="relative bg-white w-full z-20 px-4 pt-4 pb-16 shadow-lg rounded-b-xl">
+      <div className="relative w-full z-20 px-4 pt-4 pb-16">
         <div>
           <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-primary">
             {sliderTexts[currentSlide] || "Texto predeterminado"}
