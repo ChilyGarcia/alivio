@@ -243,7 +243,7 @@ export default function LoginPage() {
                   )}
                 </button>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 pt-4">
                 <input
                   type="checkbox"
                   id="remember"
@@ -257,7 +257,7 @@ export default function LoginPage() {
                 </label>
               </div>
             </div>
-            <div className="pt-6">
+            <div className="pt-3">
               <button
                 type="submit"
                 className={`inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 w-full rounded-full px-4 py-2 ${
