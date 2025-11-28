@@ -59,20 +59,127 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
   const token = Cookies.get("token");
 
   useEffect(() => {
+    if (!process.env.NEXT_PUBLIC_PUSHER_APP_KEY) {
+      console.error("PUSHER_APP_KEY no está configurado");
+      return;
+    }
+
+    console.log("🔌 Inicializando Pusher...");
     const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_APP_KEY, {
       cluster: "mt1",
+      enabledTransports: ["ws", "wss"],
     });
+
     const minId = Math.min(sender_id, receiver_id);
     const maxId = Math.max(sender_id, receiver_id);
-    const channel = pusher.subscribe(`chat.${minId}.${maxId}`);
+    const channelName = `chat.${minId}.${maxId}`;
+    
+    console.log(`📡 Suscribiéndose al canal: ${channelName}`);
+    console.log(`👤 Sender ID: ${sender_id}, Receiver ID: ${receiver_id}`);
 
-    channel.bind("App\\Events\\MessageSent", (data: Message) => {
-      setMessages((prevMessages) => [...prevMessages, data]);
+    const channel = pusher.subscribe(channelName);
+
+    // Eventos de conexión de Pusher
+    pusher.connection.bind("connected", () => {
+      console.log("✅ Pusher conectado exitosamente");
+    });
+
+    pusher.connection.bind("disconnected", () => {
+      console.log("❌ Pusher desconectado");
+    });
+
+    pusher.connection.bind("error", (err: any) => {
+      console.error("❌ Error de conexión Pusher:", err);
+    });
+
+    // Eventos de suscripción del canal
+    channel.bind("pusher:subscription_succeeded", () => {
+      console.log(`✅ Suscrito exitosamente al canal: ${channelName}`);
+    });
+
+    channel.bind("pusher:subscription_error", (status: any) => {
+      console.error(`❌ Error al suscribirse al canal: ${channelName}`, status);
+    });
+
+    // Intentar con diferentes formatos del nombre del evento
+    const eventNames = [
+      "App\\Events\\MessageSent",
+      "App.Events.MessageSent",
+      "MessageSent",
+      "message-sent",
+    ];
+
+    eventNames.forEach((eventName) => {
+      channel.bind(eventName, (data: Message) => {
+        console.log(`📨 Evento recibido: ${eventName}`, data);
+        setMessages((prevMessages) => {
+          // Si el mensaje es del remitente actual, reemplazar el mensaje optimista
+          if (data.sender_id === sender_id && data.id) {
+            // Buscar el mensaje optimista (sin ID pero con el mismo contenido y sender)
+            const optimisticIndex = prevMessages.findIndex(
+              (msg) =>
+                !msg.id &&
+                msg.sender_id === data.sender_id &&
+                msg.receiver_id === data.receiver_id &&
+                msg.message === data.message
+            );
+            
+            if (optimisticIndex !== -1) {
+              // Reemplazar el mensaje optimista con el real
+              console.log("🔄 Reemplazando mensaje optimista con el real");
+              const newMessages = [...prevMessages];
+              newMessages[optimisticIndex] = data;
+              return newMessages;
+            }
+          }
+          
+          // Evitar duplicados por ID
+          if (data.id) {
+            const existsById = prevMessages.some(
+              (msg) => msg.id === data.id
+            );
+            
+            if (existsById) {
+              console.log("⚠️ Mensaje duplicado detectado (por ID), ignorando");
+              return prevMessages;
+            }
+          }
+          
+          // Si es un mensaje del remitente actual sin ID, podría ser duplicado
+          if (data.sender_id === sender_id && !data.id) {
+            const duplicateContent = prevMessages.some(
+              (msg) =>
+                msg.sender_id === data.sender_id &&
+                msg.receiver_id === data.receiver_id &&
+                msg.message === data.message &&
+                Math.abs(
+                  new Date(msg.created_at || 0).getTime() -
+                  new Date(data.created_at || 0).getTime()
+                ) < 5000 // Dentro de 5 segundos
+            );
+            
+            if (duplicateContent) {
+              console.log("⚠️ Mensaje duplicado detectado (por contenido), ignorando");
+              return prevMessages;
+            }
+          }
+          
+          // Si es un mensaje de otro usuario, agregarlo normalmente
+          return [...prevMessages, data];
+        });
+      });
+    });
+
+    // Listener para todos los eventos (debug)
+    channel.bind_global((eventName: string, data: any) => {
+      console.log(`🔔 Evento global recibido: ${eventName}`, data);
     });
 
     return () => {
+      console.log(`🔌 Desconectando del canal: ${channelName}`);
       channel.unbind_all();
       channel.unsubscribe();
+      pusher.disconnect();
     };
   }, [sender_id, receiver_id]);
 
@@ -108,17 +215,22 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
   const handleSendMessage = () => {
     if (messageInput.trim() === "") return;
 
-    const newMessage: Message = {
-      sender_id: sender_id,
-      receiver_id: receiver_id,
-      message: messageInput,
-      created_at: new Date().toISOString(),
-    };
-
-    setMessages((prevMessages) => [...prevMessages, newMessage]);
-
     const messageToSend = messageInput;
     setMessageInput("");
+
+    // Crear mensaje optimista con timestamp único para identificarlo
+    const tempId = `temp-${Date.now()}-${Math.random()}`;
+    const newMessage: Message & { tempId?: string } = {
+      sender_id: sender_id,
+      receiver_id: receiver_id,
+      message: messageToSend,
+      created_at: new Date().toISOString(),
+      tempId: tempId,
+    };
+
+    console.log("📤 Enviando mensaje:", newMessage);
+    // Agregar mensaje optimista solo si es del remitente actual
+    setMessages((prevMessages) => [...prevMessages, newMessage]);
 
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/message`, {
       method: "POST",
@@ -131,13 +243,25 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
         receiver_id: receiver_id,
       }),
     })
-      .then((response) => {
+      .then(async (response) => {
+        const data = await response.json();
+        console.log("✅ Respuesta del servidor:", data);
+        
         if (!response.ok) {
-          console.error("Error al enviar mensaje");
+          console.error("❌ Error al enviar mensaje:", data);
+          // Remover el mensaje optimista si falla
+          setMessages((prevMessages) =>
+            prevMessages.filter((msg) => (msg as any).tempId !== tempId)
+          );
         }
+        // No actualizamos aquí porque el evento de Pusher lo hará
       })
       .catch((error) => {
-        console.error("Error al enviar mensaje:", error);
+        console.error("❌ Error al enviar mensaje:", error);
+        // Remover el mensaje optimista si falla
+        setMessages((prevMessages) =>
+          prevMessages.filter((msg) => (msg as any).tempId !== tempId)
+        );
       });
   };
 
@@ -177,7 +301,7 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messagesSubscribe.map((msg, index) => (
           <div
-            key={index}
+            key={msg.id || (msg as any).tempId || `msg-${index}`}
             className={`flex ${
               msg.sender_id === sender_id ? "justify-end" : ""
             }`}
