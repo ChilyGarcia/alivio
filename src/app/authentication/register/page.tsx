@@ -265,6 +265,7 @@ export default function RegisterPage() {
                 value={registerData.email}
                 onChange={handleChange}
                 onBlur={handleBlur}
+                autoComplete="new-email"
               />
               {errors.email && (
                 <p className="text-sm text-red-500">{errors.email}</p>
@@ -292,6 +293,7 @@ export default function RegisterPage() {
                   value={registerData.password}
                   onChange={handleChange}
                   onBlur={handleBlur}
+                  autoComplete="new-password"
                 />
                 {errors.password && (
                   <p className="text-sm text-red-500">{errors.password}</p>
@@ -353,10 +355,11 @@ export default function RegisterPage() {
             </div>
             <button
               type="submit"
-              className={`inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 w-full rounded-full px-4 py-2 ${isValidated
-                ? "bg-primary text-white hover:bg-primary/90"
-                : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                }`}
+              className={`inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 w-full rounded-full px-4 py-2 ${
+                isValidated
+                  ? "bg-primary text-white hover:bg-primary/90"
+                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+              }`}
               disabled={!isValidated}
             >
               {isLoading ? (
