@@ -6,6 +6,7 @@ import Link from "next/link";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { Toaster, toast } from "sonner";
+import { Checkbox } from "@/components/ui/Checkbox";
 
 function Input({ className = "", ...props }) {
   return (
@@ -248,18 +249,14 @@ export default function LoginPage() {
                   )}
                 </button>
               </div>
-              <div className="flex items-center space-x-2 pt-4">
-                <input
-                  type="checkbox"
+              <div className="pt-4">
+                <Checkbox
                   id="remember"
                   name="remember"
                   checked={loginData.remember}
                   onChange={handleChange}
-                  className="h-4 w-4 rounded border-primary text-primary focus:ring-primary"
+                  label="Recordar"
                 />
-                <label htmlFor="remember" className="text-sm text-gray-600">
-                  Recordar
-                </label>
               </div>
             </div>
             <div className="pt-3">
