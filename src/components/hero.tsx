@@ -543,8 +543,12 @@ export default function Hero() {
                   </svg>
                 </div>
               </div>
-              <button className="bg-primary text-white px-3 py-2 rounded-full font-medium hover:bg-primary-dark transition-colors text-sm whitespace-nowrap">
-                Buscar
+              <button className="bg-primary text-white px-4 py-2 rounded-full font-medium hover:bg-primary-dark transition-colors text-sm whitespace-nowrap flex items-center gap-2">
+                <img
+                  src="/images/icon-filter.png"
+                  alt="Filtrar"
+                  className="w-4 h-4"
+                />
               </button>
             </div>
           </div>
