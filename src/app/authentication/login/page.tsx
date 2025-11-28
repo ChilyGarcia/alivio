@@ -257,21 +257,23 @@ export default function LoginPage() {
                 </label>
               </div>
             </div>
-            <button
-              type="submit"
-              className={`inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 w-full rounded-full px-4 py-2 ${
-                isValidated
-                  ? "bg-primary text-white hover:bg-primary/90"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
-              }`}
-              disabled={!isValidated}
-            >
-              {isLoading ? (
-                <span className="loading loading-spinner loading-md"></span>
-              ) : (
-                "Iniciar sesión"
-              )}
-            </button>
+            <div className="pt-6">
+              <button
+                type="submit"
+                className={`inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 w-full rounded-full px-4 py-2 ${
+                  isValidated
+                    ? "bg-primary text-white hover:bg-primary/90"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
+                disabled={!isValidated}
+              >
+                {isLoading ? (
+                  <span className="loading loading-spinner loading-md"></span>
+                ) : (
+                  "Iniciar sesión"
+                )}
+              </button>
+            </div>
           </form>
 
           <p className="text-center text-sm text-primary">
