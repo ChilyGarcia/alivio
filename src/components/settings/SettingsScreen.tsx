@@ -2,7 +2,7 @@
 
 import {
   ArrowLeft,
-  User,
+  User as UserIcon,
   Sun,
   Users,
   Shield,
@@ -17,6 +17,7 @@ import Navbar from "@/components/navbar";
 import { authenticationService } from "@/services/auth.service";
 import Cookies from "js-cookie";
 import Footer from "@/components/footer";
+import { User } from "@/interfaces/user.interface";
 
 type SettingItem = {
   id: string;
@@ -29,7 +30,7 @@ type SettingItem = {
 export function SettingsScreen() {
   const router = useRouter();
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [user, setUser] = useState({ name: "Usuario" });
+  const [user, setUser] = useState<Partial<User>>({ name: "Usuario" });
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -172,7 +173,20 @@ export function SettingsScreen() {
               className="w-full h-full object-cover"
             />
           </div>
-          <div>
+          <div
+            className="cursor-pointer"
+            onClick={() => {
+              let profilePath = "";
+              if (user?.role === "professional") {
+                profilePath = "/professionals/profile";
+              } else if (user?.role === "patient") {
+                profilePath = "/profile";
+              }
+              if (profilePath) {
+                router.push(profilePath);
+              }
+            }}
+          >
             <h2 className="text-lg font-semibold text-white">
               {user?.name || "Usuario"}
             </h2>
