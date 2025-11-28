@@ -16,6 +16,7 @@ import { Switch } from "@/components/ui/switch";
 import Navbar from "@/components/navbar";
 import { authenticationService } from "@/services/auth.service";
 import Cookies from "js-cookie";
+import Footer from "@/components/footer";
 
 type SettingItem = {
   id: string;
