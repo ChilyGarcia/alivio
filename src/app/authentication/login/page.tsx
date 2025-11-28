@@ -88,6 +88,11 @@ export default function LoginPage() {
 
   const router = useRouter();
 
+  // Vvalidar datos
+  React.useEffect(() => {
+    validateForm(loginData.email, loginData.password);
+  }, [loginData.email, loginData.password]);
+
   const validateField = (name: string, value: string) => {
     let error = "";
     if (name === "email" && !value.trim()) {
