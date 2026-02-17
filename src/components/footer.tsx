@@ -13,7 +13,7 @@ export default function Footer() {
           <div className="md:col-span-4">
             <div className="flex items-center mb-4">
               <Image
-                src="/images/icon-footer.png"
+                src="/images/odonto-image.jpg"
                 alt="Aliviapp"
                 width={120}
                 height={40}
