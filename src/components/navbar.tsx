@@ -41,7 +41,7 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         <a href="/" className="flex items-center">
           <Image
-            src="/images/LogoAlivio.png"
+            src="/images/odonto-image.jpg"
             alt="Logo de Alivio"
             width={120}
             height={40}
