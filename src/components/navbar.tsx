@@ -43,9 +43,9 @@ const Navbar = () => {
           <Image
             src="/images/odonto-image.jpg"
             alt="Logo de Alivio"
-            width={120}
-            height={40}
-            className="w-24 md:w-32 lg:w-36"
+            width={80}
+            height={27}
+            className="w-14 md:w-16 lg:w-20"
           />
         </a>
 
