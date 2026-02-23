@@ -192,7 +192,7 @@ const TabBar = ({ onToggleNavBar }) => {
 
           <div className="fixed top-0 right-0 w-64 h-full bg-white shadow-lg p-6 flex flex-col z-50 border-l border-gray-200">
             <div className="flex justify-between items-center mb-6">
-              <img src="/images/odonto-image.jpg" className="w-32" />
+              <img src="/images/LogoAlivio.png" className="w-32" />
               <button className="text-primary" onClick={toggleMenu}>
                 <X size={28} />
               </button>

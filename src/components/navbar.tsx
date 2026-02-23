@@ -41,11 +41,11 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         <a href="/" className="flex items-center">
           <Image
-            src="/images/odonto-image.jpg"
+            src="/images/LogoAlivio.png"
             alt="Logo de Alivio"
-            width={70}
-            height={17}
-            className="w-10 md:w-16 lg:w-20"
+            width={120}
+            height={40}
+            className="w-24 md:w-32 lg:w-36"
           />
         </a>
 
