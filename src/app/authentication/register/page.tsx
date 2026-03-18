@@ -11,7 +11,7 @@ import { Checkbox } from "@/components/ui/Checkbox";
 function Input({ className = "", ...props }) {
   return (
     <input
-      className={`flex h-12 w-full rounded-x5 border-2 border-input bg-transparent px-4 py-2 text-base font-medium shadow-sm transition-colors placeholder:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+      className={`flex h-10 w-full rounded-x5 border-2 border-input bg-transparent px-4 py-2 text-sm font-medium shadow-sm transition-colors placeholder:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
       {...props}
     />
   );
@@ -166,7 +166,7 @@ export default function RegisterPage() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(modifiedRegisterData),
-        }
+        },
       );
       const data = await response.json();
       setIsLoading(false);
@@ -216,24 +216,18 @@ export default function RegisterPage() {
       <NavBar />
       <Toaster />
 
-      <div className="min-h-screen bg-white p-4 md:p-6 mt-12">
-        <div className="mx-auto max-w-md space-y-6">
-          <div className="space-y-2">
+      <div className="bg-white p-4 md:p-6 mt-12">
+        <div className="mx-auto max-w-[320px] space-y-6">
+          <div className="space-y-2 text-center">
             <h1 className="text-4xl font-bold text-primary pb-6">Registro</h1>
-            <h1 className="text-2xl font-bold text-primary pb-6">
-              Registrate y empieza a cuidar de ti
-            </h1>
-            <p className="text-lg text-primary">
-              Introduce tu información correspondiente
-            </p>
           </div>
           <form className="space-y-4" onSubmit={handleSubmit}>
-            <div className="space-y-2">
+            <div className="space-y-2 text-center">
               <p className="text-sm font-bold text-primary">
                 Completa tus datos
               </p>
               <Input
-                className="rounded-full border-primary px-4 py-2"
+                className="rounded-full border-primary/100 px-4 py-2"
                 placeholder="Nombre"
                 type="text"
                 name="name"
@@ -245,7 +239,7 @@ export default function RegisterPage() {
                 <p className="text-sm text-red-500">{errors.name}</p>
               )}
               <Input
-                className="rounded-full border-primary px-4 py-2"
+                className="rounded-full border-primary/100 px-4 py-2"
                 placeholder="Correo Electrónico"
                 type="email"
                 name="email"
@@ -259,7 +253,7 @@ export default function RegisterPage() {
               )}
               <div className="relative">
                 <Input
-                  className="rounded-full border-primary px-4 py-2"
+                  className="rounded-full border-primary/100 px-4 py-2"
                   placeholder="Número de teléfono"
                   type="tel"
                   name="phone_number"
@@ -326,15 +320,17 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            <Checkbox
-              id="terms"
-              checked={termsAccepted}
-              onChange={handleTermsChange}
-              label="Acepta nuestros términos y condiciones como..."
-              labelClassName="text-sm leading-none text-primary"
-            />
+            <div className="px-4">
+              <Checkbox
+                id="terms"
+                checked={termsAccepted}
+                onChange={handleTermsChange}
+                label="Acepta nuestros términos y condiciones como..."
+                labelClassName="text-sm leading-none text-primary"
+              />
+            </div>
 
-            <div className="pt-2">
+            <div className="pt-2 px-4">
               <Checkbox
                 id="remember"
                 name="remember"
