@@ -43,7 +43,7 @@ export default function Hero() {
   const fetchGroup = async () => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/get-groups`
+        `${process.env.NEXT_PUBLIC_API_URL}/get-groups`,
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -53,7 +53,7 @@ export default function Hero() {
     } catch (error) {
       console.error(
         "There has been a problem with your fetch operation:",
-        error
+        error,
       );
     }
   };
@@ -66,7 +66,7 @@ export default function Hero() {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/get-specialties-group/${id}`
+        `${process.env.NEXT_PUBLIC_API_URL}/get-specialties-group/${id}`,
       ).finally(() => {
         setIsLoading(false);
       });
@@ -81,7 +81,7 @@ export default function Hero() {
     } catch (error) {
       console.error(
         "There has been a problem with your fetch operation:",
-        error
+        error,
       );
     }
   };
@@ -441,7 +441,7 @@ export default function Hero() {
                   <div className="relative w-full max-w-[600px] sm:max-w-[500px] md:max-w-[550px] lg:max-w-[600px]">
                     <div className="relative">
                       <Image
-                        src="/images/Heros.png"
+                        src="/images/doctor.png"
                         alt="Hero Image"
                         width={600}
                         height={600}
