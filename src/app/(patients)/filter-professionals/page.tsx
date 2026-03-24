@@ -10,9 +10,9 @@ import { Navigation } from "swiper/modules";
 import NavBar from "@/components/navbar";
 import AppointmentModal from "@/components/AppointmentModal";
 import ProfesionalProfile from "@/components/ProfessionalProfile";
-import "leaflet/dist/leaflet.css";
-import { MapWithNoSSR } from "@/components/MapComponents";
-import { MapLocation } from "@/components/MapComponents";
+// import "leaflet/dist/leaflet.css";
+// import { MapWithNoSSR } from "@/components/MapComponents";
+// import { MapLocation } from "@/components/MapComponents";
 import { motion } from "framer-motion";
 
 const DoctorCarousel = () => {
@@ -26,8 +26,8 @@ const DoctorCarousel = () => {
   const [isModalProfileOpen, setIsModalProfileOpen] = useState(false);
   const [selectedDoctorId, setSelectedDoctorId] = useState(null);
   const [selectedUserProfessional, setSelectedUserProfessional] = useState();
-  const [isOffice, setIsOffice] = useState(false);
-  const [locations, setLocations] = useState([]);
+  // const [isOffice, setIsOffice] = useState(false);
+  // const [locations, setLocations] = useState([]);
   const [loading, setLoading] = useState(true);
   const searchParams = useSearchParams();
   const searchTerm = searchParams.get("search");
@@ -47,9 +47,11 @@ const DoctorCarousel = () => {
     },
   };
 
+  /*
   useEffect(() => {
     console.log(locations);
   }, [locations]);
+  */
 
   const formatPrice = (price) => {
     return Number(price)
@@ -76,6 +78,7 @@ const DoctorCarousel = () => {
           }
         }
 
+        /*
         const fetchLocations = async () => {
           try {
             const response = await fetch(
@@ -112,9 +115,21 @@ const DoctorCarousel = () => {
           fetchLocations();
           setIsOffice(true);
         }
+        */
+
+        const queryParams = new URLSearchParams();
+        // If there's a searchTerm, we want to perform a global search and ignore the group/accessibility from localStorage
+        if (!searchTerm) {
+          if (group && group !== "null" && group !== "undefined") {
+            queryParams.append("group_ids[]", group);
+          }
+          if (accessibilityType) {
+            queryParams.append("accessibility_types[]", accessibilityType);
+          }
+        }
 
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/professional-by-group-accesibility?group_ids[]=${group}&accessibility_types[]=${accessibilityType}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/professional-by-group-accesibility?${queryParams.toString()}`,
         );
         const data = await response.json();
 
@@ -122,11 +137,13 @@ const DoctorCarousel = () => {
           let healthProfessionals = data.health_professionals;
 
           if (searchTerm) {
-            const term = searchTerm.toLowerCase();
+            const normalize = (str) =>
+              str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+            const term = normalize(searchTerm);
             healthProfessionals = healthProfessionals.filter(
               (doctor) =>
-                doctor.user.name.toLowerCase().includes(term) ||
-                doctor.specialty.name.toLowerCase().includes(term),
+                normalize(doctor.user.name).includes(term) ||
+                (doctor.specialty?.name && normalize(doctor.specialty.name).includes(term)),
             );
           }
 
@@ -136,19 +153,19 @@ const DoctorCarousel = () => {
             return {
               id: doctor.id,
               user_id: doctor.user_id,
-              name: doctor.user.name,
-              specialty: doctor.specialty.name,
-              rating: parseFloat(doctor.rating),
-              reviews: doctor.reviews,
-              img: doctor.user.profile_image_url || "/images/card1fix.png",
+              name: doctor.user?.name || "Profesional",
+              specialty: doctor.specialty?.name || "Especialidad no especificada",
+              rating: parseFloat(doctor.rating || 5),
+              reviews: doctor.reviews || 0,
+              img: doctor.user?.profile_image_url || "/images/card1fix.png",
               location: location
                 ? location.location
                 : "Ubicación no disponible",
               longitude: location ? location.longitude : null,
               latitude: location ? location.latitude : null,
-              experience: doctor.description,
-              accessibility: doctor.accessibilities.map((acc) => acc.type),
-              price: formatPrice(doctor.hourly_rate),
+              experience: doctor.description || "",
+              accessibility: (doctor.accessibilities || []).map((acc) => acc.type),
+              price: formatPrice(doctor.hourly_rate || 0),
               duration: "45-60 minutos",
             };
           });
@@ -228,8 +245,19 @@ const DoctorCarousel = () => {
         }
 
         // Using the same endpoint as initial load but with company_id parameter
+        const queryParams = new URLSearchParams();
+        if (group && group !== "null" && group !== "undefined") {
+          queryParams.append("group_ids[]", group);
+        }
+        if (accessibilityType) {
+          queryParams.append("accessibility_types[]", accessibilityType);
+        }
+        if (company.id) {
+          queryParams.append("company_id", company.id);
+        }
+
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/professional-by-group-accesibility?group_ids[]=${group}&accessibility_types[]=${accessibilityType}&company_id=${company.id}`
+          `${process.env.NEXT_PUBLIC_API_URL}/professional-by-group-accesibility?${queryParams.toString()}`
         );
         
         if (!response.ok) {
@@ -245,19 +273,19 @@ const DoctorCarousel = () => {
             return {
               id: doctor.id,
               user_id: doctor.user_id,
-              name: doctor.user.name,
-              specialty: doctor.specialty.name,
-              rating: parseFloat(doctor.rating),
-              reviews: doctor.reviews,
-              img: doctor.user.profile_image_url || "/images/card1fix.png",
+              name: doctor.user?.name || "Profesional",
+              specialty: doctor.specialty?.name || "Especialidad no especificada",
+              rating: parseFloat(doctor.rating || 5),
+              reviews: doctor.reviews || 0,
+              img: doctor.user?.profile_image_url || "/images/card1fix.png",
               location: location
                 ? location.location
                 : "Ubicación no disponible",
               longitude: location ? location.longitude : null,
               latitude: location ? location.latitude : null,
-              experience: doctor.description,
-              accessibility: doctor.accessibilities.map((acc) => acc.type),
-              price: formatPrice(doctor.hourly_rate),
+              experience: doctor.description || "",
+              accessibility: (doctor.accessibilities || []).map((acc) => acc.type),
+              price: formatPrice(doctor.hourly_rate || 0),
               duration: "30-45 minutos",
             };
           });
@@ -291,8 +319,16 @@ const DoctorCarousel = () => {
         }
       }
 
+      const queryParams = new URLSearchParams();
+      if (group && group !== "null" && group !== "undefined") {
+        queryParams.append("group_ids[]", group);
+      }
+      if (accessibilityType) {
+        queryParams.append("accessibility_types[]", accessibilityType);
+      }
+
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/professional-by-group-accesibility?group_ids[]=${group}&accessibility_types[]=${accessibilityType}`
+        `${process.env.NEXT_PUBLIC_API_URL}/professional-by-group-accesibility?${queryParams.toString()}`
       );
       const data = await response.json();
 
@@ -303,19 +339,19 @@ const DoctorCarousel = () => {
           return {
             id: doctor.id,
             user_id: doctor.user_id,
-            name: doctor.user.name,
-            specialty: doctor.specialty.name,
-            rating: parseFloat(doctor.rating),
-            reviews: doctor.reviews,
-            img: doctor.user.profile_image_url || "/images/card1fix.png",
+            name: doctor.user?.name || "Profesional",
+            specialty: doctor.specialty?.name || "Especialidad no especificada",
+            rating: parseFloat(doctor.rating || 5),
+            reviews: doctor.reviews || 0,
+            img: doctor.user?.profile_image_url || "/images/card1fix.png",
             location: location
               ? location.location
               : "Ubicación no disponible",
             longitude: location ? location.longitude : null,
             latitude: location ? location.latitude : null,
-            experience: doctor.description,
-            accessibility: doctor.accessibilities.map((acc) => acc.type),
-            price: formatPrice(doctor.hourly_rate),
+            experience: doctor.description || "",
+            accessibility: (doctor.accessibilities || []).map((acc) => acc.type),
+            price: formatPrice(doctor.hourly_rate || 0),
             duration: "45-60 minutos",
           };
         });
@@ -370,19 +406,19 @@ const DoctorCarousel = () => {
             return {
               id: doctor.id,
               user_id: doctor.user_id,
-              name: doctor.user.name,
-              specialty: doctor.specialty.name,
-              rating: parseFloat(doctor.rating),
-              reviews: doctor.reviews,
-              img: doctor.user.profile_image_url || "/images/card1fix.png",
+              name: doctor.user?.name || "Profesional",
+              specialty: doctor.specialty?.name || "Especialidad no especificada",
+              rating: parseFloat(doctor.rating || 5),
+              reviews: doctor.reviews || 0,
+              img: doctor.user?.profile_image_url || "/images/card1fix.png",
               location: location
                 ? location.location
                 : "Ubicación no disponible",
               longitude: location ? location.longitude : null,
               latitude: location ? location.latitude : null,
-              experience: doctor.description,
-              accessibility: doctor.accessibilities.map((acc) => acc.type),
-              price: formatPrice(doctor.hourly_rate),
+              experience: doctor.description || "",
+              accessibility: (doctor.accessibilities || []).map((acc) => acc.type),
+              price: formatPrice(doctor.hourly_rate || 0),
               duration: "30-45 minutos",
             };
           });
@@ -436,7 +472,7 @@ const DoctorCarousel = () => {
           className="text-sm text-gray-500 mb-6"
         >
           Tu última búsqueda fue{" "}
-          <span className="font-semibold text-blue-800">Fisioterapia</span>, hoy
+          <span className="font-semibold text-blue-800">{searchTerm || "Fisioterapia"}</span>, hoy
           a las 7:39 pm. Puedes ver tu historial de búsquedas{" "}
           <a href="#" className="text-blue-500 underline">
             aquí
@@ -483,7 +519,7 @@ const DoctorCarousel = () => {
           ))}
         </div>
 
-        {isOffice && locations.length > 0 ? (
+        {/* {isOffice && locations.length > 0 ? (
           <>
             <MapLocation
               markers={locations}
@@ -496,7 +532,7 @@ const DoctorCarousel = () => {
           </>
         ) : (
           <></>
-        )}
+        )} */}
 
         <Swiper
           spaceBetween={16}
@@ -604,7 +640,7 @@ const DoctorCarousel = () => {
               </div>
             </div>
 
-            {selectedDoctor &&
+            {/* {selectedDoctor &&
             selectedDoctor.latitude &&
             selectedDoctor.longitude ? (
               <>
@@ -655,7 +691,7 @@ const DoctorCarousel = () => {
               </>
             ) : (
               <></>
-            )}
+            )} */}
 
             <div className="mb-6">
               <h3 className="font-bold text-blue-800 mb-2">Accesibilidad a:</h3>
