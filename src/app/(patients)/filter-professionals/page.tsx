@@ -537,6 +537,20 @@ const DoctorCarousel = () => {
         <Swiper
           spaceBetween={16}
           slidesPerView={1.2}
+          breakpoints={{
+            640: {
+              slidesPerView: 2.2,
+              spaceBetween: 20,
+            },
+            1024: {
+              slidesPerView: 3.2,
+              spaceBetween: 30,
+            },
+            1280: {
+              slidesPerView: 4.2,
+              spaceBetween: 40,
+            },
+          }}
           navigation={true}
           modules={[Navigation]}
           className="mb-8 mt-8"
