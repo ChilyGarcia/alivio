@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -28,6 +29,8 @@ const DoctorCarousel = () => {
   const [isOffice, setIsOffice] = useState(false);
   const [locations, setLocations] = useState([]);
   const [loading, setLoading] = useState(true);
+  const searchParams = useSearchParams();
+  const searchTerm = searchParams.get("search");
 
   const fadeInUp = {
     hidden: { opacity: 0, y: 20 },
@@ -111,15 +114,24 @@ const DoctorCarousel = () => {
         }
 
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/professional-by-group-accesibility?group_ids[]=${group}&accessibility_types[]=${accessibilityType}`
+          `${process.env.NEXT_PUBLIC_API_URL}/professional-by-group-accesibility?group_ids[]=${group}&accessibility_types[]=${accessibilityType}`,
         );
         const data = await response.json();
 
         if (data.health_professionals) {
-          const formattedDoctors = data.health_professionals.map((doctor) => {
-            const location = doctor.locations?.[0] || null;
+          let healthProfessionals = data.health_professionals;
 
-            console.log("Este es el doctor master", doctor);
+          if (searchTerm) {
+            const term = searchTerm.toLowerCase();
+            healthProfessionals = healthProfessionals.filter(
+              (doctor) =>
+                doctor.user.name.toLowerCase().includes(term) ||
+                doctor.specialty.name.toLowerCase().includes(term),
+            );
+          }
+
+          const formattedDoctors = healthProfessionals.map((doctor) => {
+            const location = doctor.locations?.[0] || null;
 
             return {
               id: doctor.id,
@@ -151,7 +163,7 @@ const DoctorCarousel = () => {
     };
 
     fetchDoctors();
-  }, []);
+  }, [searchTerm]);
 
   useEffect(() => {
     console.log(selectedDoctor);

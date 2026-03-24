@@ -3,13 +3,26 @@
 import { motion } from "framer-motion";
 import { Search, MapPin, Video, ChevronDown } from "lucide-react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function SearchSpecialist() {
   const [serviceType, setServiceType] = useState("Presencial");
+  const [searchTerm, setSearchTerm] = useState("");
+  const router = useRouter();
 
   const fadeInUp = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 },
+  };
+
+  const handleSearch = () => {
+    // Save selection to localStorage to be consistent with hero.tsx flow
+    const accessibilityType = serviceType === "Presencial" ? "office" : "videocall";
+    localStorage.setItem("responses", JSON.stringify({ type: accessibilityType }));
+    
+    // Navigate to the professionals page with the search term as a query param
+    const query = searchTerm ? `?search=${encodeURIComponent(searchTerm)}` : "";
+    router.push(`/filter-professionals${query}`);
   };
 
   return (
@@ -49,13 +62,19 @@ export default function SearchSpecialist() {
               <input
                 type="text"
                 placeholder="Buscar especialista..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                 className="w-full bg-transparent text-gray-700 placeholder-gray-400 focus:outline-none text-[10px] md:text-xs lg:text-sm truncate"
               />
             </div>
 
             {/* Compact Search Button */}
             <div className="pr-1 md:pr-2">
-              <button className="bg-primary hover:bg-blue-700 text-white w-8 h-8 md:w-auto md:h-8 md:px-4 rounded-full flex items-center justify-center transition-all group">
+              <button 
+                onClick={handleSearch}
+                className="bg-primary hover:bg-blue-700 text-white w-8 h-8 md:w-auto md:h-8 md:px-4 rounded-full flex items-center justify-center transition-all group"
+              >
                 <Search className="w-3 h-3 md:w-4 md:h-4 transition-transform group-hover:scale-110" />
                 <span className="hidden md:inline ml-2 text-xs font-medium">Buscar</span>
               </button>
