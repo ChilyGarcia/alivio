@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   X,
@@ -28,6 +28,10 @@ interface FilterModalProps {
   onApply: (filters: any) => void;
 }
 
+const MIN_PRICE = 10000;
+const MAX_PRICE = 1000000;
+const PRICE_STEP = 5000;
+
 export default function FilterModal({
   isOpen,
   onClose,
@@ -49,6 +53,7 @@ export default function FilterModal({
 
   const [localCategories, setLocalCategories] = useState(categories);
   const [localCompanies, setLocalCompanies] = useState(companies);
+  const trackRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (initialFilters) {
@@ -180,17 +185,93 @@ export default function FilterModal({
             title="Intervalo de precio"
           >
             <div className="px-4 py-8 relative">
-              <div className="absolute -top-2 left-1/2 -translate-x-1/2 bg-[#0C0CAA] text-white px-3 py-1 rounded-full text-[10px] font-bold z-10">
-                COP 100.000-150.000
+              {/* Badge */}
+              <div className="absolute -top-2 left-1/2 -translate-x-1/2 bg-[#0C0CAA] text-white px-3 py-1 rounded-full text-[10px] font-bold z-10 transition-all">
+                COP {activeFilters.priceRange[0].toLocaleString()} -{" "}
+                {activeFilters.priceRange[1].toLocaleString()}
               </div>
-              <div className="h-1.5 w-full bg-blue-100 rounded-full relative">
-                <div className="absolute left-[10%] right-[70%] h-full bg-[#0C0CAA] rounded-full"></div>
-                <div className="absolute left-[10%] -top-2 h-5 w-5 bg-[#0C0CAA] rounded-full border-4 border-white shadow-sm cursor-pointer"></div>
-                <div className="absolute right-[70%] -top-2 h-5 w-5 bg-blue-200 rounded-full border-4 border-white shadow-sm cursor-pointer"></div>
+
+              {/* Slider Container (The Track) */}
+              <div className="relative pt-2 pb-2">
+                <div
+                  ref={trackRef}
+                  className="h-2 w-full bg-blue-100 rounded-full relative cursor-pointer"
+                >
+                  {/* Active Track (Blue Bar) */}
+                  <div
+                    className="absolute h-full bg-[#0C0CAA] rounded-full"
+                    style={{
+                      left: `${((activeFilters.priceRange[0] - MIN_PRICE) / (MAX_PRICE - MIN_PRICE)) * 100}%`,
+                      right: `${100 - ((activeFilters.priceRange[1] - MIN_PRICE) / (MAX_PRICE - MIN_PRICE)) * 100}%`,
+                    }}
+                  />
+
+                  {/* Left Handle */}
+                  <motion.div
+                    onPan={(_, info) => {
+                      if (!trackRef.current) return;
+                      const rect = trackRef.current.getBoundingClientRect();
+                      const x = info.point.x - rect.left;
+                      const percent = Math.max(
+                        0,
+                        Math.min(100, (x / rect.width) * 100),
+                      );
+                      const val =
+                        Math.round(
+                          ((percent / 100) * (MAX_PRICE - MIN_PRICE) +
+                            MIN_PRICE) /
+                            PRICE_STEP,
+                        ) * PRICE_STEP;
+
+                      if (val < activeFilters.priceRange[1]) {
+                        setActiveFilters((prev) => ({
+                          ...prev,
+                          priceRange: [val, prev.priceRange[1]],
+                        }));
+                      }
+                    }}
+                    className="absolute top-1/2 -translate-y-1/2 h-6 w-6 bg-[#0C0CAA] rounded-full border-4 border-white shadow-md cursor-grab active:cursor-grabbing z-30"
+                    style={{
+                      left: `calc(${((activeFilters.priceRange[0] - MIN_PRICE) / (MAX_PRICE - MIN_PRICE)) * 100}% - 12px)`,
+                    }}
+                  />
+
+                  {/* Right Handle */}
+                  <motion.div
+                    onPan={(_, info) => {
+                      if (!trackRef.current) return;
+                      const rect = trackRef.current.getBoundingClientRect();
+                      const x = info.point.x - rect.left;
+                      const percent = Math.max(
+                        0,
+                        Math.min(100, (x / rect.width) * 100),
+                      );
+                      const val =
+                        Math.round(
+                          ((percent / 100) * (MAX_PRICE - MIN_PRICE) +
+                            MIN_PRICE) /
+                            PRICE_STEP,
+                        ) * PRICE_STEP;
+
+                      if (val > activeFilters.priceRange[0]) {
+                        setActiveFilters((prev) => ({
+                          ...prev,
+                          priceRange: [prev.priceRange[0], val],
+                        }));
+                      }
+                    }}
+                    className="absolute top-1/2 -translate-y-1/2 h-6 w-6 bg-blue-200 rounded-full border-4 border-white shadow-md cursor-grab active:cursor-grabbing z-30"
+                    style={{
+                      left: `calc(${((activeFilters.priceRange[1] - MIN_PRICE) / (MAX_PRICE - MIN_PRICE)) * 100}% - 12px)`,
+                    }}
+                  />
+                </div>
               </div>
+
+              {/* Labels */}
               <div className="flex justify-between mt-4 text-[10px] font-bold text-[#0C0CAA]">
-                <span>COP 10.000</span>
-                <span>COP 1.000.000</span>
+                <span>COP {MIN_PRICE.toLocaleString()}</span>
+                <span>COP {MAX_PRICE.toLocaleString()}</span>
               </div>
             </div>
           </Section>
