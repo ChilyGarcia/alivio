@@ -345,7 +345,7 @@ function PriceRangeSlider({
             {/* Asa Izquierda */}
             <motion.div
               drag="x"
-              dragConstraints={contenedorRef}
+              dragConstraints={{ left: 0, right: contenedorRef.current?.offsetWidth || 0 }}
               dragElastic={0}
               dragMomentum={false}
               style={{ x: x1 }}
@@ -356,7 +356,7 @@ function PriceRangeSlider({
             {/* Asa Derecha */}
             <motion.div
               drag="x"
-              dragConstraints={contenedorRef}
+              dragConstraints={{ left: 0, right: contenedorRef.current?.offsetWidth || 0 }}
               dragElastic={0}
               dragMomentum={false}
               style={{ x: x2 }}
