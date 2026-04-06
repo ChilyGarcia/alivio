@@ -7,7 +7,6 @@ import * as LabelPrimitive from "@radix-ui/react-label";
 import * as SelectPrimitive from "@radix-ui/react-select";
 import { Check, ChevronDown } from "lucide-react";
 import { Slot } from "@radix-ui/react-slot";
-import NavBar from "@/components/navbar";
 import { authenticationService } from "@/services/auth.service";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
@@ -373,10 +372,9 @@ export default function PaymentForm() {
 
   return (
     <>
-      <NavBar />
       <Toaster />
 
-      <div className="min-h-screen bg-white p-4 md:p-6 mt-12">
+      <div className="min-h-screen bg-white p-4 md:p-6">
         <div className="mx-auto max-w-md space-y-6">
           <div className="space-y-2">
             <h1 className="text-2xl font-bold text-primary">Pago</h1>

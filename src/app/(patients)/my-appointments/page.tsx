@@ -5,7 +5,6 @@ import { Clock, DollarSign, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import { backendService } from "@/services/backend.service";
 import { Datum } from "@/interfaces/appointment.interface";
-import NavBar from "@/components/navbar";
 import { useRouter } from "next/navigation";
 import { AppointmenMapComponent } from "@/components/MapComponents";
 
@@ -85,9 +84,7 @@ export default function AppointmentsPage() {
 
   return (
     <>
-      <NavBar />
-
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-10 mt-12 animate-fade-in">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-10 animate-fade-in">
         <div className="max-w-2xl mx-auto px-4">
           {/* Encabezado de la página */}
           <div className="flex items-center gap-3 mb-6">

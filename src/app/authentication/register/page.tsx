@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import NavBar from "@/components/navbar";
 import Link from "next/link";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
@@ -213,10 +212,9 @@ export default function RegisterPage() {
 
   return (
     <>
-      <NavBar />
       <Toaster />
 
-      <div className="bg-white p-4 md:p-6 mt-12 mb-12">
+      <div className="bg-white p-4 md:p-6 mb-12">
         <div className="mx-auto max-w-[320px] md:max-w-[400px] space-y-6 md:p-10 md:shadow-2xl md:border md:border-gray-100 md:rounded-3xl">
           <div className="space-y-2 text-center">
             <h1 className="text-4xl font-bold text-primary pb-6">Registro</h1>

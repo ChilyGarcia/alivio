@@ -7,7 +7,6 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation } from "swiper/modules";
-import NavBar from "@/components/navbar";
 import AppointmentModal from "@/components/AppointmentModal";
 import ProfesionalProfile from "@/components/ProfessionalProfile";
 import FilterModal from "@/components/FilterModal";
@@ -479,8 +478,7 @@ const DoctorCarousel = () => {
       variants={staggerContainer}
       className="min-h-screen bg-white"
     >
-      <NavBar></NavBar>
-      <div className="container mx-auto p-4 mt-12">
+      <div className="container mx-auto p-4">
         <motion.h1
           variants={fadeInUp}
           className="text-primary text-4xl font-extrabold mb-6 text-left leading-tight"

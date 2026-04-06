@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import NavBar from "@/components/navbar";
 
 export default function Page() {
   const [activeTab, setActiveTab] = useState("planes");
@@ -9,8 +8,6 @@ export default function Page() {
 
   return (
     <>
-      <NavBar></NavBar>
-
       <div className="min-h-screen bg-white">
         <header className="border-b p-4">
           <div className="flex items-center gap-3">

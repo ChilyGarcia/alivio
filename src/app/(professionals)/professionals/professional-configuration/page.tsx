@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
-import NavBar from "@/components/navbar";
 import { Toaster, toast } from "sonner";
 import { ChevronLeft } from "lucide-react";
 
@@ -238,10 +237,9 @@ export default function ProfessionalConfigurationPage() {
 
   return (
     <>
-      <NavBar />
       <Toaster />
 
-      <div className="min-h-screen bg-white p-4 md:p-8 mt-12">
+      <div className="min-h-screen bg-white p-4 md:p-8">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center mb-6">
             <button

@@ -9,7 +9,6 @@ import {
   Calendar,
   User,
 } from "lucide-react";
-import NavBar from "@/components/navbar";
 import { backendService } from "@/services/backend.service";
 import { Datum } from "@/interfaces/my-patients.interface";
 import { useRouter } from "next/navigation";
@@ -162,9 +161,7 @@ export default function ProfessionalPanel() {
 
   return (
     <>
-      <NavBar />
-
-      <div className="container mx-auto p-6 max-w-4xl min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 mt-12">
+      <div className="container mx-auto p-6 max-w-4xl min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
         <div className="flex items-center mb-6">
           <button
             onClick={() => window.history.back()}

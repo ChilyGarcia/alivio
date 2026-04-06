@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import NavBar from "@/components/navbar";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 
@@ -116,9 +115,7 @@ export default function ChatPage() {
 
   return (
     <>
-      <NavBar></NavBar>
-
-      <div className="min-h-screen bg-white mt-12">
+      <div className="min-h-screen bg-white">
         {/* Header */}
         <header className="border-b p-4">
           <div className="flex items-center gap-3">

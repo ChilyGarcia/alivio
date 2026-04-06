@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import * as React from "react";
 import { backendService } from "@/services/backend.service";
 import Cookies from "js-cookie";
-import NavBar from "@/components/navbar";
 
 // --- tu Button y helper cn intactos ---
 const Button = React.forwardRef<
@@ -132,10 +131,8 @@ export default function FavoriteHealthProfessionalPage() {
 
   return (
     <>
-      <NavBar></NavBar>
-
       <div
-        className="min-h-screen bg-gradient-to-br from-white to-gray-50 py-10 mt-12"
+        className="min-h-screen bg-gradient-to-br from-white to-gray-50 py-10"
         suppressHydrationWarning
       >
         <div className="max-w-2xl mx-auto px-4" suppressHydrationWarning>
