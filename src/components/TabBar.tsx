@@ -20,7 +20,7 @@ import Image from "next/image";
 import Cookies from "js-cookie";
 import { authenticationService } from "@/services/auth.service";
 import { User as UserType } from "@/interfaces/user.interface";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 const TabBar = ({ onToggleNavBar }) => {
   const initialUser: UserType = {
@@ -39,6 +39,7 @@ const TabBar = ({ onToggleNavBar }) => {
   const [token, setToken] = useState("");
   const [user, setUser] = useState<UserType>(initialUser);
   const router = useRouter();
+  const pathname = usePathname();
 
   const fetchUserDetails = async () => {
     try {
@@ -200,16 +201,34 @@ const TabBar = ({ onToggleNavBar }) => {
             <nav className="space-y-2">
               <NavItem
                 href="/"
-                icon={<Home size={20} />}
+                icon={
+                  pathname === "/" ? (
+                    <div className="w-5 h-5 relative">
+                      <Image
+                        src="/images/images-tabbar-seleccionada/house.png"
+                        alt="Inicio"
+                        width={20}
+                        height={20}
+                        className="object-contain"
+                      />
+                    </div>
+                  ) : (
+                    <Home size={20} />
+                  )
+                }
                 label="Inicio"
-                active
+                active={pathname === "/"}
               />
               <DropdownMenu
                 label={
                   <div className="flex items-center">
                     <div className="w-5 h-5 relative mr-2">
                       <Image
-                        src="/images/images-tabbar/3pilares.png"
+                        src={
+                          pathname === "/my-appointments"
+                            ? "/images/images-tabbar-seleccionada/pilares.png"
+                            : "/images/images-tabbar/3pilares.png"
+                        }
                         alt="Pilares"
                         width={20}
                         height={20}
@@ -227,7 +246,11 @@ const TabBar = ({ onToggleNavBar }) => {
                       icon={
                         <div className="w-5 h-5 relative">
                           <Image
-                            src="/images/images-tabbar/citas.png"
+                            src={
+                              pathname === "/my-appointments"
+                                ? "/images/images-tabbar-seleccionada/citas.png"
+                                : "/images/images-tabbar/citas.png"
+                            }
                             alt="Citas"
                             width={20}
                             height={20}
@@ -236,65 +259,21 @@ const TabBar = ({ onToggleNavBar }) => {
                         </div>
                       }
                       label="Citas"
-                      active={false}
+                      active={pathname === "/my-appointments"}
                     />
                   </>
                 )}
-                {/* <NavItem
-  href="/services"
-  icon={
-    <div className="w-5 h-5 relative">
-      <Image
-        src="/images/images-tabbar/planes.png"
-        alt="Planes"
-        width={20}
-        height={20}
-        className="object-contain"
-      />
-    </div>
-  }
-  label="Planes"
-  active={false}
-/>
-<NavItem
-  href="/services"
-  icon={
-    <div className="w-5 h-5 relative">
-      <Image
-        src="/images/images-tabbar/servisio-especiales.png"
-        alt="Servicios Especiales"
-        width={20}
-        height={20}
-        className="object-contain"
-      />
-    </div>
-  }
-  label="Servicios Especiales"
-  active={false}
-/> */}
               </DropdownMenu>
-              {/* <NavItem
-  href="/farmacias"
-  icon={
-    <div className="w-5 h-5 relative">
-      <Image
-        src="/images/images-tabbar/farmacia.png"
-        alt="Farmacias"
-        width={20}
-        height={20}
-        className="object-contain"
-      />
-    </div>
-  }
-  label="Farmacias"
-  active={false}
-/> */}
               <NavItem
                 href="/my-chats"
                 icon={
                   <div className="w-5 h-5 relative">
                     <Image
-                      src="/images/images-tabbar/chats.png"
+                      src={
+                        pathname === "/my-chats"
+                          ? "/images/images-tabbar-seleccionada/chats.png"
+                          : "/images/images-tabbar/chats.png"
+                      }
                       alt="Chats"
                       width={20}
                       height={20}
@@ -303,14 +282,18 @@ const TabBar = ({ onToggleNavBar }) => {
                   </div>
                 }
                 label="Chats"
-                active={false}
+                active={pathname === "/my-chats"}
               />
               <NavItem
                 href="/notifications"
                 icon={
                   <div className="w-5 h-5 relative">
                     <Image
-                      src="/images/images-tabbar/notificaciones.png"
+                      src={
+                        pathname === "/notifications"
+                          ? "/images/images-tabbar-seleccionada/notificaciones.png"
+                          : "/images/images-tabbar/notificaciones.png"
+                      }
                       alt="Notificaciones"
                       width={20}
                       height={20}
@@ -319,14 +302,18 @@ const TabBar = ({ onToggleNavBar }) => {
                   </div>
                 }
                 label="notificaciones"
-                active={false}
+                active={pathname === "/notifications"}
               />
               <NavItem
                 href="/we"
                 icon={
                   <div className="w-5 h-5 relative">
                     <Image
-                      src="/images/images-tabbar/nosotros.png"
+                      src={
+                        pathname === "/we"
+                          ? "/images/images-tabbar-seleccionada/nosotros.png"
+                          : "/images/images-tabbar/nosotros.png"
+                      }
                       alt="Nosotros"
                       width={20}
                       height={20}
@@ -335,14 +322,18 @@ const TabBar = ({ onToggleNavBar }) => {
                   </div>
                 }
                 label="nosotros"
-                active={false}
+                active={pathname === "/we"}
               />
               <NavItem
                 href="/contact"
                 icon={
                   <div className="w-5 h-5 relative">
                     <Image
-                      src="/images/images-tabbar/contacto.png"
+                      src={
+                        pathname === "/contact"
+                          ? "/images/images-tabbar-seleccionada/contacto.png"
+                          : "/images/images-tabbar/contacto.png"
+                      }
                       alt="Contacto"
                       width={20}
                       height={20}
@@ -351,20 +342,8 @@ const TabBar = ({ onToggleNavBar }) => {
                   </div>
                 }
                 label="contacto"
-                active={false}
+                active={pathname === "/contact"}
               />
-              {/* {user.role === "professional" ? (
-                <>
-                  <NavItem
-                    href="/professionals/professional-configuration"
-                    icon={<Stethoscope size={20} />}
-                    label="Profesional"
-                    active={false}
-                  />
-                </>
-              ) : (
-                <></>
-              )} */}
             </nav>
             <div className="mt-auto border-t pt-4">
               {token ? (
@@ -377,14 +356,21 @@ const TabBar = ({ onToggleNavBar }) => {
                     }
                     icon={<User size={20} />}
                     label={user?.name ? getShortName(user.name) : "Perfil"}
-                    active={false}
+                    active={
+                      pathname === "/profile" ||
+                      pathname === "/professionals/profile"
+                    }
                   />
                   <NavItem
                     href="/settings"
                     icon={
                       <div className="w-5 h-5 relative">
                         <Image
-                          src="/images/images-tabbar/settings.png"
+                          src={
+                            pathname === "/settings"
+                              ? "/images/images-tabbar-seleccionada/ajustes.png"
+                              : "/images/images-tabbar/settings.png"
+                          }
                           alt="Configuración"
                           width={20}
                           height={20}
@@ -393,7 +379,7 @@ const TabBar = ({ onToggleNavBar }) => {
                       </div>
                     }
                     label="Configuración"
-                    active={false}
+                    active={pathname === "/settings"}
                   />
                   <Link
                     href="/"
@@ -410,7 +396,7 @@ const TabBar = ({ onToggleNavBar }) => {
                     href="/authentication/login"
                     icon={<User size={20} />}
                     label="Ingresar"
-                    active={false}
+                    active={pathname === "/authentication/login"}
                   />
                 </>
               )}
