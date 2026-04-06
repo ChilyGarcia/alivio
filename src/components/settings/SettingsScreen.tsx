@@ -142,7 +142,7 @@ export function SettingsScreen() {
       {/* Navbar */}
       <Navbar />
 
-      <main className="container mx-auto px-4 py-6 pt-20">
+      <div className="container mx-auto px-4 py-6 pt-20">
         {/* Header */}
         <div className="flex items-center gap-3 mb-6">
           <button className="text-blue-800" onClick={() => router.back()}>
@@ -214,7 +214,7 @@ export function SettingsScreen() {
             </div>
           ))}
         </div>
-      </main>
+      </div>
     </div>
   );
 }

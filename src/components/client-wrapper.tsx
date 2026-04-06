@@ -5,5 +5,5 @@ export default function ClientWrapper({
 }: {
   children: React.ReactNode;
 }) {
-  return <div suppressHydrationWarning>{children}</div>;
+  return <>{children}</>;
 }

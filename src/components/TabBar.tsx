@@ -29,7 +29,7 @@ const TabBar = ({ onToggleNavBar }) => {
     email: "",
     email_verified_at: null,
     created_at: null,
-    updated_at: new Date(),
+    updated_at: null,
     profile_image: "",
     role: "",
   };

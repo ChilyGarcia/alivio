@@ -22,7 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={montserrat.className}>
+      <body className={montserrat.className} suppressHydrationWarning>
         <ClientWrapper>
           <main className="antialiased">{children}</main>
           <Footer />
