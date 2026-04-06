@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
 import {
   X,
   Search,
@@ -44,9 +44,9 @@ export default function FilterModal({
     orderBy: "Populares",
     specialty: "",
     company: "",
-    priceRange: [100000, 150000],
-    services: [],
-    diseases: [],
+    priceRange: [100000, 150000] as [number, number],
+    services: [] as string[],
+    diseases: [] as string[],
     format: "Virtual",
     city: "Cúcuta",
   });
@@ -180,101 +180,12 @@ export default function FilterModal({
           </Section>
 
           {/* Intervalo de precio */}
-          <Section
-            icon={<CircleDollarSign className="h-6 w-6" />}
-            title="Intervalo de precio"
-          >
-            <div className="px-4 py-8 relative">
-              {/* Badge */}
-              <div className="absolute -top-2 left-1/2 -translate-x-1/2 bg-[#0C0CAA] text-white px-3 py-1 rounded-full text-[10px] font-bold z-10 transition-all">
-                COP {activeFilters.priceRange[0].toLocaleString()} -{" "}
-                {activeFilters.priceRange[1].toLocaleString()}
-              </div>
-
-              {/* Slider Container (The Track) */}
-              <div className="relative pt-2 pb-2">
-                <div
-                  ref={trackRef}
-                  className="h-2 w-full bg-blue-100 rounded-full relative cursor-pointer"
-                >
-                  {/* Active Track (Blue Bar) */}
-                  <div
-                    className="absolute h-full bg-[#0C0CAA] rounded-full"
-                    style={{
-                      left: `${((activeFilters.priceRange[0] - MIN_PRICE) / (MAX_PRICE - MIN_PRICE)) * 100}%`,
-                      right: `${100 - ((activeFilters.priceRange[1] - MIN_PRICE) / (MAX_PRICE - MIN_PRICE)) * 100}%`,
-                    }}
-                  />
-
-                  {/* Left Handle */}
-                  <motion.div
-                    onPan={(_, info) => {
-                      if (!trackRef.current) return;
-                      const rect = trackRef.current.getBoundingClientRect();
-                      const x = info.point.x - rect.left;
-                      const percent = Math.max(
-                        0,
-                        Math.min(100, (x / rect.width) * 100),
-                      );
-                      const val =
-                        Math.round(
-                          ((percent / 100) * (MAX_PRICE - MIN_PRICE) +
-                            MIN_PRICE) /
-                            PRICE_STEP,
-                        ) * PRICE_STEP;
-
-                      if (val < activeFilters.priceRange[1]) {
-                        setActiveFilters((prev) => ({
-                          ...prev,
-                          priceRange: [val, prev.priceRange[1]],
-                        }));
-                      }
-                    }}
-                    className="absolute top-1/2 -translate-y-1/2 h-6 w-6 bg-[#0C0CAA] rounded-full border-4 border-white shadow-md cursor-grab active:cursor-grabbing z-30"
-                    style={{
-                      left: `calc(${((activeFilters.priceRange[0] - MIN_PRICE) / (MAX_PRICE - MIN_PRICE)) * 100}% - 12px)`,
-                    }}
-                  />
-
-                  {/* Right Handle */}
-                  <motion.div
-                    onPan={(_, info) => {
-                      if (!trackRef.current) return;
-                      const rect = trackRef.current.getBoundingClientRect();
-                      const x = info.point.x - rect.left;
-                      const percent = Math.max(
-                        0,
-                        Math.min(100, (x / rect.width) * 100),
-                      );
-                      const val =
-                        Math.round(
-                          ((percent / 100) * (MAX_PRICE - MIN_PRICE) +
-                            MIN_PRICE) /
-                            PRICE_STEP,
-                        ) * PRICE_STEP;
-
-                      if (val > activeFilters.priceRange[0]) {
-                        setActiveFilters((prev) => ({
-                          ...prev,
-                          priceRange: [prev.priceRange[0], val],
-                        }));
-                      }
-                    }}
-                    className="absolute top-1/2 -translate-y-1/2 h-6 w-6 bg-blue-200 rounded-full border-4 border-white shadow-md cursor-grab active:cursor-grabbing z-30"
-                    style={{
-                      left: `calc(${((activeFilters.priceRange[1] - MIN_PRICE) / (MAX_PRICE - MIN_PRICE)) * 100}% - 12px)`,
-                    }}
-                  />
-                </div>
-              </div>
-
-              {/* Labels */}
-              <div className="flex justify-between mt-4 text-[10px] font-bold text-[#0C0CAA]">
-                <span>COP {MIN_PRICE.toLocaleString()}</span>
-                <span>COP {MAX_PRICE.toLocaleString()}</span>
-              </div>
-            </div>
-          </Section>
+          <PriceRangeSlider
+            initialRange={activeFilters.priceRange}
+            onChange={(range) =>
+              setActiveFilters((prev) => ({ ...prev, priceRange: range }))
+            }
+          />
 
           {/* Servicios */}
           <Section icon={<Briefcase className="h-6 w-6" />} title="Servicios">
@@ -367,6 +278,101 @@ export default function FilterModal({
         </div>
       </motion.div>
     </AnimatePresence>
+  );
+}
+
+function PriceRangeSlider({
+  initialRange,
+  onChange,
+}: {
+  initialRange: [number, number];
+  onChange: (range: [number, number]) => void;
+}) {
+  const [rango, setRango] = useState<[number, number]>(initialRange);
+  const contenedorRef = useRef<HTMLDivElement>(null);
+
+  // Valores de movimiento para sincronía total (fuera del ciclo de React)
+  const x1 = useMotionValue(0);
+  const x2 = useMotionValue(0);
+
+  // Efecto para inicializar posiciones basándonos en el rango inicial
+  useEffect(() => {
+    if (!contenedorRef.current) return;
+    const ancho = contenedorRef.current.offsetWidth;
+    const p1 = ((initialRange[0] - MIN_PRICE) / (MAX_PRICE - MIN_PRICE)) * ancho;
+    const p2 = ((initialRange[1] - MIN_PRICE) / (MAX_PRICE - MIN_PRICE)) * ancho;
+    x1.set(p1);
+    x2.set(p2);
+    setRango(initialRange);
+  }, [initialRange, x1, x2]);
+
+  // Sincronización de la barra azul con las posiciones x de las asas
+  const barraLeft = x1;
+  const barraWidth = useTransform([x1, x2], ([v1, v2]: any) => v2 - v1);
+
+  const actualizarPrecio = () => {
+    if (!contenedorRef.current) return;
+    const ancho = contenedorRef.current.offsetWidth;
+    
+    const pct1 = Math.max(0, Math.min(100, (x1.get() / ancho) * 100));
+    const pct2 = Math.max(0, Math.min(100, (x2.get() / ancho) * 100));
+    
+    const val1 = Math.round(((pct1 / 100) * (MAX_PRICE - MIN_PRICE) + MIN_PRICE) / PRICE_STEP) * PRICE_STEP;
+    const val2 = Math.round(((pct2 / 100) * (MAX_PRICE - MIN_PRICE) + MIN_PRICE) / PRICE_STEP) * PRICE_STEP;
+    
+    const nuevoRango: [number, number] = [val1, val2];
+    setRango(nuevoRango);
+    onChange(nuevoRango);
+  };
+
+  return (
+    <Section icon={<CircleDollarSign className="h-6 w-6" />} title="Intervalo de precio">
+      <div className="px-4 py-8 relative">
+        {/* Etiqueta de precio (Badge) */}
+        <div className="absolute -top-2 left-1/2 -translate-x-1/2 bg-[#0C0CAA] text-white px-3 py-1 rounded-full text-[10px] font-bold z-10 transition-all">
+          COP {rango[0].toLocaleString()} - {rango[1].toLocaleString()}
+        </div>
+
+        <div className="relative pt-2 pb-2">
+          {/* Pista del deslizador */}
+          <div ref={contenedorRef} className="h-2 w-full bg-blue-100 rounded-full relative">
+            {/* Barra Azul (Activa) - Sincronizada por Transformación */}
+            <motion.div
+              className="absolute h-full bg-[#0C0CAA] rounded-full"
+              style={{ left: barraLeft, width: barraWidth }}
+            />
+
+            {/* Asa Izquierda */}
+            <motion.div
+              drag="x"
+              dragConstraints={contenedorRef}
+              dragElastic={0}
+              dragMomentum={false}
+              style={{ x: x1 }}
+              onDrag={actualizarPrecio}
+              className="absolute top-1/2 -translate-y-1/2 -ml-3 h-6 w-6 bg-[#0C0CAA] rounded-full border-4 border-white shadow-md cursor-grab active:cursor-grabbing z-30"
+            />
+
+            {/* Asa Derecha */}
+            <motion.div
+              drag="x"
+              dragConstraints={contenedorRef}
+              dragElastic={0}
+              dragMomentum={false}
+              style={{ x: x2 }}
+              onDrag={actualizarPrecio}
+              className="absolute top-1/2 -translate-y-1/2 -ml-3 h-6 w-6 bg-blue-200 rounded-full border-4 border-white shadow-md cursor-grab active:cursor-grabbing z-30"
+            />
+          </div>
+        </div>
+
+        {/* Etiquetas de Mín y Máx */}
+        <div className="flex justify-between mt-4 text-[10px] font-bold text-[#0C0CAA]">
+          <span>COP {MIN_PRICE.toLocaleString()}</span>
+          <span>COP {MAX_PRICE.toLocaleString()}</span>
+        </div>
+      </div>
+    </Section>
   );
 }
 
