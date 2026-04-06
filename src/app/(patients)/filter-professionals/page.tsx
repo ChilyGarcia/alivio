@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -13,6 +13,7 @@ import ProfesionalProfile from "@/components/ProfessionalProfile";
 // import "leaflet/dist/leaflet.css";
 // import { MapWithNoSSR } from "@/components/MapComponents";
 // import { MapLocation } from "@/components/MapComponents";
+import { Search, X, SlidersHorizontal } from "lucide-react";
 import { motion } from "framer-motion";
 
 const DoctorCarousel = () => {
@@ -23,6 +24,7 @@ const DoctorCarousel = () => {
   const [companies, setCompanies] = useState([]);
   const [doctors, setDoctors] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const router = useRouter();
   const [isModalProfileOpen, setIsModalProfileOpen] = useState(false);
   const [selectedDoctorId, setSelectedDoctorId] = useState(null);
   const [selectedUserProfessional, setSelectedUserProfessional] = useState();
@@ -31,6 +33,7 @@ const DoctorCarousel = () => {
   const [loading, setLoading] = useState(true);
   const searchParams = useSearchParams();
   const searchTerm = searchParams.get("search");
+  const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm || "");
 
   const fadeInUp = {
     hidden: { opacity: 0, y: 20 },
@@ -138,12 +141,16 @@ const DoctorCarousel = () => {
 
           if (searchTerm) {
             const normalize = (str) =>
-              str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+              str
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .toLowerCase();
             const term = normalize(searchTerm);
             healthProfessionals = healthProfessionals.filter(
               (doctor) =>
                 normalize(doctor.user.name).includes(term) ||
-                (doctor.specialty?.name && normalize(doctor.specialty.name).includes(term)),
+                (doctor.specialty?.name &&
+                  normalize(doctor.specialty.name).includes(term)),
             );
           }
 
@@ -154,7 +161,8 @@ const DoctorCarousel = () => {
               id: doctor.id,
               user_id: doctor.user_id,
               name: doctor.user?.name || "Profesional",
-              specialty: doctor.specialty?.name || "Especialidad no especificada",
+              specialty:
+                doctor.specialty?.name || "Especialidad no especificada",
               rating: parseFloat(doctor.rating || 5),
               reviews: doctor.reviews || 0,
               img: doctor.user?.profile_image_url || "/images/card1fix.png",
@@ -164,7 +172,9 @@ const DoctorCarousel = () => {
               longitude: location ? location.longitude : null,
               latitude: location ? location.latitude : null,
               experience: doctor.description || "",
-              accessibility: (doctor.accessibilities || []).map((acc) => acc.type),
+              accessibility: (doctor.accessibilities || []).map(
+                (acc) => acc.type,
+              ),
               price: formatPrice(doctor.hourly_rate || 0),
               duration: "45-60 minutos",
             };
@@ -201,7 +211,9 @@ const DoctorCarousel = () => {
     // Fetch companies data
     const fetchCompanies = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/companies`);
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/companies`,
+        );
         if (!response.ok) {
           throw new Error("Error fetching companies");
         }
@@ -223,10 +235,10 @@ const DoctorCarousel = () => {
       fetchInitialDoctors();
       return;
     }
-    
+
     setSelectedCompany(company);
     setDoctors([]);
-    
+
     const fetchProfessionalsByCompany = async () => {
       try {
         let group = localStorage.getItem("group");
@@ -257,13 +269,13 @@ const DoctorCarousel = () => {
         }
 
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/professional-by-group-accesibility?${queryParams.toString()}`
+          `${process.env.NEXT_PUBLIC_API_URL}/professional-by-group-accesibility?${queryParams.toString()}`,
         );
-        
+
         if (!response.ok) {
           throw new Error("Error fetching professionals by company");
         }
-        
+
         const data = await response.json();
 
         if (data.health_professionals) {
@@ -274,7 +286,8 @@ const DoctorCarousel = () => {
               id: doctor.id,
               user_id: doctor.user_id,
               name: doctor.user?.name || "Profesional",
-              specialty: doctor.specialty?.name || "Especialidad no especificada",
+              specialty:
+                doctor.specialty?.name || "Especialidad no especificada",
               rating: parseFloat(doctor.rating || 5),
               reviews: doctor.reviews || 0,
               img: doctor.user?.profile_image_url || "/images/card1fix.png",
@@ -284,7 +297,9 @@ const DoctorCarousel = () => {
               longitude: location ? location.longitude : null,
               latitude: location ? location.latitude : null,
               experience: doctor.description || "",
-              accessibility: (doctor.accessibilities || []).map((acc) => acc.type),
+              accessibility: (doctor.accessibilities || []).map(
+                (acc) => acc.type,
+              ),
               price: formatPrice(doctor.hourly_rate || 0),
               duration: "30-45 minutos",
             };
@@ -328,14 +343,14 @@ const DoctorCarousel = () => {
       }
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/professional-by-group-accesibility?${queryParams.toString()}`
+        `${process.env.NEXT_PUBLIC_API_URL}/professional-by-group-accesibility?${queryParams.toString()}`,
       );
       const data = await response.json();
 
       if (data.health_professionals) {
         const formattedDoctors = data.health_professionals.map((doctor) => {
           const location = doctor.locations?.[0] || null;
-          
+
           return {
             id: doctor.id,
             user_id: doctor.user_id,
@@ -344,13 +359,13 @@ const DoctorCarousel = () => {
             rating: parseFloat(doctor.rating || 5),
             reviews: doctor.reviews || 0,
             img: doctor.user?.profile_image_url || "/images/card1fix.png",
-            location: location
-              ? location.location
-              : "Ubicación no disponible",
+            location: location ? location.location : "Ubicación no disponible",
             longitude: location ? location.longitude : null,
             latitude: location ? location.latitude : null,
             experience: doctor.description || "",
-            accessibility: (doctor.accessibilities || []).map((acc) => acc.type),
+            accessibility: (doctor.accessibilities || []).map(
+              (acc) => acc.type,
+            ),
             price: formatPrice(doctor.hourly_rate || 0),
             duration: "45-60 minutos",
           };
@@ -371,7 +386,7 @@ const DoctorCarousel = () => {
       fetchInitialDoctors();
       return;
     }
-    
+
     setSelectedCategory(category);
     // Reset company selection when a category is selected
     setSelectedCompany(null);
@@ -395,7 +410,7 @@ const DoctorCarousel = () => {
     const fetchGetProfessionalsByGroupAndSpecialty = async () => {
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/professional-by-group-and-specialty?group_id=${group}&specialty_id=${category.id}&accessibility_types[]=${accessibilityType}`
+          `${process.env.NEXT_PUBLIC_API_URL}/professional-by-group-and-specialty?group_id=${group}&specialty_id=${category.id}&accessibility_types[]=${accessibilityType}`,
         );
         const data = await response.json();
 
@@ -407,7 +422,8 @@ const DoctorCarousel = () => {
               id: doctor.id,
               user_id: doctor.user_id,
               name: doctor.user?.name || "Profesional",
-              specialty: doctor.specialty?.name || "Especialidad no especificada",
+              specialty:
+                doctor.specialty?.name || "Especialidad no especificada",
               rating: parseFloat(doctor.rating || 5),
               reviews: doctor.reviews || 0,
               img: doctor.user?.profile_image_url || "/images/card1fix.png",
@@ -417,7 +433,9 @@ const DoctorCarousel = () => {
               longitude: location ? location.longitude : null,
               latitude: location ? location.latitude : null,
               experience: doctor.description || "",
-              accessibility: (doctor.accessibilities || []).map((acc) => acc.type),
+              accessibility: (doctor.accessibilities || []).map(
+                (acc) => acc.type,
+              ),
               price: formatPrice(doctor.hourly_rate || 0),
               duration: "30-45 minutos",
             };
@@ -463,22 +481,58 @@ const DoctorCarousel = () => {
       <div className="container mx-auto p-4 mt-12">
         <motion.h1
           variants={fadeInUp}
-          className="text-3xl font-bold mb-4 text-blue-800"
+          className="text-primary text-4xl font-extrabold mb-6 text-left leading-tight"
         >
-          Selecciona los especialistas
+          Elige la especialidad
         </motion.h1>
-        <motion.p
-          variants={fadeInUp}
-          className="text-sm text-gray-500 mb-6"
-        >
-          Tu última búsqueda fue{" "}
-          <span className="font-semibold text-blue-800">{searchTerm || "Fisioterapia"}</span>, hoy
-          a las 7:39 pm. Puedes ver tu historial de búsquedas{" "}
-          <a href="#" className="text-blue-500 underline">
-            aquí
-          </a>
-          .
-        </motion.p>
+
+        <div className="flex items-center gap-2 mb-8">
+          <div className="flex-1 flex items-center bg-[#F5FBFF] border-2 border-[#0C0CAA] rounded-full px-5 py-2 shadow-sm transition-all focus-within:shadow-md">
+            <Search className="h-4 w-4 text-[#0C0CAA]/40 mr-3" />
+            <input
+              type="text"
+              value={localSearchTerm}
+              onChange={(e) => setLocalSearchTerm(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  const params = new URLSearchParams(searchParams);
+                  if (localSearchTerm) {
+                    params.set("search", localSearchTerm);
+                  } else {
+                    params.delete("search");
+                  }
+                  router.push(`?${params.toString()}`);
+                }
+              }}
+              placeholder="Busca la especialidad"
+              className="flex-1 bg-transparent focus:outline-none text-primary font-medium placeholder-primary/30 text-sm"
+            />
+            {localSearchTerm && (
+              <button
+                onClick={() => setLocalSearchTerm("")}
+                className="ml-2 hover:bg-primary/5 p-1 rounded-full transition-all"
+              >
+                <X className="h-4 w-4 text-[#0C0CAA]/40" />
+              </button>
+            )}
+          </div>
+
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            onClick={() => {
+              const params = new URLSearchParams(searchParams);
+              if (localSearchTerm) {
+                params.set("search", localSearchTerm);
+              } else {
+                params.delete("search");
+              }
+              router.push(`?${params.toString()}`);
+            }}
+            className="bg-primary text-white p-3.5 rounded-full shadow-lg hover:bg-blue-900 transition-all flex items-center justify-center flex-shrink-0"
+          >
+            <SlidersHorizontal className="h-5 w-5" />
+          </motion.button>
+        </div>
 
         <div className="flex gap-2 overflow-x-auto scrollbar-hide mb-6">
           {categories.map((category) => (
@@ -499,7 +553,9 @@ const DoctorCarousel = () => {
           ))}
         </div>
 
-        <h3 className="font-bold text-lg text-blue-800 mb-2">Empresas de salud</h3>
+        <h3 className="font-bold text-lg text-blue-800 mb-2">
+          Empresas de salud
+        </h3>
         <div className="flex gap-2 overflow-x-auto scrollbar-hide mb-6">
           {companies.map((company) => (
             <motion.button
@@ -780,12 +836,12 @@ const DoctorCarousel = () => {
                       {option === "videocall"
                         ? "Videollamada"
                         : option === "chat"
-                        ? "Chat"
-                        : option === "office"
-                        ? "Consultorio"
-                        : option === "home"
-                        ? "Ir a casa"
-                        : option}
+                          ? "Chat"
+                          : option === "office"
+                            ? "Consultorio"
+                            : option === "home"
+                              ? "Ir a casa"
+                              : option}
                     </span>
                   </div>
                 ))}
