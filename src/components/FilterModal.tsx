@@ -97,7 +97,7 @@ export default function FilterModal({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[100] bg-white flex flex-col h-full"
+        className="fixed inset-0 z-[10000] bg-white flex flex-col h-full"
       >
         {/* Modal Content Header */}
         <div className="flex items-center gap-4 px-6 py-4 mt-2">
@@ -270,7 +270,7 @@ export default function FilterModal({
         </div>
 
         {/* Footer Actions */}
-        <div className="px-6 py-6 border-t border-gray-100 bg-white space-y-4">
+        <div className="px-6 py-6 pb-10 border-t border-gray-100 bg-white space-y-4">
           <button
             onClick={resetFilters}
             className="w-full py-3 text-[#0C0CAA] font-bold border-2 border-[#0C0CAA] rounded-2xl hover:bg-blue-50 transition-colors"
