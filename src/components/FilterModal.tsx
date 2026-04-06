@@ -99,47 +99,57 @@ export default function FilterModal({
         exit={{ opacity: 0 }}
         className="fixed inset-0 z-[100] bg-white flex flex-col h-full"
       >
-        {/* Sticky Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-white">
-          <div className="flex items-center gap-4">
-             <div className="flex items-center gap-2">
-                <Image src="/images/logo_alivia_blue.png" alt="ALIVIO" width={100} height={30} className="object-contain" />
-             </div>
-          </div>
-          <button className="bg-[#0C7B02] text-white px-4 py-1.5 rounded-full text-xs font-bold flex items-center gap-2">
-            Emergencia <ChevronDown className="h-3 w-3" />
-          </button>
-        </div>
-
         {/* Modal Content Header */}
         <div className="flex items-center gap-4 px-6 py-4 mt-2">
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+          >
             <X className="h-8 w-8 text-[#0C0CAA]" />
           </button>
-          <h2 className="text-2xl font-extrabold text-[#0C0CAA]">Filtros de búsqueda</h2>
+          <h2 className="text-2xl font-extrabold text-[#0C0CAA]">
+            Filtros de búsqueda
+          </h2>
         </div>
 
         {/* Scrollable Body */}
         <div className="flex-1 overflow-y-auto px-6 py-4 space-y-10 pb-6">
-          
           {/* Ordenar por */}
-          <Section icon={<ClipboardList className="h-6 w-6" />} title="Ordenar por">
+          <Section
+            icon={<ClipboardList className="h-6 w-6" />}
+            title="Ordenar por"
+          >
             <div className="flex gap-3 flex-wrap">
               {["Populares", "Todos", "Cerca de mi"].map((item) => (
-                <Chip key={item} label={item} active={activeFilters.orderBy === item} onClick={() => toggleFilter("orderBy", item)} />
+                <Chip
+                  key={item}
+                  label={item}
+                  active={activeFilters.orderBy === item}
+                  onClick={() => toggleFilter("orderBy", item)}
+                />
               ))}
             </div>
           </Section>
 
           {/* Especialidades */}
-          <Section icon={<Stethoscope className="h-6 w-6" />} title="Especialidades">
+          <Section
+            icon={<Stethoscope className="h-6 w-6" />}
+            title="Especialidades"
+          >
             <div className="flex flex-col gap-4">
               <SearchInput placeholder="Escribe la especialidad" />
               <div className="flex gap-3 flex-wrap">
                 {categories.slice(0, 5).map((cat) => (
-                  <Chip key={cat.id} label={cat.name} active={activeFilters.specialty === cat.name} onClick={() => toggleFilter("specialty", cat.name)} />
+                  <Chip
+                    key={cat.id}
+                    label={cat.name}
+                    active={activeFilters.specialty === cat.name}
+                    onClick={() => toggleFilter("specialty", cat.name)}
+                  />
                 ))}
-                <button className="text-[#0C0CAA] font-bold text-sm px-4 py-2 hover:underline">Ver más...</button>
+                <button className="text-[#0C0CAA] font-bold text-sm px-4 py-2 hover:underline">
+                  Ver más...
+                </button>
               </div>
             </div>
           </Section>
@@ -147,18 +157,28 @@ export default function FilterModal({
           {/* Empresas */}
           <Section icon={<Building2 className="h-6 w-6" />} title="Empresas">
             <div className="flex flex-col gap-4">
-               <SearchInput placeholder="Escribe la empresa" />
-               <div className="flex gap-3 flex-wrap">
+              <SearchInput placeholder="Escribe la empresa" />
+              <div className="flex gap-3 flex-wrap">
                 {companies.slice(0, 5).map((comp) => (
-                  <Chip key={comp.id} label={comp.name} active={activeFilters.company === comp.name} onClick={() => toggleFilter("company", comp.name)} />
+                  <Chip
+                    key={comp.id}
+                    label={comp.name}
+                    active={activeFilters.company === comp.name}
+                    onClick={() => toggleFilter("company", comp.name)}
+                  />
                 ))}
-                <button className="text-[#0C0CAA] font-bold text-sm px-4 py-2 hover:underline">Ver más...</button>
+                <button className="text-[#0C0CAA] font-bold text-sm px-4 py-2 hover:underline">
+                  Ver más...
+                </button>
               </div>
             </div>
           </Section>
 
           {/* Intervalo de precio */}
-          <Section icon={<CircleDollarSign className="h-6 w-6" />} title="Intervalo de precio">
+          <Section
+            icon={<CircleDollarSign className="h-6 w-6" />}
+            title="Intervalo de precio"
+          >
             <div className="px-4 py-8 relative">
               <div className="absolute -top-2 left-1/2 -translate-x-1/2 bg-[#0C0CAA] text-white px-3 py-1 rounded-full text-[10px] font-bold z-10">
                 COP 100.000-150.000
@@ -178,52 +198,86 @@ export default function FilterModal({
           {/* Servicios */}
           <Section icon={<Briefcase className="h-6 w-6" />} title="Servicios">
             <div className="flex gap-3 flex-wrap">
-              {["Odontologia", "Fisioterapia", "General", "Dermatologia", "Terapias"].map((s) => (
-                <Chip key={s} label={s} active={activeFilters.services.includes(s)} onClick={() => toggleFilter("services", s)} />
+              {[
+                "Odontologia",
+                "Fisioterapia",
+                "General",
+                "Dermatologia",
+                "Terapias",
+              ].map((s) => (
+                <Chip
+                  key={s}
+                  label={s}
+                  active={activeFilters.services.includes(s)}
+                  onClick={() => toggleFilter("services", s)}
+                />
               ))}
-              <button className="text-[#0C0CAA] font-bold text-sm px-4 py-2 hover:underline">Ver más...</button>
+              <button className="text-[#0C0CAA] font-bold text-sm px-4 py-2 hover:underline">
+                Ver más...
+              </button>
             </div>
           </Section>
 
           {/* Enfermedades */}
-          <Section icon={<UserRound className="h-6 w-6" />} title="Enfermedades">
-             <div className="flex gap-3 flex-wrap">
-              {["Gripe", "Ansiedad", "Depresión", "Cálculos", "Fiebre"].map((e) => (
-                <Chip key={e} label={e} active={activeFilters.diseases.includes(e)} onClick={() => toggleFilter("diseases", e)} />
-              ))}
-              <button className="text-[#0C0CAA] font-bold text-sm px-4 py-2 hover:underline">Ver más...</button>
+          <Section
+            icon={<UserRound className="h-6 w-6" />}
+            title="Enfermedades"
+          >
+            <div className="flex gap-3 flex-wrap">
+              {["Gripe", "Ansiedad", "Depresión", "Cálculos", "Fiebre"].map(
+                (e) => (
+                  <Chip
+                    key={e}
+                    label={e}
+                    active={activeFilters.diseases.includes(e)}
+                    onClick={() => toggleFilter("diseases", e)}
+                  />
+                ),
+              )}
+              <button className="text-[#0C0CAA] font-bold text-sm px-4 py-2 hover:underline">
+                Ver más...
+              </button>
             </div>
           </Section>
 
           {/* Formato */}
           <Section icon={<Globe className="h-6 w-6" />} title="Formato">
-             <div className="flex gap-3">
+            <div className="flex gap-3">
               {["Presencial", "Virtual"].map((f) => (
-                <Chip key={f} label={f} active={activeFilters.format === f} onClick={() => toggleFilter("format", f)} />
+                <Chip
+                  key={f}
+                  label={f}
+                  active={activeFilters.format === f}
+                  onClick={() => toggleFilter("format", f)}
+                />
               ))}
             </div>
           </Section>
 
           {/* Ciudad */}
           <Section icon={<MapPin className="h-6 w-6" />} title="Ciudad">
-             <div className="flex gap-3 flex-wrap">
+            <div className="flex gap-3 flex-wrap">
               {["Bucaramanga", "Cúcuta", "Bogotá", "Medellín"].map((c) => (
-                <Chip key={c} label={c} active={activeFilters.city === c} onClick={() => toggleFilter("city", c)} />
+                <Chip
+                  key={c}
+                  label={c}
+                  active={activeFilters.city === c}
+                  onClick={() => toggleFilter("city", c)}
+                />
               ))}
             </div>
           </Section>
-
         </div>
 
         {/* Footer Actions */}
         <div className="px-6 py-6 border-t border-gray-100 bg-white space-y-4">
-          <button 
+          <button
             onClick={resetFilters}
             className="w-full py-3 text-[#0C0CAA] font-bold border-2 border-[#0C0CAA] rounded-2xl hover:bg-blue-50 transition-colors"
           >
             Borrar filtros
           </button>
-          <button 
+          <button
             onClick={handleApply}
             className="w-full py-3 bg-[#0C0CAA] text-white font-bold rounded-2xl hover:bg-blue-900 transition-all shadow-lg"
           >
@@ -235,7 +289,15 @@ export default function FilterModal({
   );
 }
 
-function Section({ icon, title, children }: { icon: React.ReactNode, title: string, children: React.ReactNode }) {
+function Section({
+  icon,
+  title,
+  children,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  children: React.ReactNode;
+}) {
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-3">
@@ -247,13 +309,21 @@ function Section({ icon, title, children }: { icon: React.ReactNode, title: stri
   );
 }
 
-function Chip({ label, active, onClick }: { label: string, active: boolean, onClick: () => void }) {
+function Chip({
+  label,
+  active,
+  onClick,
+}: {
+  label: string;
+  active: boolean;
+  onClick: () => void;
+}) {
   return (
     <button
       onClick={onClick}
       className={`px-6 py-2 rounded-full border-2 font-bold text-sm transition-all ${
-        active 
-          ? "bg-[#0C0CAA] text-white border-[#0C0CAA] shadow-md" 
+        active
+          ? "bg-[#0C0CAA] text-white border-[#0C0CAA] shadow-md"
           : "bg-white text-[#0C0CAA] border-[#0C0CAA] hover:bg-blue-50"
       }`}
     >
