@@ -10,6 +10,7 @@ import { Navigation } from "swiper/modules";
 import NavBar from "@/components/navbar";
 import AppointmentModal from "@/components/AppointmentModal";
 import ProfesionalProfile from "@/components/ProfessionalProfile";
+import FilterModal from "@/components/FilterModal";
 // import "leaflet/dist/leaflet.css";
 // import { MapWithNoSSR } from "@/components/MapComponents";
 // import { MapLocation } from "@/components/MapComponents";
@@ -24,6 +25,7 @@ const DoctorCarousel = () => {
   const [companies, setCompanies] = useState([]);
   const [doctors, setDoctors] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const router = useRouter();
   const [isModalProfileOpen, setIsModalProfileOpen] = useState(false);
   const [selectedDoctorId, setSelectedDoctorId] = useState(null);
@@ -519,15 +521,7 @@ const DoctorCarousel = () => {
 
           <motion.button
             whileTap={{ scale: 0.9 }}
-            onClick={() => {
-              const params = new URLSearchParams(searchParams);
-              if (localSearchTerm) {
-                params.set("search", localSearchTerm);
-              } else {
-                params.delete("search");
-              }
-              router.push(`?${params.toString()}`);
-            }}
+            onClick={() => setIsFilterModalOpen(true)}
             className="bg-primary text-white p-3.5 rounded-full shadow-lg hover:bg-blue-900 transition-all flex items-center justify-center flex-shrink-0"
           >
             <SlidersHorizontal className="h-5 w-5" />
@@ -909,6 +903,16 @@ const DoctorCarousel = () => {
         isOpen={isModalProfileOpen}
         onClose={() => setIsModalProfileOpen(false)}
         professional={selectedDoctor}
+      />
+
+      <FilterModal
+        isOpen={isFilterModalOpen}
+        onClose={() => setIsFilterModalOpen(false)}
+        categories={categories}
+        companies={companies}
+        onApply={(filters) => {
+          console.log("Applied Filters:", filters);
+        }}
       />
     </motion.div>
   );
