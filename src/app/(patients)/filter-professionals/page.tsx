@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -916,4 +916,16 @@ const DoctorCarousel = () => {
   );
 };
 
-export default DoctorCarousel;
+export default function FilterProfessionalsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-white flex justify-center items-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+        </div>
+      }
+    >
+      <DoctorCarousel />
+    </Suspense>
+  );
+}
