@@ -50,6 +50,7 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
   const [messagesSubscribe, setMessages] = useState<Message[]>(messages);
   const [messageInput, setMessageInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [senderImageUrl, setSenderImageUrl] = useState<string | null>(null);
   const [receiver, setReceiver] = useState<Receiver>({
     id: 0,
     name: "",
@@ -143,28 +144,33 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
   }, [sender_id, receiver_id]);
 
   useEffect(() => {
-    const fetchUserReceiver = async () => {
+    const fetchUsers = async () => {
       try {
-        const response = await fetch(
+        // Cargar datos del receiver
+        const resReceiver = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/get-user-details/${receiver_id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
+        if (resReceiver.ok) {
+          const data = await resReceiver.json();
+          setReceiver(data);
         }
-        const data = await response.json();
 
-        setReceiver(data);
+        // Cargar datos del sender (usuario autenticado)
+        const resSender = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/get-user-details/${sender_id}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        if (resSender.ok) {
+          const senderData = await resSender.json();
+          setSenderImageUrl(senderData.profile_image_url || null);
+        }
       } catch (error) {
-        console.error("Failed to fetch user receiver:", error);
+        console.error("Failed to fetch users:", error);
       }
     };
 
-    fetchUserReceiver();
+    fetchUsers();
   }, []);
 
   useEffect(() => {
