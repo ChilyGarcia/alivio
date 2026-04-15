@@ -112,79 +112,80 @@ const TabBar = ({ onToggleNavBar }) => {
 
   return (
     <>
-      {showTabBar && !HIDDEN_TABBAR_PATHS.some((p) => pathname.startsWith(p)) && (
-        <nav className="fixed bottom-0 left-0 w-full bg-white shadow-md p-2 flex justify-around items-center border-t border-gray-300 z-[9000]">
-          <TabItem
-            href="/"
-            icon={<Home size={24} />}
-            label="Inicio"
-            onClick={() => handleTabItemAuthentication("/")}
-          />
-          {token && (
-            <>
-              {user.role == "patient" ? (
-                <TabItem
-                  href="/my-appointments"
-                  icon={<Calendar size={24} />}
-                  label="Citas"
-                  onClick={() =>
-                    handleTabItemAuthentication("/my-appointments")
-                  }
-                />
-              ) : (
-                <TabItem
-                  href="/professionals/my-patients"
-                  icon={<Calendar size={24} />}
-                  label="Citas"
-                  onClick={() =>
-                    handleTabItemAuthentication("/my-appointments")
-                  }
-                />
-              )}
-            </>
-          )}
-          {/* <TabItem
+      {showTabBar &&
+        !HIDDEN_TABBAR_PATHS.some((p) => pathname.startsWith(p)) && (
+          <nav className="fixed bottom-0 left-0 w-full bg-white shadow-md p-2 flex justify-around items-center border-t border-gray-300 z-[9000]">
+            <TabItem
+              href="/"
+              icon={<Home size={24} />}
+              label="Inicio"
+              onClick={() => handleTabItemAuthentication("/")}
+            />
+            {token && (
+              <>
+                {user.role == "patient" ? (
+                  <TabItem
+                    href="/my-appointments"
+                    icon={<Calendar size={24} />}
+                    label="Citas"
+                    onClick={() =>
+                      handleTabItemAuthentication("/my-appointments")
+                    }
+                  />
+                ) : (
+                  <TabItem
+                    href="/professionals/my-patients"
+                    icon={<Calendar size={24} />}
+                    label="Citas"
+                    onClick={() =>
+                      handleTabItemAuthentication("/my-appointments")
+                    }
+                  />
+                )}
+              </>
+            )}
+            {/* <TabItem
           href="/services"
           icon={<CreditCard size={24} />}
           label="Planes"
           onClick={() => handleTabItemAuthentication("/planes")}
         /> */}
-          {token ? (
-            <TabItem
-              href={
-                user?.role === "professional"
-                  ? "/professionals/profile"
-                  : "/profile"
-              }
-              icon={<User size={24} />}
-              label={getShortName(user.name)}
-              onClick={(e) => {
-                e.preventDefault();
-                const profilePath =
+            {token ? (
+              <TabItem
+                href={
                   user?.role === "professional"
                     ? "/professionals/profile"
-                    : "/profile";
-                handleTabItemAuthentication(profilePath);
-              }}
-            />
-          ) : (
-            <TabItem
-              href="/authentication/login"
-              icon={<User size={24} />}
-              label="Ingresar"
-              onClick={() =>
-                handleTabItemAuthentication("/authentication/login")
-              }
-            />
-          )}
-          <button
-            onClick={toggleMenu}
-            className="flex flex-col items-center text-primary hover:text-blue-500 transition-all"
-          >
-            <Menu size={24} />
-          </button>
-        </nav>
-      )}
+                    : "/profile"
+                }
+                icon={<User size={24} />}
+                label={getShortName(user.name)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  const profilePath =
+                    user?.role === "professional"
+                      ? "/professionals/profile"
+                      : "/profile";
+                  handleTabItemAuthentication(profilePath);
+                }}
+              />
+            ) : (
+              <TabItem
+                href="/authentication/login"
+                icon={<User size={24} />}
+                label="Ingresar"
+                onClick={() =>
+                  handleTabItemAuthentication("/authentication/login")
+                }
+              />
+            )}
+            <button
+              onClick={toggleMenu}
+              className="flex flex-col items-center text-primary hover:text-blue-500 transition-all"
+            >
+              <Menu size={24} />
+            </button>
+          </nav>
+        )}
 
       {menuOpen && (
         <>
@@ -426,8 +427,9 @@ const TabItem = ({ href, icon, label, onClick }) => {
 const NavItem = ({ href, icon, label, active }) => (
   <Link
     href={href}
-    className={`flex items-center p-3 rounded-lg ${active ? "bg-blue-100" : "hover:bg-gray-100"
-      } text-primary transition-all`}
+    className={`flex items-center p-3 rounded-lg ${
+      active ? "bg-blue-100" : "hover:bg-gray-100"
+    } text-primary transition-all`}
   >
     {icon}
     <span className="ml-3">{label}</span>

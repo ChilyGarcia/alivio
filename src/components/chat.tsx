@@ -60,6 +60,7 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
   const [showMediaPanel, setShowMediaPanel] = useState(false);
   const [mediaPage, setMediaPage] = useState(0);
   const MEDIA_PER_PAGE = 4;
+  const [conversations, setConversations] = useState<any[]>([]);
   const [receiver, setReceiver] = useState<Receiver>({
     id: 0,
     name: "",
@@ -192,10 +193,34 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
 
     fetchUsers();
   }, []);
-
   useEffect(() => {
-    console.log("Este es el dato del receiver", receiver);
-  }, [receiver]);
+    const fetchConversations = async () => {
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/conversations`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        const formatTime = (ts: string) => {
+          if (!ts) return "";
+          const d = new Date(ts);
+          return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+        };
+        setConversations(data.map((c: any) => ({
+          id: c.other_user.id,
+          name: c.other_user.name,
+          message: c.last_message?.message || "Sin mensajes",
+          time: formatTime(c.last_message?.created_at),
+          avatar: c.other_user.profile_image_url || "/images/doc1.png",
+          hasNotification: c.unread_count > 0,
+          receiver_id: c.other_user.id,
+        })));
+      } catch (e) {
+        console.error("Error fetching conversations", e);
+      }
+    };
+    fetchConversations();
+  }, []);
 
   // Auto-scroll al último mensaje
   const scrollToBottom = () => {
@@ -287,13 +312,71 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
 
   return (
     <>
-    <div className="flex flex-col h-screen w-full max-w-2xl mx-auto bg-gray-50">
-      <header className="sticky top-0 z-10 flex items-center gap-4 p-4 bg-blue-700 text-white">
-        <button className="p-1" onClick={() => router.back()}>
-          <ChevronLeft className="w-6 h-6" />
-        </button>
-        <div className="flex items-center gap-3 flex-1">
-          <div className="relative w-10 h-10 rounded-full overflow-hidden">
+    {/* ============ LAYOUT WRAPPER ============ */}
+    <div className="flex h-screen w-full bg-gray-100">
+
+      {/* ===== SIDEBAR — Lista de chats (solo desktop) ===== */}
+      <aside className="hidden md:flex flex-col w-80 bg-white border-r border-gray-200 h-full shrink-0">
+        {/* Header sidebar */}
+        <div className="p-4 border-b flex items-center gap-3 bg-blue-700">
+          <button onClick={() => router.back()} className="p-1 rounded-full hover:bg-white/20 text-white transition-colors">
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          <h2 className="text-white font-semibold text-base">Mis chats</h2>
+        </div>
+
+        {/* Conversations list */}
+        <div className="flex-1 overflow-y-auto">
+          {conversations.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-full text-gray-400 gap-2 py-10">
+              <p className="text-sm">No hay conversaciones</p>
+            </div>
+          ) : (
+            conversations.map((conv) => {
+              const isActive = conv.receiver_id === receiver_id;
+              return (
+                <button
+                  key={conv.id}
+                  className={`w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors border-b border-gray-100 text-left ${
+                    isActive ? "bg-blue-50 border-l-4 border-l-blue-600" : ""
+                  }`}
+                  onClick={() => router.push(`/chat?sender_id=${sender_id}&receiver_id=${conv.receiver_id}`)}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={normalizeImageUrl(conv.avatar)}
+                    alt={conv.name}
+                    className="w-11 h-11 rounded-full object-cover shrink-0"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex justify-between items-center">
+                      <span className={`text-sm font-semibold truncate ${isActive ? "text-blue-700" : "text-gray-900"}`}>
+                        {conv.name}
+                      </span>
+                      <span className="text-xs text-gray-400 shrink-0 ml-1">{conv.time}</span>
+                    </div>
+                    <p className="text-xs text-gray-500 truncate">{conv.message}</p>
+                  </div>
+                  {conv.hasNotification && (
+                    <span className="w-2 h-2 rounded-full bg-blue-600 shrink-0" />
+                  )}
+                </button>
+              );
+            })
+          )}
+        </div>
+      </aside>
+
+      {/* ===== MAIN CHAT AREA ===== */}
+      <div className="flex flex-col flex-1 h-full min-w-0">
+
+        {/* Header */}
+        <header className="flex items-center gap-4 p-4 bg-blue-700 text-white shrink-0">
+          {/* Mobile back btn */}
+          <button className="p-1 md:hidden" onClick={() => router.back()}>
+            <ChevronLeft className="w-6 h-6" />
+          </button>
+          <div className="relative w-10 h-10 rounded-full overflow-hidden shrink-0">
             <Image
               src={normalizeImageUrl(receiver.profile_image_url)}
               alt="Profile picture"
@@ -302,122 +385,105 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
               className="object-cover"
             />
           </div>
-          <div>
-            <h1 className="font-medium"> {receiver.name} </h1>
-            <p className="text-xs text-white/80">{receiver.role}</p>
+          <div className="flex-1 min-w-0">
+            <h1 className="font-semibold truncate">{receiver.name}</h1>
+            <p className="text-xs text-white/80 capitalize">{receiver.role}</p>
           </div>
-        </div>
-        <button className="p-1" onClick={() => { setShowMediaPanel(true); setMediaPage(0); }}>
-          <File className="w-6 h-6" />
-        </button>
-      </header>
+          {/* Media button - solo mobile (en desktop está la sidebar) */}
+          <button className="p-1 md:hidden" onClick={() => { setShowMediaPanel(true); setMediaPage(0); }}>
+            <File className="w-6 h-6" />
+          </button>
+        </header>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messagesSubscribe.map((msg, index) => (
-          <div
-            key={msg.id || (msg as any).tempId || `msg-${index}`}
-            className={`flex ${msg.sender_id === sender_id ? "justify-end" : ""
-              }`}
-          >
-            {msg.sender_id !== sender_id && (
-              <div className="relative w-8 h-8 rounded-full overflow-hidden flex-shrink-0 mt-2">
-                <Image
-                  src={normalizeImageUrl(receiver.profile_image_url)}
-                  alt="User avatar"
-                  width={32}
-                  height={32}
-                  className="object-cover"
-                />
-              </div>
-            )}
+        {/* Messages */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+          {messagesSubscribe.map((msg, index) => (
             <div
-              className={`max-w-[80%] p-3 rounded-2xl ${msg.sender_id === sender_id
-                ? "bg-blue-700 text-white rounded-tr-sm"
-                : "bg-gray-200 rounded-tl-sm"
-                }`}
+              key={msg.id || (msg as any).tempId || `msg-${index}`}
+              className={`flex ${msg.sender_id === sender_id ? "justify-end" : ""}`}
             >
-              {msg.image_url && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={normalizeImageUrl(msg.image_url)}
-                  alt="imagen"
-                  className="rounded-lg mb-1 max-w-[200px] object-cover cursor-pointer hover:opacity-90 transition-opacity"
-                  onLoad={scrollToBottom}
-                  onClick={() => setLightboxUrl(normalizeImageUrl(msg.image_url))}
-                />
+              {msg.sender_id !== sender_id && (
+                <div className="relative w-8 h-8 rounded-full overflow-hidden flex-shrink-0 mt-2 mr-2">
+                  <Image
+                    src={normalizeImageUrl(receiver.profile_image_url)}
+                    alt="User avatar"
+                    width={32}
+                    height={32}
+                    className="object-cover"
+                  />
+                </div>
               )}
-              {msg.message?.trim() && <p>{msg.message}</p>}
+              <div
+                className={`max-w-[70%] md:max-w-[55%] p-3 rounded-2xl ${
+                  msg.sender_id === sender_id
+                    ? "bg-blue-700 text-white rounded-tr-sm"
+                    : "bg-white shadow-sm rounded-tl-sm"
+                }`}
+              >
+                {msg.image_url && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={normalizeImageUrl(msg.image_url)}
+                    alt="imagen"
+                    className="rounded-lg mb-1 max-w-[220px] object-cover cursor-pointer hover:opacity-90 transition-opacity"
+                    onLoad={scrollToBottom}
+                    onClick={() => setLightboxUrl(normalizeImageUrl(msg.image_url))}
+                  />
+                )}
+                {msg.message?.trim() && <p className="text-sm">{msg.message}</p>}
+              </div>
+              <div className="flex items-center gap-1 text-xs text-gray-400 pl-2 self-end mb-1">
+                <span>{msg.created_at?.split(" ")[1]?.substring(0, 5)}</span>
+                <Check className="w-3.5 h-3.5" />
+              </div>
             </div>
-            <div className="flex items-center gap-1 text-xs text-gray-500 pl-2">
-              <span>{msg.created_at?.split(" ")[1]}</span>
-              <Check className="w-4 h-4" />
-            </div>
-          </div>
-        ))}
-        <div ref={messagesEndRef} />
-      </div>
+          ))}
+          <div ref={messagesEndRef} />
+        </div>
 
-      <div className="p-4 border-t bg-white flex items-center gap-2">
-        <input
-          type="text"
-          placeholder="Escribe tu mensaje aquí"
-          value={messageInput}
-          onChange={(e) => setMessageInput(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              handleSendMessage();
-            }
-          }}
-          className="flex-1 px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:border-blue-500"
-        />
-
-        <button className="p-2" onClick={() => fileInputRef.current?.click()}>
-          <ImageIcon className="w-6 h-6 text-gray-500" />
-        </button>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          className="hidden"
-          onChange={handleImageSelect}
-        />
-        <button
-          className="p-2 bg-blue-700 rounded-full text-white"
-          onClick={() => handleSendMessage()}
-        >
-          <Send className="w-5 h-5" />
-        </button>
+        {/* Input bar */}
+        <div className="p-3 md:p-4 border-t bg-white flex items-center gap-2 shrink-0">
+          <input
+            type="text"
+            placeholder="Escribe tu mensaje aquí"
+            value={messageInput}
+            onChange={(e) => setMessageInput(e.target.value)}
+            onKeyDown={(e) => { if (e.key === "Enter") handleSendMessage(); }}
+            className="flex-1 px-4 py-2.5 rounded-full border border-gray-300 focus:outline-none focus:border-blue-500 text-sm"
+          />
+          <button className="p-2 hover:bg-gray-100 rounded-full transition-colors" onClick={() => fileInputRef.current?.click()}>
+            <ImageIcon className="w-5 h-5 text-gray-500" />
+          </button>
+          <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageSelect} />
+          <button
+            className="p-2.5 bg-blue-700 hover:bg-blue-800 rounded-full text-white transition-colors"
+            onClick={() => handleSendMessage()}
+          >
+            <Send className="w-4 h-4" />
+          </button>
+        </div>
       </div>
     </div>
 
     {/* Lightbox */}
     {lightboxUrl && (
-      <div
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/90"
-        onClick={() => setLightboxUrl(null)}
-      >
-        <button
-          className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
-          onClick={() => setLightboxUrl(null)}
-        >
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90"
+        onClick={() => setLightboxUrl(null)}>
+        <button className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+          onClick={() => setLightboxUrl(null)}>
           <X className="w-6 h-6" />
         </button>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={lightboxUrl}
-          alt="imagen ampliada"
+        <img src={lightboxUrl} alt="imagen ampliada"
           className="max-w-[90vw] max-h-[90vh] rounded-xl object-contain shadow-2xl"
-          onClick={(e) => e.stopPropagation()}
-        />
+          onClick={(e) => e.stopPropagation()} />
       </div>
     )}
 
     {/* Media Screen */}
     {showMediaPanel && (
       <MediaGallery
-        images={messagesSubscribe
-          .filter((m) => m.image_url)
-          .map((m) => normalizeImageUrl(m.image_url))}
+        images={messagesSubscribe.filter((m) => m.image_url).map((m) => normalizeImageUrl(m.image_url))}
         onBack={() => setShowMediaPanel(false)}
         onImageClick={(url) => setLightboxUrl(url)}
       />
@@ -425,3 +491,4 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
     </>
   );
 }
+
