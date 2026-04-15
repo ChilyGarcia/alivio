@@ -221,9 +221,13 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
         } else {
           // marcar el ID como enviado por nosotros para que Pusher lo ignore
           if (data.message?.id) sentMessageIds.current.add(data.message.id);
-          // reemplazar el optimista con el real
+          // reemplazar el optimista con el real, conservando tempId para estabilidad del key
           setMessages((prev) =>
-            prev.map((m) => ((m as any).tempId === tempId ? data.message : m))
+            prev.map((m) =>
+              (m as any).tempId === tempId
+                ? { ...data.message, tempId }
+                : m
+            )
           );
         }
       })
