@@ -9,7 +9,7 @@ import { ChevronLeft } from "lucide-react";
 
 function normalizeImageUrl(url: string | null | undefined): string {
   if (!url || url === "null" || url.includes("null")) return "/images/doc1.png";
-  if (url.startsWith("http://") || url.startsWith("https://")) return url;
+  if (url.startsWith("/") || url.startsWith("http://") || url.startsWith("https://")) return url;
   return `${process.env.NEXT_PUBLIC_API_URL?.replace("/api", "")}/${url.replace(/^\//, "")}`;
 }
 

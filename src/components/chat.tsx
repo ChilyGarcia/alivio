@@ -11,7 +11,8 @@ import MediaGallery from "@/components/MediaGallery";
 // Fuerza https en producción para evitar mixed content
 function normalizeImageUrl(url: string | null | undefined): string {
   if (!url || url === "null" || url.includes("null")) return "/images/doc1.png";
-  if (typeof window !== "undefined" && window.location.protocol === "https:") {
+  if (url.startsWith("/") || (typeof window !== "undefined" && window.location.protocol === "https:")) {
+    if (url.startsWith("/")) return url;
     return url.replace(/^http:\/\//, "https://");
   }
   return url;
