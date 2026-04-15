@@ -190,6 +190,17 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
     const messageToSend = messageInput;
     setMessageInput("");
 
+    const tempId = `temp-${Date.now()}`;
+    const optimisticMsg: Message & { tempId?: string } = {
+      tempId,
+      sender_id,
+      receiver_id,
+      message: messageToSend,
+      image_url: imageFile ? URL.createObjectURL(imageFile) : null,
+      created_at: new Date().toISOString().replace("T", " ").substring(0, 19),
+    };
+    setMessages((prev) => [...prev, optimisticMsg]);
+
     const formData = new FormData();
     formData.append("receiver_id", String(receiver_id));
     if (messageToSend.trim()) formData.append("message", messageToSend);
@@ -197,24 +208,26 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
 
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/message`, {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
       body: formData,
     })
       .then(async (response) => {
         const data = await response.json();
         if (!response.ok) {
           console.error("Error al enviar mensaje:", data);
+          // revertir optimista
+          setMessages((prev) => prev.filter((m) => (m as any).tempId !== tempId));
         } else {
-          setMessages((prev) => {
-            const exists = prev.some((m) => m.id === data.message?.id);
-            if (exists) return prev;
-            return [...prev, data.message];
-          });
+          // reemplazar el optimista con el real (Pusher lo ignorará por ID duplicado)
+          setMessages((prev) =>
+            prev.map((m) => ((m as any).tempId === tempId ? data.message : m))
+          );
         }
       })
-      .catch((error) => console.error("Error al enviar mensaje:", error));
+      .catch((error) => {
+        console.error("Error al enviar mensaje:", error);
+        setMessages((prev) => prev.filter((m) => (m as any).tempId !== tempId));
+      });
   };
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
