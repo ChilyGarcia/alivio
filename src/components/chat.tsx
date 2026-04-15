@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { ChevronLeft, Check, File, ImageIcon, Send } from "lucide-react";
+import { ChevronLeft, Check, File, ImageIcon, Send, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Pusher from "pusher-js";
 import Cookies from "js-cookie";
@@ -55,6 +55,7 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
   const sentMessageIds = useRef<Set<number>>(new Set());
   const [senderImageUrl, setSenderImageUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
   const [receiver, setReceiver] = useState<Receiver>({
     id: 0,
     name: "",
@@ -201,6 +202,15 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
     scrollToBottom();
   }, [messagesSubscribe]);
 
+  // Cerrar lightbox con tecla Escape
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setLightboxUrl(null);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   const handleSendMessage = (imageFile?: File) => {
     if (!imageFile && messageInput.trim() === "") return;
 
@@ -272,6 +282,7 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
   };
 
   return (
+    <>
     <div className="flex flex-col h-screen w-full max-w-2xl mx-auto bg-gray-50">
       <header className="sticky top-0 z-10 flex items-center gap-4 p-4 bg-blue-700 text-white">
         <button className="p-1" onClick={() => router.back()}>
@@ -326,8 +337,9 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
                 <img
                   src={normalizeImageUrl(msg.image_url)}
                   alt="imagen"
-                  className="rounded-lg mb-1 max-w-[200px] object-cover"
+                  className="rounded-lg mb-1 max-w-[200px] object-cover cursor-pointer hover:opacity-90 transition-opacity"
                   onLoad={scrollToBottom}
+                  onClick={() => setLightboxUrl(normalizeImageUrl(msg.image_url))}
                 />
               )}
               {msg.message?.trim() && <p>{msg.message}</p>}
@@ -373,5 +385,28 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
         </button>
       </div>
     </div>
+
+    {/* Lightbox */}
+    {lightboxUrl && (
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/90"
+        onClick={() => setLightboxUrl(null)}
+      >
+        <button
+          className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+          onClick={() => setLightboxUrl(null)}
+        >
+          <X className="w-6 h-6" />
+        </button>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={lightboxUrl}
+          alt="imagen ampliada"
+          className="max-w-[90vw] max-h-[90vh] rounded-xl object-contain shadow-2xl"
+          onClick={(e) => e.stopPropagation()}
+        />
+      </div>
+    )}
+    </>
   );
 }
