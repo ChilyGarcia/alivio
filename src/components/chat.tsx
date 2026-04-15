@@ -285,8 +285,7 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
 
   return (
     <>
-    {/* ===== MAIN CHAT AREA ===== */}
-    <div className="flex flex-col w-full h-full min-w-0 bg-gray-50">
+    <div className="flex flex-col w-full h-full min-w-0 bg-gray-50 relative">
       {/* Header */}
       <header className="flex items-center gap-4 p-4 bg-blue-700 text-white shrink-0">
         {/* Mobile back btn */}
@@ -379,9 +378,18 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
           <Send className="w-4 h-4" />
         </button>
       </div>
+
+      {/* Media Screen inside the panel */}
+      {showMediaPanel && (
+        <MediaGallery
+          images={messagesSubscribe.filter((m) => m.image_url).map((m) => normalizeImageUrl(m.image_url))}
+          onBack={() => setShowMediaPanel(false)}
+          onImageClick={(url) => setLightboxUrl(url)}
+        />
+      )}
     </div>
 
-    {/* Lightbox */}
+    {/* Lightbox remains fixed/global */}
     {lightboxUrl && (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90"
         onClick={() => setLightboxUrl(null)}>
@@ -395,16 +403,8 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
           onClick={(e) => e.stopPropagation()} />
       </div>
     )}
-
-    {/* Media Screen */}
-    {showMediaPanel && (
-      <MediaGallery
-        images={messagesSubscribe.filter((m) => m.image_url).map((m) => normalizeImageUrl(m.image_url))}
-        onBack={() => setShowMediaPanel(false)}
-        onImageClick={(url) => setLightboxUrl(url)}
-      />
-    )}
     </>
+
   );
 }
 

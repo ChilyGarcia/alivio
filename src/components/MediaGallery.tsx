@@ -10,7 +10,7 @@ interface MediaGalleryProps {
 
 export default function MediaGallery({ images, onBack, onImageClick }: MediaGalleryProps) {
   return (
-    <div className="fixed inset-0 z-40 flex flex-col w-full md:max-w-2xl md:mx-auto bg-gray-50 md:shadow-2xl md:border md:border-white/10">
+    <div className="absolute inset-0 z-40 flex flex-col w-full bg-gray-50 h-full">
       {/* Header */}
       <header className="sticky top-0 z-10 flex items-center gap-4 p-4 bg-blue-700 text-white">
         <button className="p-1" onClick={onBack}>
