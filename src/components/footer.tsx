@@ -3,8 +3,13 @@
 import React from "react";
 import { Heart, Facebook, Instagram, Youtube } from "lucide-react";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
+
+const HIDDEN_FOOTER_PATHS = ["/chat"];
 
 export default function Footer() {
+  const pathname = usePathname();
+  if (HIDDEN_FOOTER_PATHS.some((p) => pathname.startsWith(p))) return null;
   return (
     <footer className="bg-primary text-white py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -108,9 +108,11 @@ const TabBar = ({ onToggleNavBar }) => {
     setShowTabBar(menuOpen);
   };
 
+  const HIDDEN_TABBAR_PATHS = ["/chat"];
+
   return (
     <>
-      {showTabBar && (
+      {showTabBar && !HIDDEN_TABBAR_PATHS.some((p) => pathname.startsWith(p)) && (
         <nav className="fixed bottom-0 left-0 w-full bg-white shadow-md p-2 flex justify-around items-center border-t border-gray-300 z-[9000]">
           <TabItem
             href="/"
@@ -424,9 +426,8 @@ const TabItem = ({ href, icon, label, onClick }) => {
 const NavItem = ({ href, icon, label, active }) => (
   <Link
     href={href}
-    className={`flex items-center p-3 rounded-lg ${
-      active ? "bg-blue-100" : "hover:bg-gray-100"
-    } text-primary transition-all`}
+    className={`flex items-center p-3 rounded-lg ${active ? "bg-blue-100" : "hover:bg-gray-100"
+      } text-primary transition-all`}
   >
     {icon}
     <span className="ml-3">{label}</span>
