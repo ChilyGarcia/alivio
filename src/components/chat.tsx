@@ -7,6 +7,15 @@ import { useRouter } from "next/navigation";
 import Pusher from "pusher-js";
 import Cookies from "js-cookie";
 
+// Fuerza https en producción para evitar mixed content
+function normalizeImageUrl(url: string | null | undefined): string {
+  if (!url) return "/images/doc1.png";
+  if (typeof window !== "undefined" && window.location.protocol === "https:") {
+    return url.replace(/^http:\/\//, "https://");
+  }
+  return url;
+}
+
 interface Message {
   id?: number;
   sender_id: number;
@@ -33,8 +42,8 @@ interface Receiver {
   created_at: Date;
   updated_at: Date;
   role: string;
-  profile_image: null;
-  profile_image_url: null;
+  profile_image: string | null;
+  profile_image_url: string | null;
 }
 
 export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
@@ -213,7 +222,7 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
         <div className="flex items-center gap-3 flex-1">
           <div className="relative w-10 h-10 rounded-full overflow-hidden">
             <Image
-              src={receiver.profile_image_url || "/images/doc1.png"}
+              src={normalizeImageUrl(receiver.profile_image_url)}
               alt="Profile picture"
               width={40}
               height={40}
@@ -240,7 +249,7 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
             {msg.sender_id !== sender_id && (
               <div className="relative w-8 h-8 rounded-full overflow-hidden flex-shrink-0 mt-2">
                 <Image
-                  src={receiver.profile_image_url || "/images/doc1.png"}
+                  src={normalizeImageUrl(receiver.profile_image_url)}
                   alt="User avatar"
                   width={32}
                   height={32}
