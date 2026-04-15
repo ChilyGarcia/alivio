@@ -21,6 +21,7 @@ interface Message {
   sender_id: number;
   receiver_id: number;
   message: string;
+  image_url?: string | null;
   created_at?: string;
 }
 
@@ -51,6 +52,7 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
   const [messageInput, setMessageInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [senderImageUrl, setSenderImageUrl] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [receiver, setReceiver] = useState<Receiver>({
     id: 0,
     name: "",
@@ -182,29 +184,29 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messagesSubscribe]);
 
-  const handleSendMessage = () => {
-    if (messageInput.trim() === "") return;
+  const handleSendMessage = (imageFile?: File) => {
+    if (!imageFile && messageInput.trim() === "") return;
 
     const messageToSend = messageInput;
     setMessageInput("");
 
+    const formData = new FormData();
+    formData.append("receiver_id", String(receiver_id));
+    if (messageToSend.trim()) formData.append("message", messageToSend);
+    if (imageFile) formData.append("image", imageFile);
+
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/message`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({
-        message: messageToSend,
-        receiver_id: receiver_id,
-      }),
+      body: formData,
     })
       .then(async (response) => {
         const data = await response.json();
         if (!response.ok) {
           console.error("Error al enviar mensaje:", data);
         } else {
-          // Agregar el mensaje real del servidor, Pusher lo ignorará por ID duplicado
           setMessages((prev) => {
             const exists = prev.some((m) => m.id === data.message?.id);
             if (exists) return prev;
@@ -213,6 +215,12 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
         }
       })
       .catch((error) => console.error("Error al enviar mensaje:", error));
+  };
+
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) handleSendMessage(file);
+    e.target.value = "";
   };
 
   const handleRouterMyAppointments = () => {
@@ -269,7 +277,15 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
                 : "bg-gray-200 rounded-tl-sm"
                 }`}
             >
-              <p>{msg.message}</p>
+              {msg.image_url && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={normalizeImageUrl(msg.image_url)}
+                  alt="imagen"
+                  className="rounded-lg mb-1 max-w-[200px] object-cover"
+                />
+              )}
+              {msg.message?.trim() && <p>{msg.message}</p>}
             </div>
             <div className="flex items-center gap-1 text-xs text-gray-500 pl-2">
               <span>{msg.created_at?.split(" ")[1]}</span>
@@ -294,12 +310,19 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
           className="flex-1 px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:border-blue-500"
         />
 
-        <button className="p-2">
+        <button className="p-2" onClick={() => fileInputRef.current?.click()}>
           <ImageIcon className="w-6 h-6 text-gray-500" />
         </button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={handleImageSelect}
+        />
         <button
           className="p-2 bg-blue-700 rounded-full text-white"
-          onClick={handleSendMessage}
+          onClick={() => handleSendMessage()}
         >
           <Send className="w-5 h-5" />
         </button>
