@@ -51,6 +51,7 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
   const [messagesSubscribe, setMessages] = useState<Message[]>(messages);
   const [messageInput, setMessageInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const sentMessageIds = useRef<Set<number>>(new Set());
   const [senderImageUrl, setSenderImageUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [receiver, setReceiver] = useState<Receiver>({
@@ -125,8 +126,8 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
     eventNames.forEach((eventName) => {
       channel.bind(eventName, (data: Message) => {
         setMessages((prev) => {
-          // Si ya existe por ID, ignorar (ya fue agregado por el fetch del remitente)
-          if (data.id && prev.some((m) => m.id === data.id)) return prev;
+          // ignorar si ya lo tenemos (enviado por nosotros o duplicado)
+          if (data.id && (sentMessageIds.current.has(data.id) || prev.some((m) => m.id === data.id))) return prev;
           return [...prev, data];
         });
       });
@@ -218,7 +219,9 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
           // revertir optimista
           setMessages((prev) => prev.filter((m) => (m as any).tempId !== tempId));
         } else {
-          // reemplazar el optimista con el real (Pusher lo ignorará por ID duplicado)
+          // marcar el ID como enviado por nosotros para que Pusher lo ignore
+          if (data.message?.id) sentMessageIds.current.add(data.message.id);
+          // reemplazar el optimista con el real
           setMessages((prev) =>
             prev.map((m) => ((m as any).tempId === tempId ? data.message : m))
           );
