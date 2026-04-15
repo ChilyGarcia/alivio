@@ -287,7 +287,7 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
     <>
     <div className="flex flex-col w-full h-full min-w-0 bg-gray-50 relative">
       {/* Header */}
-      <header className="flex items-center gap-4 p-4 bg-blue-700 text-white shrink-0">
+      <header className="sticky top-0 z-10 flex items-center gap-4 p-4 bg-blue-700 text-white shrink-0">
         {/* Mobile back btn */}
         <button className="p-1 md:hidden" onClick={() => router.back()}>
           <ChevronLeft className="w-6 h-6" />
