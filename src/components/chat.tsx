@@ -73,7 +73,7 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
     const minId = Math.min(sender_id, receiver_id);
     const maxId = Math.max(sender_id, receiver_id);
     const channelName = `chat.${minId}.${maxId}`;
-    
+
     console.log(`📡 Suscribiéndose al canal: ${channelName}`);
     console.log(`👤 Sender ID: ${sender_id}, Receiver ID: ${receiver_id}`);
 
@@ -123,7 +123,7 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
                 msg.receiver_id === data.receiver_id &&
                 msg.message === data.message
             );
-            
+
             if (optimisticIndex !== -1) {
               // Reemplazar el mensaje optimista con el real
               console.log("🔄 Reemplazando mensaje optimista con el real");
@@ -132,19 +132,19 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
               return newMessages;
             }
           }
-          
+
           // Evitar duplicados por ID
           if (data.id) {
             const existsById = prevMessages.some(
               (msg) => msg.id === data.id
             );
-            
+
             if (existsById) {
               console.log("⚠️ Mensaje duplicado detectado (por ID), ignorando");
               return prevMessages;
             }
           }
-          
+
           // Si es un mensaje del remitente actual sin ID, podría ser duplicado
           if (data.sender_id === sender_id && !data.id) {
             const duplicateContent = prevMessages.some(
@@ -157,13 +157,13 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
                   new Date(data.created_at || 0).getTime()
                 ) < 5000 // Dentro de 5 segundos
             );
-            
+
             if (duplicateContent) {
               console.log("⚠️ Mensaje duplicado detectado (por contenido), ignorando");
               return prevMessages;
             }
           }
-          
+
           // Si es un mensaje de otro usuario, agregarlo normalmente
           return [...prevMessages, data];
         });
@@ -246,7 +246,7 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
       .then(async (response) => {
         const data = await response.json();
         console.log("✅ Respuesta del servidor:", data);
-        
+
         if (!response.ok) {
           console.error("❌ Error al enviar mensaje:", data);
           // Remover el mensaje optimista si falla
@@ -272,16 +272,13 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
   return (
     <div className="flex flex-col h-screen max-w-md mx-auto bg-gray-50">
       <header className="flex items-center gap-4 p-4 bg-blue-700 text-white">
-        <button className="p-1" onClick={() => router.push("/")}>
-          <ChevronLeft
-            className="w-6 h-6"
-            onClick={() => handleRouterMyAppointments()}
-          />
+        <button className="p-1" onClick={() => router.back()}>
+          <ChevronLeft className="w-6 h-6" />
         </button>
         <div className="flex items-center gap-3 flex-1">
           <div className="relative w-10 h-10 rounded-full overflow-hidden">
             <Image
-              src="/images/doc1.png"
+              src={receiver.profile_image_url || "/images/doc1.png"}
               alt="Profile picture"
               width={40}
               height={40}
@@ -302,14 +299,13 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
         {messagesSubscribe.map((msg, index) => (
           <div
             key={msg.id || (msg as any).tempId || `msg-${index}`}
-            className={`flex ${
-              msg.sender_id === sender_id ? "justify-end" : ""
-            }`}
+            className={`flex ${msg.sender_id === sender_id ? "justify-end" : ""
+              }`}
           >
             {msg.sender_id !== sender_id && (
               <div className="relative w-8 h-8 rounded-full overflow-hidden flex-shrink-0 mt-2">
                 <Image
-                  src="/images/doc1.png"
+                  src={receiver.profile_image_url || "/images/doc1.png"}
                   alt="User avatar"
                   width={32}
                   height={32}
@@ -318,11 +314,10 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
               </div>
             )}
             <div
-              className={`max-w-[80%] p-3 rounded-2xl ${
-                msg.sender_id === sender_id
-                  ? "bg-blue-700 text-white rounded-tr-sm"
-                  : "bg-gray-200 rounded-tl-sm"
-              }`}
+              className={`max-w-[80%] p-3 rounded-2xl ${msg.sender_id === sender_id
+                ? "bg-blue-700 text-white rounded-tr-sm"
+                : "bg-gray-200 rounded-tl-sm"
+                }`}
             >
               <p>{msg.message}</p>
             </div>
