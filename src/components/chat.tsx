@@ -23,6 +23,7 @@ interface Message {
   message: string;
   image_url?: string | null;
   created_at?: string;
+  temporary_id?: string;
 }
 
 interface ChatProps {
@@ -126,8 +127,19 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
     eventNames.forEach((eventName) => {
       channel.bind(eventName, (data: Message) => {
         setMessages((prev) => {
-          // ignorar si ya lo tenemos (enviado por nosotros o duplicado)
-          if (data.id && (sentMessageIds.current.has(data.id) || prev.some((m) => m.id === data.id))) return prev;
+          // Si el mensaje ya tiene ID real y ya está en la lista (evita duplicados de Pusher)
+          if (data.id && prev.some((m) => m.id === data.id)) return prev;
+          
+          // Si el mensaje tiene temporary_id y coincide con uno de nuestros mensajes optimistas
+          if (data.temporary_id && prev.some((m) => (m as any).tempId === data.temporary_id)) {
+            return prev.map((m) => 
+              (m as any).tempId === data.temporary_id ? { ...data, tempId: data.temporary_id } : m
+            );
+          }
+
+          // Si el ID ya está en sentMessageIds, lo ignoramos porque ya lo procesamos en el callback de la petición POST
+          if (data.id && sentMessageIds.current.has(data.id)) return prev;
+
           return [...prev, data];
         });
       });
@@ -206,6 +218,7 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
     formData.append("receiver_id", String(receiver_id));
     if (messageToSend.trim()) formData.append("message", messageToSend);
     if (imageFile) formData.append("image", imageFile);
+    formData.append("temporary_id", tempId);
 
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/message`, {
       method: "POST",
