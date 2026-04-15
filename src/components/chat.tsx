@@ -221,7 +221,7 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
 
   return (
     <div className="flex flex-col h-screen w-full max-w-2xl mx-auto bg-gray-50">
-      <header className="flex items-center gap-4 p-4 bg-blue-700 text-white">
+      <header className="sticky top-0 z-10 flex items-center gap-4 p-4 bg-blue-700 text-white">
         <button className="p-1" onClick={() => router.back()}>
           <ChevronLeft className="w-6 h-6" />
         </button>
