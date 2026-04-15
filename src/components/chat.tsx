@@ -193,8 +193,12 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
   }, [receiver]);
 
   // Auto-scroll al último mensaje
-  useEffect(() => {
+  const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
   }, [messagesSubscribe]);
 
   const handleSendMessage = (imageFile?: File) => {
@@ -316,6 +320,7 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
                   src={normalizeImageUrl(msg.image_url)}
                   alt="imagen"
                   className="rounded-lg mb-1 max-w-[200px] object-cover"
+                  onLoad={scrollToBottom}
                 />
               )}
               {msg.message?.trim() && <p>{msg.message}</p>}
