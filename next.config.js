@@ -3,16 +3,14 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        // Desarrollo local
         protocol: 'http',
         hostname: '127.0.0.1',
-        port: '8080',
+        port: '8000',
         pathname: '/storage/**',
       },
       {
-        // Producción - Ajusta esto con tu dominio de producción
         protocol: 'https',
-        hostname: 'api.alivio.com', // Reemplaza con tu dominio real de producción
+        hostname: 'api.aliviapp.com.co',
         port: '',
         pathname: '/storage/**',
       },
