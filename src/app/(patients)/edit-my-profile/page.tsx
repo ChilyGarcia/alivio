@@ -73,7 +73,7 @@ export default function EditProfilePage() {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       handleChange("profile_image", file);
-      
+
       // Crear URL para vista previa
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -95,30 +95,30 @@ export default function EditProfilePage() {
   const handleSave = async () => {
     try {
       const formData = new FormData();
-      
-      // Validar campos requeridos
+
       if (!form.name || !form.email || !form.phone_number) {
         alert("Por favor completa todos los campos requeridos");
         return;
       }
 
-      // Agregar campos requeridos
       formData.append("name", form.name);
       formData.append("email", form.email);
       formData.append("phone_number", form.phone_number);
-      
-      // Agregar campos opcionales
-      if (form.document_type) {
-        formData.append("document_type", form.document_type);
-      }
-      if (form.document_number) {
-        formData.append("document_number", form.document_number);
-      }
-      if (form.profile_image) {
-        formData.append("profile_image", form.profile_image);
+
+      if (form.document_type) formData.append("document_type", form.document_type);
+      if (form.document_number) formData.append("document_number", form.document_number);
+      if (form.profile_image) formData.append("profile_image", form.profile_image);
+
+      const result = await authenticationService.updateUser(formData);
+
+      // Actualizar el usuario con los datos devueltos por el servidor
+      if (result?.user) {
+        setUser(result.user);
+        setPreviewImage(null);
+        setForm(prev => ({ ...prev, profile_image: null }));
       }
 
-      await authenticationService.updateUser(formData);
+      alert("Perfil actualizado correctamente");
       router.back();
     } catch (error) {
       console.error(error);
