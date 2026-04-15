@@ -161,7 +161,7 @@ export default function LoginPage() {
       }
 
       toast.success("Login exitoso!");
-      Cookies.set("token", data.access_token, { expires: 1 });
+      Cookies.set("token", data.access_token, { expires: 1, path: "/" });
 
       if (appointmentDetails) {
         router.push("/payments");

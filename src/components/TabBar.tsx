@@ -58,12 +58,15 @@ const TabBar = ({ onToggleNavBar }) => {
       if (auth) {
         const response = await fetchUserDetails();
 
-        Cookies.set("user", JSON.stringify(response));
-        setToken(auth);
+        Cookies.set("user", JSON.stringify(response), { path: "/" });
+        setToken(auth || "");
+      } else {
+        setToken("");
+        setUser(initialUser);
       }
     };
     fetchData();
-  }, []);
+  }, [pathname]);
 
   const handleTabItemAuthentication = (ref: string) => {
     const token = Cookies.get("token");
@@ -80,7 +83,7 @@ const TabBar = ({ onToggleNavBar }) => {
 
       console.log(response);
       if (response) {
-        Cookies.remove("token");
+        Cookies.remove("token", { path: "/" });
         window.location.href = "/";
       }
       return response;
