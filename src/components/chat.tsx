@@ -218,6 +218,13 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
     };
     setMessages((prev) => [...prev, optimisticMsg]);
 
+    // Para imágenes, el blob URL carga instantáneo → esperar al siguiente frame
+    if (imageFile) {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => scrollToBottom());
+      });
+    }
+
     const formData = new FormData();
     formData.append("receiver_id", String(receiver_id));
     if (messageToSend.trim()) formData.append("message", messageToSend);
