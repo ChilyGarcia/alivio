@@ -6,6 +6,7 @@ import { ChevronLeft, Check, File, ImageIcon, Send, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Pusher from "pusher-js";
 import Cookies from "js-cookie";
+import MediaGallery from "@/components/MediaGallery";
 
 // Fuerza https en producción para evitar mixed content
 function normalizeImageUrl(url: string | null | undefined): string {
@@ -56,6 +57,9 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
   const [senderImageUrl, setSenderImageUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
+  const [showMediaPanel, setShowMediaPanel] = useState(false);
+  const [mediaPage, setMediaPage] = useState(0);
+  const MEDIA_PER_PAGE = 4;
   const [receiver, setReceiver] = useState<Receiver>({
     id: 0,
     name: "",
@@ -303,7 +307,7 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
             <p className="text-xs text-white/80">{receiver.role}</p>
           </div>
         </div>
-        <button className="p-1">
+        <button className="p-1" onClick={() => { setShowMediaPanel(true); setMediaPage(0); }}>
           <File className="w-6 h-6" />
         </button>
       </header>
@@ -406,6 +410,17 @@ export default function Chat({ sender_id, receiver_id, messages }: ChatProps) {
           onClick={(e) => e.stopPropagation()}
         />
       </div>
+    )}
+
+    {/* Media Screen */}
+    {showMediaPanel && (
+      <MediaGallery
+        images={messagesSubscribe
+          .filter((m) => m.image_url)
+          .map((m) => normalizeImageUrl(m.image_url))}
+        onBack={() => setShowMediaPanel(false)}
+        onImageClick={(url) => setLightboxUrl(url)}
+      />
     )}
     </>
   );
